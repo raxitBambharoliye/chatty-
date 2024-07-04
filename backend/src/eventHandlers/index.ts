@@ -5,7 +5,7 @@ export const eventHandler = (socket:any) => {
         logger.info(`EVENT RECEIVED :: ${eventName} :: ${JSON.stringify(data)} :::::::::::::: `) 
         switch (eventName) {
             case "test":
-                logger.info("testing even received ", data);
+                logger.info(`testing even received ${JSON.stringify(data)} ` );
                 break;
         }
     })

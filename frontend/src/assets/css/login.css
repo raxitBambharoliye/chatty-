@@ -1,0 +1,67 @@
+.background{
+    background: var(--color-black) !important;
+}
+.loginInner{
+    max-width: 450px;
+    width: 100%;
+    background-color: var(--color-black-second);
+    color: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow:0px 0px 30px 0px #000000c4;
+}
+/* background */
+.background{
+    position: relative;
+    
+}
+
+.background:after{
+    content: '';
+    width: 21rem;
+    height: 21rem;
+    border-radius: 50%;
+    background-color: #767ff0;
+    position: absolute;
+    top: 10%;
+    left: 8%;
+    filter: blur(150px);
+}
+.background:before{
+    content: '';
+    width: 21rem;
+    height: 21rem;
+    border-radius: 50%;
+    background-color: #ef6088;
+    position: absolute;
+    right: 10%;
+    bottom: 8%;
+
+    filter: blur(150px);
+}
+/* loginWith */
+.loginWith{
+    border-top: 1px solid var(--color-gray);
+    padding-top: 20px;
+    margin-top: 20px;
+}
+.loginWith .iconImg{ 
+    width: 28px;
+    height: 28px;
+    margin-right: 8px;
+}
+.loginWithButton{
+    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-black);
+    padding: 8px 0;
+    border-radius: 12px;
+    text-decoration: none;
+    color: white;
+    transition: all 0.4s linear;
+}
+.loginWithButton:hover{
+    background: var(--color-black-second);
+}
