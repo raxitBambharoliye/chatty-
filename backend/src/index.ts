@@ -18,6 +18,6 @@ app.use("/",router)
 httpServer.listen(process.env.SERVER_PORT, async() => {
     await mongoDbConnection();
     await socketConnection();
-    logger.info(`server running on PORT ${process.env.SERVER_PORT}`)
+    logger.info(`server running on PORT ${process.env.SERVER_PORT}`);
 })
 export default io;
