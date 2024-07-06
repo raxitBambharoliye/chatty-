@@ -26,15 +26,22 @@ body{
 .inputBlack input{
     background-color: var(--color-black);
     border: none;
-    color: var(--color-gray) !important;
+    color: var(--color-gray) ;
 }
 .inputBlack input:focus{
     background-color: var(--color-black) !important;
-    color: var(--color-gray);
+    color: white !important;
     box-shadow: 0 0 0 .25rem #5b5b5b40;
 }
 .inputBlack input::placeholder{
     color: var(--color-gray);
+}
+::-webkit-calendar-picker-indicator{
+    background-color: var(--color-black-second);
+    color: white !important;
+    padding: 5px;
+    cursor: pointer;
+    border-radius: 3px;
 }
 .inputBlack label{
     color: var(--color-gray);
@@ -43,6 +50,17 @@ body{
 .validationError{
     color: red;
     font-size: 14px;
+}
+.passwordIcon{
+    background-color: transparent;
+    border: none;
+    outline: none;
+    position: absolute;
+    top: 50%;
+    /* bottom: 50%; */
+    transform: translateY(-50%);
+    right: 2%;
+    color: var(--color-gray);
 }
 /* Button  */
 .themGradient{
@@ -81,5 +99,8 @@ body{
 }
 .themBlueBordered:hover{
     background-color: var(--color-primary);
+    color: white;
 }
+
+
 /* image */

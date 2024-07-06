@@ -1,4 +1,6 @@
 import axios from "axios";
+import { getCookieData } from "../common";
+import { COOKIE_KEY } from "../constant";
 
 
 
@@ -8,7 +10,7 @@ const axiosClient = axios.create({
 
 axiosClient.interceptors.request.use(
     (config) => {
-        const token="test";
+        const token=getCookieData(COOKIE_KEY.TOKEN,true);
         if (token) {
             config.headers['x-auth-token'] = token;
         }

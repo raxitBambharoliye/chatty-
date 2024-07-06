@@ -10,9 +10,16 @@ const registerUser =async (req: any, res: any) => {
         req.body.password = await hash(req.body.password, 10);
         const user = await MQ.insertOne(MODEL.USER_MODEL, req.body);
         if (user) {
-            res.status(200).json({
-                message: "User registered successfully",
-            })
+            let secret = process.env.JWT_SECRET || "";
+            let token = jwt.sign({ userId: user.id, email: user.email }, secret,{expiresIn: 60*60*24});
+            if (token) {
+                delete user.password;
+               return res.status(200).json({
+                    message: "user logged in successfully",
+                   userData: user,
+                    token
+                })
+            }
         } else {
             res.status(500).json({
                 message:"some thing went wrong, please try later",
