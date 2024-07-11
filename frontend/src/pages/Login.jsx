@@ -54,7 +54,13 @@ function Login() {
             console.log('CATCH ERROR IN : logInHandler', error);
         }
     }
-
+    //NOTE - login with google 
+    const openGoogleLogin = async () => {
+        window.open(
+            `${import.meta.env.VITE_BASE_URL}/auth/google/callback`,
+            '_self'
+        )
+    }
     return (
         <div className='w-100  vh-100  d-flex flex-column align-items-center justify-content-center background'>
             <div className="loginInner">
@@ -78,7 +84,7 @@ function Login() {
                         }
                     })} />
                     {errors.password && <p className='validationError pb-2'>{errors.password.message}</p>}
-
+                    <Link className='formLink d-block text-end'>Forgot Password </Link>
                     <div className="d-flex mt-4">
                         <Button buttonClass='themGradient btnRounded me-2' type='submit' value='Log In' ref={ref} />
                         <Link to={APP_URL.FE_REGISTER}>
@@ -87,8 +93,8 @@ function Login() {
                     </div>
                 </form>
                 <div className="loginWith">
-                    <Link className='loginWithButton'>
-                        <img src="./icon/google.png" className='iconImg' alt="" />
+                    <Link className='loginWithButton' onClick={openGoogleLogin}>
+                        <img src="./icon/google.png" className='iconImg' alt=""  />
                         Continue With Google
                     </Link>
                 </div>

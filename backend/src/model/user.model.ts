@@ -9,7 +9,6 @@ const userSchema = new Schema({
     },
     DOB : {
         type: String,
-        required:true,
     },
     email: {
         type: String,
@@ -32,9 +31,13 @@ const userSchema = new Schema({
     },
     password: {
         type: String,
-        required:true,
     },
     isOnLine: {
+        type: Boolean,
+        default: false,
+        required: true,
+    },
+    withEmail: {
         type: Boolean,
         default: false,
         required: true,

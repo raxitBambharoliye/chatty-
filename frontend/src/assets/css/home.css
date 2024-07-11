@@ -1,0 +1,71 @@
+.homeBackground{
+    background-color: var(--color-black);
+}
+.asideInner{
+    background-color: var(--color-black-second);
+    color: white;
+}
+
+.asideHeader{
+    padding: 8px 12px;
+    /* background-color: rgb(84, 80, 80); */
+    /* background:linear-gradient(250deg,hsla(343, 82%, 66%, 0.504) 0%,hsla(337, 79%, 65%, 0.539) 8%,hsla(330, 74%, 64%, 0.442) 16%,hsla(323, 67%, 63%, 0.476) 24%,hsl(313deg 58% 62%) 34%,hsl(300deg 47% 60%) 45%,hsl(284deg 55% 63%) 56%,hsl(269deg 63% 66%) 69%,hsl(253deg 71% 69%) 84%,hsl(236deg 80% 70%) 100%) ;  */
+    /* background: linear-gradient(261deg, rgba(239,96,136,0.30015756302521013) 10%, rgba(118,127,240,0.3) 79%);     */
+    /* background-color:var(--color-black); */
+    margin: 10px ;
+    margin-bottom: 0;
+    border-radius: 12px;
+}
+.asideHeader .userProfile {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: rgb(89, 89, 89);
+}
+.asideHeader .userProfile img{
+    width: inherit;
+    height: inherit;
+    border-radius: inherit;
+    object-fit: cover;
+}
+
+/* aside contact details */
+.asideContacts{
+    padding-top: 12px;
+}
+
+.asideContacts .asideContactsItem{
+    /* background-color: var(--color-black); */
+    /* border: 1px solid var(--color-gray); */
+    /* background-color: var(--color-black-second); */
+    padding: 4px 8px;
+    margin: 8px 4px ;
+    border-radius: 12px;
+}
+
+.asideContacts .asideContactsItem img{
+ width: 60px;
+ height: 60px;
+ border-radius: 50%;
+ background-color: var(--color-gray);
+}
+
+.asideContactsItem .name h3{
+    font-size: 20px;
+}
+.asideContactsItem .name p { 
+    font-size: 14px;
+    color: var(--color-gray);
+    text-transform: capitalize;
+}
+
+/* aside footer  */
+
+.asideFooter{
+    padding: 8px 12px;
+    position:sticky;
+    bottom: 0;
+    /* background-color: var(--color-black); */
+    background: linear-gradient(261deg, rgba(239,96,136,0.30015756302521013) 10%, rgba(118,127,240,0.3) 79%);
+
+}

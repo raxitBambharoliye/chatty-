@@ -1,6 +1,8 @@
 import { Router } from "express";
 import logger from "../utility/logger";
 import { userRouter } from "./user.router";
+import { googleRouter } from "./google.router";
+import passport from "passport";
 
 
 const router = Router();
@@ -11,5 +13,4 @@ router.get("/", (req: any, res: any) => {
 })
 
 router.use("/user",userRouter)
-
 export default router;
