@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import './assets/css/index.css'
+import './assets/css/media.css'
 import { RouterProvider } from 'react-router-dom'
 import router from './router/index.jsx'
 import { Provider } from 'react-redux'

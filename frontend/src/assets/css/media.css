@@ -1,0 +1,60 @@
+@media (max-width:576px) {
+    .asideInner{
+        width: 100%;
+    }
+    .chatInner .toggleButton{
+        display: none;
+    }
+    .chatInner{
+        display: none !important;
+    }
+    .message p{
+        max-width: 100%;
+    }
+}
+
+
+@media (min-width:576px) {
+    .asideInner{
+        width: 100%;
+    }
+    .chatInner{
+        display: none !important;
+    }
+    .chatInner .toggleButton{
+        display: block !important;
+    }
+    .message p{
+        max-width: 100%;
+    }
+}
+@media (min-width:768px) {
+    .chatInner{
+        display: flex !important;
+    }
+    .asideInner{
+        width: 40%;
+    }
+    .message p{
+        max-width: 80% !important;
+    }
+}
+@media (min-width:992px) {
+    .asideInner{
+        width: 30%;
+    }
+    .message p{
+        max-width: 50% !important;
+    }
+}
+@media (min-width:1200px) {
+    .asideInner{
+        width: 18%;
+    }
+    .chatInner .toggleButton{
+        display: none !important;
+    }
+}
+@media (min-width:1400px) {
+    
+}
