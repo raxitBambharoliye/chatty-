@@ -21,7 +21,9 @@ function Login() {
     const userData = getCookieData(COOKIE_KEY.USER);
     console.log('userData', userData)
     if (token && token !== "" && userData) {
-        return navigate(APP_URL.FE_HOME);
+        useEffect(() => {
+            return navigate(APP_URL.FE_HOME);
+        },[])
     }
     //NOTE - if not logged in 
     const dispatch = useDispatch();

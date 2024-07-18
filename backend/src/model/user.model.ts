@@ -41,7 +41,8 @@ const userSchema = new Schema({
         type: Boolean,
         default: false,
         required: true,
-    }
+    },
+    verifiedEmail: { type: Boolean, default: false }
 }, { timestamps: true })
 
 const USER = mongoose.model(MODEL.USER_MODEL, userSchema);

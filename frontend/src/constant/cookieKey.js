@@ -1,4 +1,5 @@
 export default Object.freeze({
     TOKEN: 'userToken',
-    USER:'userData'
+    USER:'userData',
+    TEM_USER:'temUserData'
 })

@@ -1,14 +1,15 @@
 import { body, validationResult } from "express-validator";
 import { MQ } from "../../common";
 import { MODEL } from "../../constant";
+import { UserIN } from "../../utility/interfaces";
 
 
 const reqUserRegisterValidation = [
     body('userName').isString()
         .notEmpty().withMessage("Please enter user name ")
         .custom(async (value) => {
-            let getUserByName = await MQ.find(MODEL.USER_MODEL, { userName: value });
-            if (getUserByName.length) {
+            let getUserByName = await MQ.find<UserIN[]>(MODEL.USER_MODEL, { userName: value });
+            if (getUserByName && getUserByName.length) {
                 throw new Error('User name already exists');
             }
         }),
@@ -19,8 +20,8 @@ const reqUserRegisterValidation = [
         .notEmpty().withMessage("Please enter your email address")
         .isEmail().withMessage("place enter valid email address")
         .custom(async(value) => {
-            let getUserByEmail = await MQ.find(MODEL.USER_MODEL, { email: value });
-            if (getUserByEmail.length) {
+            let getUserByEmail = await MQ.find<UserIN[]>(MODEL.USER_MODEL, { email: value });
+            if (getUserByEmail && getUserByEmail.length) {
                 throw new Error('Email already exists');
             }
         }),

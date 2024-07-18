@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import '../assets/css/home.css'
 import {Input} from '../components/Form'
+import SendMessage from '../components/Message/SendMessage';
+import ReceiveMessage from '../components/Message/ReceiveMessage';
+import { DatePart } from '../components/Message';
+import { AsideContactsItem } from '../components/Home';
+import { Link } from 'react-router-dom';
+import {APP_URL} from '../constant/index'
 function Home() {
   let [asideShow, setAsideShow] = useState(true);
+  let [activeChat,setActiveChat]= useState(-1);
   const contactArray = new Array(20).fill(1)
   console.log('contactArray', contactArray)
-  useEffect(() => {
-    
-    console.log('asideShow', asideShow)
-  },[asideShow])
+  let asideContent=useState("contacts")
   return (
     <div className='w-100 vh-100 homeBackground'>
       <div className="d-flex  gx-0 align-items-center">
@@ -23,28 +27,17 @@ function Home() {
             </div>
             <div className="asideContacts flex-grow-1 overflow-auto">
               {contactArray.map((contact, index) =>( 
-                <div className={`asideContactsItem ${index==1 ? 'active' : ""}` }key={index}>
-                <div className="userProfile d-flex align-items-center">
-                  <div className="profile me-2 ">
-                      <img src="./image/dummyProfile.png" alt="" />
-                  </div>
-                  <div className="name">
-                    <h3 className='m-0'>Radhe Patel</h3>
-                    <p className='m-0'>enjoy full life </p>
-                  </div>  
-                </div>
-              </div>
+                <AsideContactsItem userName='Radhe Patel' tagLine='enjoy your life' index={index} activeChat={activeChat} key={index} onClick={ (e)=>{setActiveChat(index)} } />
               ))}
             </div>
             <div className="asideFooter">
-            <h3 className='m-0'>footer</h3>
             <div className="asideFooterMenu">
-              <div className="menuItem">
-                <button><i className="fa-solid fa-user-plus"></i></button>
-              </div>
-              <button className="menuItem">
-              <i className="fa-solid fa-right-from-bracket"></i>
-              </button>
+              <div className="menuItem"><Link><i className="fa-regular fa-address-book"></i></Link></div>
+              <div className="menuItem"><Link><i className="fa-solid fa-user-plus"></i></Link></div>
+              <div className="menuItem"><Link><i className="fa-solid fa-phone"></i></Link></div>
+              <div className="menuItem"><Link className="menuItem" title='search'><i className="fa-solid fa-magnifying-glass"></i></Link></div>
+              <div className="menuItem"><Link className="menuItem" title='logout' to={APP_URL.FE_LOGOUT}><i className="fa-solid fa-right-from-bracket"></i></Link></div>
+              
             </div>
             </div>
           </div>
@@ -72,23 +65,9 @@ function Home() {
           </div>
           {/* chat show */}
           <div className="chatBox flex-grow-1 d-flex flex-column justify-content-end">
-            <div className="message send position-relative d-flex align-items-end">
-              <div className="profile me-1"><img src="./image/profile1.jpg" alt="" /></div>
-              <p className='mb-1'>Hii</p>
-            </div>
-            <div className="message receive position-relative d-flex align-items-end justify-content-end">
-              <p className='mb-1'>Hello</p>
-              <div className="profile ms-1"><img src="./image/profile1.jpg" alt="" /></div>
-            </div>
-            <div className="message send position-relative d-flex align-items-end">
-              <div className="profile me-1"><img src="./image/profile1.jpg" alt="" /></div>
-              <p className='mb-1'>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quaerat, impedit? Lorem ipsum, dolor sit amet consectetur adipisicing elit. Voluptatem, eaque.</p>
-            </div>
-            <div className="message receive position-relative d-flex align-items-end justify-content-end">
-              <p className='mb-1'>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quaerat, impedit? Lorem ipsum, dolor sit amet consectetur adipisicing elit. Voluptatem, eaque.</p>
-              <div className="profile ms-1"><img src="./image/profile1.jpg" alt="" /></div>
-              
-            </div>
+          <DatePart/>
+              <SendMessage message="Hii" time="12:30 AM" />
+              <ReceiveMessage message="Hello" /> 
           </div>
             {/* chat Input  */}
           <div className="chatInput  mt-3">
@@ -106,7 +85,7 @@ function Home() {
           <div className="asideInner vh-100">
 
           </div>
-        </div>
+        </div>  
       </div>
     </div>
   )

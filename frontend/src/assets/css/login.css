@@ -1,6 +1,4 @@
-.background{
-    background: var(--color-black) !important;
-}
+
 .loginInner{
     max-width: 450px;
     width: 100%;
@@ -12,6 +10,7 @@
 }
 /* background */
 .background{
+    background: var(--color-black) !important;
     position: relative;
     
 }
@@ -64,4 +63,53 @@
 }
 .loginWithButton:hover{
     background: var(--color-black-second);
+}
+
+
+
+/* email verify */
+.emailVerify {
+    background: rgba(0, 0, 0, 0.543);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow:0px 0px 30px 0px #2c2c2cc4;
+    text-align: center;
+    position: relative;
+    display: inline-block;
+    margin: 0 12px;
+    z-index: 9999;
+    max-width: 550px;
+  }
+  
+.emailVerify::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    padding: 3px; 
+    background: linear-gradient(90deg,hsl(343deg 82% 66%) 0%,hsl(337deg 79% 65%) 8%,hsl(330deg 74% 64%) 16%,hsl(323deg 67% 63%) 24%,hsl(313deg 58% 62%) 34%,hsl(300deg 47% 60%) 45%,hsl(284deg 55% 63%) 56%,hsl(269deg 63% 66%) 69%,hsl(253deg 71% 69%) 84%,hsl(236deg 80% 70%) 100%);
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;    
+    z-index: -1;
+  }
+.resendMail{
+transition: all .4s linear;
+color: var(--color-gray);
+font-weight: 500;
+
+}
+.resendMail:hover{
+    color: var(--color-yellow);
+}
+.resendMail.editData:hover{
+    color: var(--color-primary);
+}
+.emailVerify p { 
+    color: var(--color-gray);
+}
+.emailVerify p strong{
+    color: white;
 }

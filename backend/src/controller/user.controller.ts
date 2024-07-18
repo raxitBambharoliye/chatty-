@@ -3,15 +3,16 @@ import { MQ } from "../common";
 import { MODEL } from "../constant";
 import logger from "../utility/logger";
 import jwt from "jsonwebtoken";
-import { createToken, setCookieData } from "../utility/common";
+import { createToken, encryptData, setCookieData } from "../utility/common";
+import { UserIN } from "../utility/interfaces";
 const registerUser = async (req: any, res: any) => {
   try {
     req.body.password = await hash(req.body.password, 10);
-    const user = await MQ.insertOne(MODEL.USER_MODEL, req.body);
+    const user = await MQ.insertOne<UserIN>(MODEL.USER_MODEL, req.body);
     if (user) {
       let token = createToken(user.id, user.email);
       if (token) {
-        delete user.password;
+        // delete user.password;
         return res.status(200).json({
           message: "user logged in successfully",
           userData: user,
@@ -32,7 +33,7 @@ const registerUser = async (req: any, res: any) => {
 const userLogIn = async (req: any, res: any) => {
   try {
     let { email, password } = req.body;
-    let user = await MQ.findOne(MODEL.USER_MODEL, { email: email });
+    let user = await MQ.findOne<UserIN>(MODEL.USER_MODEL, { email: email });
     if (!user) {
       return res.status(400).json({
         message: "invalid email address or password",
@@ -49,7 +50,7 @@ const userLogIn = async (req: any, res: any) => {
       expiresIn: 60 * 60 * 24,
     });
     if (token) {
-      delete user.password;
+      // delete user.password;
       return res.status(200).json({
         message: "user logged in successfully",
         userData: user,
@@ -78,7 +79,7 @@ const loginWithGoogleHandler = async (req: any, res: any) => {
 } */
     let userData = req.user._json;
     if (userData && userData.email_verified) {
-      let user = await MQ.findOne(MODEL.USER_MODEL, {email: userData.email});
+      let user = await MQ.findOne<UserIN>(MODEL.USER_MODEL, {email: userData.email});
       if (!user) {
         const insertData = {
           userName: userData.name,
@@ -87,6 +88,15 @@ const loginWithGoogleHandler = async (req: any, res: any) => {
           withEmail: true,
         };
         user = await MQ.insertOne(MODEL.USER_MODEL, insertData);
+      }
+      if (!user) {
+        return res.status(500).json({
+          message: "some thing went wrong, please try later",
+        });
+      }
+      if (!user.verifiedEmail) {
+        //NOTE - send verification email
+        
       }
       let token = createToken(user.id, user.email);
       res.cookie("userData", JSON.stringify(setCookieData(user)));
@@ -100,5 +110,30 @@ const loginWithGoogleHandler = async (req: any, res: any) => {
     console.log("error", error);
   }
 };
+import path from 'path';  
+import fs from 'fs';
+import handlebars from 'handlebars'
+
+export const openMailHtml = async (req: any, res: any) => {
+  try {
+    const filePath = path.join(__dirname, '../view/verifyEmail.html');
+    if (fs.existsSync(filePath)) {
+      const source = await fs.readFileSync(filePath, 'utf8').toString();
+      const template = await handlebars.compile(source);
+      let replace:any= {email:"test@gmail.com",userName:"test",password:"12322"}
+      // replace = encryptData(replace);
+      // console.log('replace', replace)
+      let htmlToSend= template({email:"r@gmail.com"})
+
+      return res.send(htmlToSend)
+    }
+    res.send("not okk")
+
+  } catch (error) {
+    console.log('error', error)
+    
+  }
+}
+
 
 export { registerUser, userLogIn, loginWithGoogleHandler };

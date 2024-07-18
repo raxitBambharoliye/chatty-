@@ -22,5 +22,14 @@ const createToken = (userId: string, email: string) => {
     });
     return token;
 }
+export const encryptData = (data: any) => {
+  let secret = process.env.SECRET_KEY || "chatyπ-!@#$$%%$#!@T*^";
+  
+  if (typeof data !== "string") {
+    data = JSON.stringify(data);
+  }
+  const encryptedData = CryptoJS.AES.encrypt(data, secret).toString();
+    return encryptedData;
+}
 
 export { setCookieData,createToken };

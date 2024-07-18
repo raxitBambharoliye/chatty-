@@ -1,10 +1,15 @@
-// user interface 
-interface UserIN {
-    userName:String ;
-        DOB : String;
-        email: String;
-        tagLine:String;
-        profilePicture: String;
-        isBlocked:Boolean ;
-        blockedUserId: string[];
+// user interface
+export interface UserIN {
+  _id: any,
+  id:string,
+  userName: string;
+  DOB: string;
+  email: string;
+  tagLine: string;
+  profilePicture: string;
+  isBlocked: Boolean;
+  blockedUserId: string[];
+  withEmail: Boolean;
+  verifiedEmail: Boolean;
+  password:string
 }

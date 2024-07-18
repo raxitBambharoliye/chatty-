@@ -1,44 +1,40 @@
-import React, { useEffect, useRef } from 'react'
-import { SocketEvent } from '../soket/eventHandler'
+import React, { useRef } from 'react'
 import '../assets/css/login.css'
 import Input from '../components/Form/Input';
 import { Button, Password } from '../components/Form';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form'
 import { APP_URL, COOKIE_KEY } from '../constant';
-import { AxiosCLI } from '../axios';
 import { getCookieData, setDataInCookie } from '../common';
 import { useDispatch, useSelector, } from 'react-redux';
-import { setUser } from '../reducers/userReducer';
 function Register() {
     let navigate = useNavigate();
     const dispatch = useDispatch();
     const user = useSelector((state) => state.userData);
     const ref = useRef();
-    const { register, formState: { errors }, handleSubmit, getValues ,setError} = useForm({
+    const { register, formState: { errors }, handleSubmit, getValues ,setError ,setValue} = useForm({
         defaultValues: {
             userName:'raxit',
             email: 'r@gmail.com',
             password: 'ra@Patel.08',
             CPassword: 'ra@Patel.08',
         },
-    });  
+    }); 
+    
+    const tempUserData = getCookieData(COOKIE_KEY.TEM_USER);
+    console.log('tempUserData', tempUserData)
+    if (tempUserData ) {
+        setValue("userName",tempUserData.userName)
+        setValue("email",tempUserData.email)
+        setValue("password",tempUserData.password)
+        setValue("CPassword",tempUserData.CPassword)
+        setValue("DOB",tempUserData.DOB)
+    }
     const registerHandler = async (data) => {
         try {
             console.log(data);
-            const response = await AxiosCLI.post(APP_URL.REGISTER, data);
-            if (response.status === 200) {
-                SocketEvent.SocketConnection();
-                if (response.data.token && response.data.token != "") {
-                    console.log("set token works")
-                    setDataInCookie(COOKIE_KEY.TOKEN, response.data.token);
-                }
-                if (response.data.userData) {
-                    setDataInCookie(COOKIE_KEY.USER, response.data.userData);
-                    dispatch(setUser(response.data.userData));
-                }
-                navigate(APP_URL.FE_HOME);
-            }
+            setDataInCookie(COOKIE_KEY.TEM_USER, data);
+           return navigate(APP_URL.FE_EMAIL_VERIFY)
         } catch (error) {
             console.log('error.response.data.errors', error.response.data.errors.length)
             if (error.response.status === 400 && error.response.data.errors ) {
@@ -50,6 +46,17 @@ function Register() {
                 }
             }
             console.log('CATCH ERROR IN : registerHandler', error);
+        }
+    }
+     async function sendMail(){
+         try {
+            console.log("sendMail test ")
+            const temUserData = getCookieData(COOKIE_KEY.TEM_USER);
+            if (temUserData) {
+                //NOTE - call send mail url
+            }
+        } catch (error) {
+            console.log('CATCH ERROR IN : sendMail', error);
         }
     }
 

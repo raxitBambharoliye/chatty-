@@ -70,7 +70,9 @@ opacity: 1;
     background-color: var(--color-black);
     box-shadow: 0 0 10px 2px #57545478;
 }
-
+.asideContacts .asideContactsItem.active {
+    box-shadow: none;
+}
 .asideContacts .asideContactsItem img {
     width: 40px;
     height: 40px;
@@ -98,7 +100,16 @@ opacity: 1;
     background: linear-gradient(261deg, rgba(239, 96, 136, 0.30015756302521013) 10%, rgba(118, 127, 240, 0.3) 79%);
 
 }
-
+.asideFooterMenu {
+    display: flex; 
+    justify-content: space-around;
+}
+.asideFooterMenu a{
+ background: transparent;
+ border: none;
+ color: white;
+ font-size: 22px;
+}
 
 /* Chat  */
 .chatInner {
@@ -214,4 +225,27 @@ opacity: 1;
     background:var(--color-black-light);
     color: white;
     border-radius: 12px 12px 0 12px ;
+}
+.messageTime{
+    display: block;
+    font-size: 12px;
+    color: var(--color-gray);
+}
+.messageText{
+    width: fit-content;
+}
+
+/* date part  */
+.datePart{
+    color: var(--color-gray);
+    margin: 12px 0;
+}
+.datePart .part{
+border: 1px solid var(--color-black-second);
+height: 2px;
+}
+.datePart p {
+    border: 1.5px solid var(--color-gray);
+    padding: 4px 12px;
+    border-radius: 20px;
 }

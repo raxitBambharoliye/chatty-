@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatty π | verify your email Id</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<!-- font icon -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  
+    <style>
+      .background{
+    background: #15171b !important;
+    position: relative;
+    
+}
+
+.background:after{
+    content: '';
+    width: 21rem;
+    height: 21rem;
+    border-radius: 50%;
+    background-color: #767ff0;
+    position: absolute;
+    top: 10%;
+    left: 8%;
+    filter: blur(150px);
+}
+.background:before{
+    content: '';
+    width: 21rem;
+    height: 21rem;
+    border-radius: 50%;
+    background-color: #ef6088;
+    position: absolute;
+    right: 10%;
+    bottom: 8%;
+    filter: blur(150px);
+}
+
+.verifyEmailInner {
+    background: rgba(0, 0, 0, 0.543);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow:0px 0px 30px 0px #2c2c2cc4;
+    text-align: center;
+    position: relative;
+    display: inline-block;
+    margin: 0 12px;
+    z-index: 9999;
+    max-width: 500px;
+  }
+  
+.verifyEmailInner::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    padding: 3px; 
+    background: linear-gradient(90deg,hsl(343deg 82% 66%) 0%,hsl(337deg 79% 65%) 8%,hsl(330deg 74% 64%) 16%,hsl(323deg 67% 63%) 24%,hsl(313deg 58% 62%) 34%,hsl(300deg 47% 60%) 45%,hsl(284deg 55% 63%) 56%,hsl(269deg 63% 66%) 69%,hsl(253deg 71% 69%) 84%,hsl(236deg 80% 70%) 100%);
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;    
+    z-index: -1;
+  }
+
+.verifyEmailInner h1{
+    color: #cbcdd1;
+}
+.verifyEmailInner p {
+    color: #989BA1;
+}
+.verifyButton{
+    background-color: #F3B502;
+    padding: 4px 12px;
+    display: inline-block;
+    font-size: 18px;
+    color: black;
+    border-radius: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    border: 2px solid transparent;
+    transition: all .4s ease-in-out;
+}
+.verifyButton:hover{
+    border: 2px solid #F3B502;
+    background: transparent;
+    color: #F3B502;
+}
+    </style>
+</head>
+
+<body>
+    <div class='w-100  vh-100  d-flex flex-column align-items-center justify-content-center background'>
+        <div class="verifyEmailInner">
+            <h1>Verify Email Id {{email}}</h1>
+            <p>click on verify button to verify your email, and your <strong>Chatty π</strong> account was created. after that you can login with this email and your password</p>
+            <a href="" class="verifyButton">Verify</a>
+        </div>
+    </div>
+</body>
+
+</html>

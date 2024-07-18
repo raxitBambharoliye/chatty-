@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Your Account</title>
+    <style>
+        @font-face {
+            font-family: 'Roboto';
+            font-weight: 200;
+            src: url(./fonts/Roboto-Thin.woff2) format("woff2");
+        }
+
+        @font-face {
+            font-family: 'Roboto';
+            font-weight: 300;
+            src: url(./fonts/Roboto-Light.woff2) format("woff2");
+        }
+
+        @font-face {
+            font-family: 'Roboto';
+            font-weight: 400;
+            src: url(./fonts/Roboto-Regular.woff2) format("woff2");
+        }
+
+        @font-face {
+            font-family: 'Roboto';
+            font-weight: 500;
+            src: url(./fonts/Roboto-Medium.woff2) format("woff2");
+        }
+
+        @font-face {
+            font-family: 'Roboto';
+            font-weight: 700;
+            src: url(./fonts/Roboto-Bold.woff2) format("woff2");
+        }
+
+        @font-face {
+            font-family: 'Roboto';
+            font-weight: 900;
+            src: url(./fonts/Roboto-Black.woff2) format("woff2");
+        }
+
+        p,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        ul,
+        body {
+            margin: 0;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Roboto';
+        }
+
+        .container {
+            max-width: 630px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        img {
+            width: 100%;
+            display: block;
+        }
+
+        .img_sec {
+            padding-bottom: 50px;
+        }
+
+        .kyc_content {
+            padding-left: 43px;
+        }
+
+        h1 {
+            padding-bottom: 30px;
+        }
+
+        .kyc_content>p {
+            padding-bottom: 30px;
+            line-height: 145%;
+            letter-spacing: 0.7px;
+        }
+
+        .button_sec {
+            padding-bottom: 30px;
+        }
+
+        .button_sec>a {
+            background-image: linear-gradient(#fac600, #d6b11a);
+            border: none;
+            padding: 12px 25px;
+            font-size: 20px;
+            font-weight: 700;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.4s ease;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+            text-transform: uppercase;
+            text-decoration: none;
+            color: #000000;
+        }
+
+        .button_sec>a:hover {
+            background-image: linear-gradient(#2d2d2d, #000000);
+            color: #d6b11a;
+        }
+
+        /*  .button_sec>button {
+            background-image: linear-gradient(#fac600, #d6b11a);
+            border: none;
+            padding: 12px 25px;
+            font-size: 20px;
+            font-weight: 700;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.4s ease;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+            text-transform: uppercase;
+        } */
+
+        /* .button_sec>button:hover {
+            background-image: linear-gradient(#2d2d2d, #000000);
+            color: #d6b11a;
+        } */
+
+        @media(max-width: 768px) {
+            .kyc_content {
+                padding-left: 20px;
+            }
+
+            .img_sec {
+                padding-bottom: 30px;
+            }
+
+            h1 {
+                padding-bottom: 15px;
+            }
+
+            .kyc_content>p {
+                padding-bottom: 25px;
+            }
+        }
+
+        @media(max-width: 576px) {
+            .img_sec {
+                padding-bottom: 20px;
+            }
+
+            .kyc_content {
+                padding-left: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <table class="container">
+        <thead>
+            <tr>
+                <td>
+                    <div class="img_sec">
+                        <img src="./img/footer.jpg"
+                            alt="Rummy Challenge">
+                    </div>
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <div class="kyc_content">
+                        <h1>You are almost there!</h1>
+                        <p>Welcome to RummyChallenge! India's most trusted online rummy plat
+                            form. You are just one step away from the best-in-class online rummy
+                            experience. All you need to do is to click on the link below to verify
+                            your RummyChallenge account.</p>
+                        <div class="button_sec">
+                            <!-- https://kube.artoon.in:32267/emailVerification/{{email}} -->
+                            <!--<a href= "https://localhost:3000/emailVerification/{{email}}"> -->
+                            <a href="{{url}}/emailVerification/{{email}}">
+                                Verify Your Account
+                            </a>
+                            <!-- <button> Verify Your Account </button> -->
+                        </div>
+                        <p>We have lots in store for you! Take the 7 day login challenge and get
+                            guaranteed Rs. 300 for free. Get upto Rs. 5250 Welcome Bonus on
+                            your Ist add cash and transfer winnings to your bank account
+                            instantly on the same day. So what are you waiting for? Play rummy &
+                            win real money daily!</p>
+                        <p>
+                            Best, <br />
+                            Team RummyChallenge
+                        </p>
+                        <img src="./img/footer1.jpg"
+                            alt="">
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+
+        </tab>
+</body>
+
+</html>

@@ -7,59 +7,63 @@ class MQ {
 
   setCollection(collectionName: string) {
     switch (collectionName) {
-        case MODEL.USER_MODEL:
+      case MODEL.USER_MODEL:
         this.collection = USER;
         break;
     }
   }
 
-  async insertOne(collection: string, data: any) {
+  async insertOne<T>(collection: string, data: any): Promise<T | null> {
     try {
       this.setCollection(collection);
-            return  await this.collection.create(data);
-            
+      return await this.collection.create(data);
     } catch (error) {
       logger.error(`🤦‍♂️🤦‍♂️🤦‍♂️🤦‍♂️ CATCH ERROR IN insertOne: 🤦‍♂️🤦‍♂️🤦‍♂️🤦‍♂️ ::: ${error}`);
       console.log("error", error);
+      return null;
     }
-    }
-    
-  async findOne(collection: string, query: any) {
+  }
+
+  async findOne<T>(collection: string, query: any): Promise<T | null> {
     try {
       this.setCollection(collection);
-            return  await this.collection.findOne(query);
+      return await this.collection.findOne(query);
     } catch (error) {
       logger.error(`🤦‍♂️🤦‍♂️🤦‍♂️🤦‍♂️ CATCH ERROR IN findOne: 🤦‍♂️🤦‍♂️🤦‍♂️🤦‍♂️ ::: ${error}`);
       console.log("error", error);
+      return null;
     }
+  }
+  async findById<T>(collection: string, id: any): Promise<T | null> {
+    try {
+      this.setCollection(collection);
+      return await this.collection.findById(id);
+    } catch (error) {
+      logger.error(`🤦‍♂️🤦‍♂️🤦‍♂️🤦‍♂️ CATCH ERROR IN findById: 🤦‍♂️🤦‍♂️🤦‍♂️🤦‍♂️ ::: ${error}`);
+      console.log("error", error);
+      return null;
     }
-    async findById(collection: string, id: any) {
-        try {
-          this.setCollection(collection);
-          return  await this.collection.findById(id);
-        } catch (error) {
-          logger.error(`🤦‍♂️🤦‍♂️🤦‍♂️🤦‍♂️ CATCH ERROR IN findById: 🤦‍♂️🤦‍♂️🤦‍♂️🤦‍♂️ ::: ${error}`);
-          console.log("error", error);
-        }
+  }
+  async find<T>(collection: string, query: any) : Promise<T | null>{
+    try {
+      this.setCollection(collection);
+      return await this.collection.find(query);
+    } catch (error) {
+      logger.error(`🤦‍♂️🤦‍♂️🤦‍♂️🤦‍♂️ CATCH ERROR IN find: 🤦‍♂️🤦‍♂️🤦‍♂️🤦‍♂️ ::: ${error}`);
+      console.log("error", error);
+      return null;
     }
-    async find(collection: string, query: any) {
-        try {
-          this.setCollection(collection);
-                return  await this.collection.find(query);
-        } catch (error) {
-          logger.error(`🤦‍♂️🤦‍♂️🤦‍♂️🤦‍♂️ CATCH ERROR IN find: 🤦‍♂️🤦‍♂️🤦‍♂️🤦‍♂️ ::: ${error}`);
-          console.log("error", error);
-        }
+  }
+  async findByIdAndUpdate<T>(collection: string,id: any,data: any): Promise<T | null> {
+    try {
+      this.setCollection(collection);
+      return await this.collection.findByIdAndUpdate(id, data);
+    } catch (error) {
+      logger.error(`🤦‍♂️🤦‍♂️🤦‍♂️🤦‍♂️ CATCH ERROR IN findByIdAndUpdate: 🤦‍♂️🤦‍♂️🤦‍♂️🤦‍♂️ ::: ${error}`);
+      console.log("error", error);
+      return null;
     }
-    async findByIdAndUpdate(collection: string, id: any,data:any) {
-        try {
-          this.setCollection(collection);
-                return  await this.collection.findByIdAndUpdate(id,data);
-        } catch (error) {
-          logger.error(`🤦‍♂️🤦‍♂️🤦‍♂️🤦‍♂️ CATCH ERROR IN findByIdAndUpdate: 🤦‍♂️🤦‍♂️🤦‍♂️🤦‍♂️ ::: ${error}`);
-          console.log("error", error);
-        }
-    }
+  }
 }
 
 export default new MQ();

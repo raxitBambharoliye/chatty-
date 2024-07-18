@@ -12,6 +12,8 @@ import passport from 'passport'
 import './config/passport'
 import { googleRouter } from './router/google.router';
 import Cookies from 'cookie-parser'
+import { sendMail } from './services/sendmail.service';
+import { openMailHtml } from './controller/user.controller';
 
 dotenv.config()
 const app = express();
@@ -52,12 +54,14 @@ app.use(function(request, response, next) {
 })
 app.use(passport.initialize())
 app.use(passport.session())     
-app.get("/", (req: any, res: any) => {
+app.get("/", async (req: any, res: any) => {
+    await sendMail()
+
     res.status(200).send({
         message:"server api call test successfully"
     })
 })
-
+app.get("/mailTest",openMailHtml)
 app.use("/", router)
 app.use('/auth',googleRouter)
 

@@ -7,5 +7,6 @@ export default Object.freeze({
     FE_LOGIN: '/login',
     FE_HOME: '/home',
     FE_REGISTER: '/register',
-    FE_LOGOUT:'/logout'
+    FE_LOGOUT:'/logout',
+    FE_EMAIL_VERIFY:'/verifyEmail'
 })
