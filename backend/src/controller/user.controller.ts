@@ -3,8 +3,12 @@ import { MQ } from "../common";
 import { MODEL } from "../constant";
 import logger from "../utility/logger";
 import jwt from "jsonwebtoken";
-import { createToken, encryptData, setCookieData } from "../utility/common";
+import { createToken, decryptData, encryptData, setCookieData } from "../utility/common";
 import { UserIN } from "../utility/interfaces";
+import path from 'path';  
+import fs from 'fs';
+import handlebars from 'handlebars'
+import { sendMail } from "../services/sendmail.service";
 const registerUser = async (req: any, res: any) => {
   try {
     req.body.password = await hash(req.body.password, 10);
@@ -110,30 +114,75 @@ const loginWithGoogleHandler = async (req: any, res: any) => {
     console.log("error", error);
   }
 };
-import path from 'path';  
-import fs from 'fs';
-import handlebars from 'handlebars'
 
-export const openMailHtml = async (req: any, res: any) => {
+
+
+
+export const sendVerificationMail =async (req: any, res: any) => {
   try {
+    const { email, password, userName, DOB } = req.body;
+
+    let html="";
+    let source="";
     const filePath = path.join(__dirname, '../view/verifyEmail.html');
+    const enCryptData= encryptData({email,password,userName,DOB},true);
     if (fs.existsSync(filePath)) {
-      const source = await fs.readFileSync(filePath, 'utf8').toString();
+      source = await fs.readFileSync(filePath, 'utf8').toString();
       const template = await handlebars.compile(source);
-      let replace:any= {email:"test@gmail.com",userName:"test",password:"12322"}
-      // replace = encryptData(replace);
-      // console.log('replace', replace)
-      let htmlToSend= template({email:"r@gmail.com"})
-
-      return res.send(htmlToSend)
+      html = template({ url: `https://chatty-pie-host.loca.lt/user/verifyEmail?data=${enCryptData}`, });
+      
     }
-    res.send("not okk")
-
+    let mailResponsive:Boolean =await sendMail(html, "Email Verification")
+    if (mailResponsive) {
+    return  res.status(200).json({ success: true, message: "verification email sent successfully" });
+    } else {
+      return res.status(500).json({ success: false, message: "Failed to send verification email. please try after some time." });
+    }
   } catch (error) {
+    logger.error(`CATCH ERROR IN sendVerificationMail ::: ${error}`);
+    console.log('error', error)
+
+  }
+}
+
+export const verifyEmail = async (req: any, res: any) => {
+  try {
+    let encryptedData:string = req.query.data;
+    if (!encryptedData) { 
+     return res.status(400).json({ success: false, message: "something went wrong" });
+    }
+    let decryptedData = decryptData(encryptedData);
+    if (decryptedData && decryptedData.email && decryptedData.password && decryptedData.userName && decryptedData.DOB) {
+      let { email, password, userName, DOB } = decryptedData;
+      let checkUser = await MQ.find<UserIN[]>(MODEL.USER_MODEL, { $or:[{email:email},{userName:userName} ]});
+      if (checkUser && checkUser.length) {
+        return res.status(400).json({ success: false, message: "User already exists" });
+      }
+      
+      password= await hash(password, 10);
+      let insertData = {
+        userName,
+        email,
+        DOB,
+        password
+      }
+
+
+     const user = await MQ.insertOne<UserIN>(MODEL.USER_MODEL, insertData);
+      if (user) {
+        res.sendFile(path.join(__dirname,'../view/emailVerified.html'))
+      } else {  
+        res.status(500).json({
+          message: "some thing went wrong, please try later",
+        });
+      }
+    } else {   
+     return res.status(400).json({ success: false, message: "something went wrong" });
+    }
+  } catch (error) {
+    logger.error(`CATCH ERROR IN verifyEmail :::  ${error}`);
     console.log('error', error)
     
   }
 }
-
-
 export { registerUser, userLogIn, loginWithGoogleHandler };

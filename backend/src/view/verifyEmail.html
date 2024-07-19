@@ -63,7 +63,7 @@
     inset: 0;
     border-radius: 12px;
     padding: 3px; 
-    background: linear-gradient(90deg,hsl(343deg 82% 66%) 0%,hsl(337deg 79% 65%) 8%,hsl(330deg 74% 64%) 16%,hsl(323deg 67% 63%) 24%,hsl(313deg 58% 62%) 34%,hsl(300deg 47% 60%) 45%,hsl(284deg 55% 63%) 56%,hsl(269deg 63% 66%) 69%,hsl(253deg 71% 69%) 84%,hsl(236deg 80% 70%) 100%);
+    background: linear-gradient(90deg,#ef6189 0%,hsl(337deg 79% 65%) 8%,hsl(330deg 74% 64%) 16%,hsl(323deg 67% 63%) 24%,hsl(313deg 58% 62%) 34%,hsl(300deg 47% 60%) 45%,hsl(284deg 55% 63%) 56%,hsl(269deg 63% 66%) 69%,hsl(253deg 71% 69%) 84%,rgb(117, 125, 240) 100%);
     -webkit-mask: 
       linear-gradient(#fff 0 0) content-box, 
       linear-gradient(#fff 0 0);
@@ -100,9 +100,9 @@
 <body>
     <div class='w-100  vh-100  d-flex flex-column align-items-center justify-content-center background'>
         <div class="verifyEmailInner">
-            <h1>Verify Email Id {{email}}</h1>
+            <h1>Verify Email Id</h1>
             <p>click on verify button to verify your email, and your <strong>Chatty π</strong> account was created. after that you can login with this email and your password</p>
-            <a href="https://www.google.com/" class="verifyButton">Verify</a>
+            <a href="{{url}}" class="verifyButton">Verify</a>
         </div>
     </div>
 </body>

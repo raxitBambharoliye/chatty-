@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import '../assets/css/login.css'
 import Input from '../components/Form/Input';
 import { Button, Password } from '../components/Form';
@@ -7,22 +7,25 @@ import { useForm } from 'react-hook-form'
 import { APP_URL, COOKIE_KEY } from '../constant';
 import { getCookieData, setDataInCookie } from '../common';
 import { useDispatch, useSelector, } from 'react-redux';
+import { AxiosCLI } from '../axios';
+import Lottie from "lottie-react";
+import EmailAnimation from '../assets/animation/EmailAnimation.json'
 function Register() {
     let navigate = useNavigate();
+    let [loading, setLoading] = useState(false);
     const dispatch = useDispatch();
     const user = useSelector((state) => state.userData);
     const ref = useRef();
-    const { register, formState: { errors }, handleSubmit, getValues ,setError ,setValue} = useForm({
+    const { register, formState: { errors, isSubmitting }, handleSubmit, getValues ,setError ,setValue} = useForm({
         defaultValues: {
             userName:'raxit',
-            email: 'r@gmail.com',
+            email: 'raxitdev55@gmail.com',
             password: 'ra@Patel.08',
             CPassword: 'ra@Patel.08',
         },
     }); 
     
     const tempUserData = getCookieData(COOKIE_KEY.TEM_USER);
-    console.log('tempUserData', tempUserData)
     if (tempUserData ) {
         setValue("userName",tempUserData.userName)
         setValue("email",tempUserData.email)
@@ -32,10 +35,14 @@ function Register() {
     }
     const registerHandler = async (data) => {
         try {
-            console.log(data);
-            setDataInCookie(COOKIE_KEY.TEM_USER, data);
-           return navigate(APP_URL.FE_EMAIL_VERIFY)
+            setLoading(true)
+            const response = await AxiosCLI.post(APP_URL.SEND_VERIFICATION_MAIL, data);
+            if (response.status == 200) {
+                    setDataInCookie(COOKIE_KEY.TEM_USER, data);
+                    return navigate(APP_URL.FE_EMAIL_VERIFY)
+            }
         } catch (error) {
+            setLoading(false)
             console.log('error.response.data.errors', error.response.data.errors.length)
             if (error.response.status === 400 && error.response.data.errors ) {
                 for(let i = 0; i < error.response.data.errors.length;i++){
@@ -48,19 +55,10 @@ function Register() {
             console.log('CATCH ERROR IN : registerHandler', error);
         }
     }
-     async function sendMail(){
-         try {
-            console.log("sendMail test ")
-            const temUserData = getCookieData(COOKIE_KEY.TEM_USER);
-            if (temUserData) {
-                //NOTE - call send mail url
-            }
-        } catch (error) {
-            console.log('CATCH ERROR IN : sendMail', error);
-        }
-    }
 
+    
     return (
+        <>
         <div className='w-100  vh-100  d-flex flex-column align-items-center justify-content-center background'>
             <div className="loginInner">
                 <h1 className='text-center mb-4'>Chatty π</h1>
@@ -106,7 +104,7 @@ function Register() {
                     })} />
                     {errors.CPassword && <p className='validationError pb-2'>{errors.CPassword.message}</p>}
                     <div className="d-flex mt-4">
-                        <Button buttonClass='themGradient btnRounded me-2' type='submit' value='Sign Up' ref={ref} />
+                        <Button buttonClass='themGradient btnRounded me-2' type='submit' value='Sign Up' ref={ref} /* disable={isSubmitting} */ />
                         <Link to={'/'}>
                         <Button buttonClass='themBlueBordered btnRounded' type='button' value='Log In' ref={ref} />
                         </Link>
@@ -117,11 +115,16 @@ function Register() {
                         <img src="./icon/google.png" className='iconImg' alt="" />
                         Continue With Google
                     </Link>
-                </div>
+                </div> 
             </div>
-        </div>
+            </div>
+            <div className={`loader ${isSubmitting ? "d-flex":"d-none"}`}>
+                <div className="loaderInner ">
+                    <Lottie animationData={EmailAnimation} />
+                </div>
+                    <h2 className='mx-3 text-center'>Sending verification mail to your email .... </h2>
+                </div>
+        </>
     )
 }
-
-
-export default Register
+export default Register;

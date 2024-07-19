@@ -1,8 +1,8 @@
 export default Object.freeze({
     LOGIN: '/user/login',
-    REGISTER:'/user/register',
+    SEND_VERIFICATION_MAIL:'/user/sendVerificationMail',
     GET_USER_DATA: '/auth/login/success',
-    
+    // SEND_VERIFICATION_MAIL:'/user/'
 
     FE_LOGIN: '/login',
     FE_HOME: '/home',

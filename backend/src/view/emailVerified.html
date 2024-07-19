@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chatty π | verify your email Id</title>
+    <title>Chatty π | email verified</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,7 +13,7 @@
 <!-- font icon -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   
-    <style>
+    <style type="text/css">
       .background{
     background: #15171b !important;
     position: relative;
@@ -51,10 +51,13 @@
     box-shadow:0px 0px 30px 0px #2c2c2cc4;
     text-align: center;
     position: relative;
-    display: inline-block;
+    display:flex;
+    flex-direction: column;
+    align-items: center;
     margin: 0 12px;
     z-index: 9999;
     max-width: 500px;
+
   }
   
 .verifyEmailInner::before {
@@ -100,9 +103,11 @@
 <body>
     <div class='w-100  vh-100  d-flex flex-column align-items-center justify-content-center background'>
         <div class="verifyEmailInner">
-            <h1>Verify Email Id</h1>
-            <p>click on verify button to verify your email, and your <strong>Chatty π</strong> account was created. after that you can login with this email and your password</p>
-            <a href="" class="verifyButton">Verify</a>
+            <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script>
+            <dotlottie-player src="https://lottie.host/8ecacb1d-d325-49ca-8b6f-59e9973402c4/3WCzpD4cfU.json" background="transparent" speed="1" style="width: 300px; height: 300px" direction="1" playMode="normal" loop autoplay></dotlottie-player>
+            <h1>your email was verified successfully!</h1>
+            <p>you can login on <strong>Chatty π</strong>, with this email</p>
+            <a href="http://localhost:3000/" class="verifyButton">LogIn On App</a>
         </div>
     </div>
 </body>

@@ -22,14 +22,29 @@ const createToken = (userId: string, email: string) => {
     });
     return token;
 }
-export const encryptData = (data: any) => {
+export const encryptData = (data: any,encodedData=false) => {
   let secret = process.env.SECRET_KEY || "chatyπ-!@#$$%%$#!@T*^";
   
   if (typeof data !== "string") {
     data = JSON.stringify(data);
   }
-  const encryptedData = CryptoJS.AES.encrypt(data, secret).toString();
+  let encryptedData = CryptoJS.AES.encrypt(data, secret).toString();
+  if (encodedData) {
+    encryptedData = encodeURIComponent(encryptedData); 
+  }
     return encryptedData;
 }
+export const decryptData = (data:any) => {
+  let secret = process.env.SECRET_KEY || "chatyπ-!@#$$%%$#!@T*^";
 
+  if (data) {
+      const bytes = CryptoJS.AES.decrypt(data, secret).toString(CryptoJS.enc.Utf8);
+      console.log('bytes', bytes)
+      if (typeof bytes === "string") {
+          return JSON.parse(bytes);
+      }
+      return bytes;
+  }
+  return null;
+}
 export { setCookieData,createToken };

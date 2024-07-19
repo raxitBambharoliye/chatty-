@@ -12,9 +12,7 @@ import passport from 'passport'
 import './config/passport'
 import { googleRouter } from './router/google.router';
 import Cookies from 'cookie-parser'
-import { sendMail } from './services/sendmail.service';
-import { openMailHtml } from './controller/user.controller';
-
+const localtunnel = require('localtunnel')
 dotenv.config()
 const app = express();
 const httpServer = createServer(app)
@@ -55,19 +53,20 @@ app.use(function(request, response, next) {
 app.use(passport.initialize())
 app.use(passport.session())     
 app.get("/", async (req: any, res: any) => {
-    await sendMail()
-
     res.status(200).send({
         message:"server api call test successfully"
     })
 })
-app.get("/mailTest",openMailHtml)
 app.use("/", router)
 app.use('/auth',googleRouter)
 
 httpServer.listen(process.env.SERVER_PORT, async() => {
     await mongoDbConnection();
     await socketConnection();
+
+    let tunnel= await localtunnel(8080,{subdomain:"chatty-pie-host"})
+    tunnel.url;
+    console.log('tunnel.url', tunnel.url)
     logger.info(`server running on PORT ${process.env.SERVER_PORT}`);
 })
 export default io;

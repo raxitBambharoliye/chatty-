@@ -116,6 +116,25 @@ body{
     border-radius: 20px;
   }
   ::-webkit-scrollbar-thumb {
-    background:linear-gradient(182deg,hsl(343deg 82% 66%) 0%,hsl(337deg 79% 65%) 8%,hsl(330deg 74% 64%) 16%,hsl(323deg 67% 63%) 24%,hsl(313deg 58% 62%) 34%,hsl(300deg 47% 60%) 45%,hsl(284deg 55% 63%) 56%,hsl(269deg 63% 66%) 69%,hsl(253deg 71% 69%) 84%,hsl(236deg 80% 70%) 100%) ; 
+    background:linear-gradient(182deg,#ef6189 0%,hsl(337deg 79% 65%) 8%,hsl(330deg 74% 64%) 16%,hsl(323deg 67% 63%) 24%,hsl(313deg 58% 62%) 34%,hsl(300deg 47% 60%) 45%,hsl(284deg 55% 63%) 56%,hsl(269deg 63% 66%) 69%,hsl(253deg 71% 69%) 84%,#757df0 100%) ; 
     border-radius: 20px;
+  }
+
+  /* loader */
+
+  .loader{
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    background-color: #000000b3;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    color: white;
+  }
+  .loaderInner{
+    max-width: 550px;
   }
