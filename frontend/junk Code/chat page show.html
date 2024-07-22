@@ -1,0 +1,33 @@
+{/* chat header  */}
+          <div className="chatHeader d-flex justify-content-between align-items-center">
+            <div className="userProfile d-flex ">
+              <div className="img">
+                <img src="./image/profile1.jpg" alt="" />
+              </div>
+              <div className="userInfo ms-3">
+                <h2 className='mb-0'>MR. Radhe</h2>
+                <p >enjoy the life</p>
+              </div>
+            </div>
+            <div className="menu">
+              <button className="menu">
+                <i className="fa-solid fa-ellipsis-vertical"></i>
+              </button>
+            </div>
+          </div>
+          {/* chat show */}
+          <div className="chatBox flex-grow-1 d-flex flex-column justify-content-end">
+            <DatePart />
+            <SendMessage message="Hii" time="12:30 AM" />
+            <ReceiveMessage message="Hello" />
+          </div>
+          {/* chat Input  */}
+          <div className="chatInput  mt-3">
+            <form action="">
+              <div className="d-flex align-items-center">
+                <div className="input me-2 flex-grow-1"><Input type="text" placeholder="Enter Your message... " inputClass="inputBlack  " /></div>
+                <div className="attachmentButton me-2"><button ><i className="fa-solid fa-paperclip" /></button></div>
+                <div className="sendButton"><button type='submit'><i className="fa-regular fa-paper-plane" /></button></div>
+              </div>
+            </form>
+          </div>

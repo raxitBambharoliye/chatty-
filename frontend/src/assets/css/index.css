@@ -62,6 +62,10 @@ body{
     right: 2%;
     color: var(--color-gray);
 }
+.inputBlack input:disabled{
+    background-color: #989ba173 !important;
+    color: black !important;
+}
 /* Button  */
 .themGradient{
     font-size: 16px;
@@ -134,7 +138,20 @@ body{
     justify-content: center;
     flex-direction: column;
     color: white;
+    z-index: 9999;
   }
   .loaderInner{
     max-width: 550px;
   }
+/* modal */
+.secondBlackModal .modal-content{
+    color: white;
+ background-color: #474747c9;
+}
+.secondBlackModal .btn-close{
+    display: none;
+}
+/* opther */
+.singlePreviewInput{
+    visibility: hidden;
+}

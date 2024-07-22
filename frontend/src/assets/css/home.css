@@ -1,251 +1,320 @@
-.homeBackground {
-    background-color: var(--color-black);
-}
+    .homeBackground {
+        background-color: var(--color-black);
+    }
 
-.asideInner {
-    background-color: var(--color-black-second);
-    box-shadow: 9px 1px 27px 4px black;
-    color: white;
+    .asideInner {
+        background-color: var(--color-black-second);
+        box-shadow: 9px 1px 27px 4px black;
+        color: white;
+        transition: all .4s linear;
+    }
+
+    .asideHeader {
+        padding: 8px 12px;
+        margin: 10px;
+        margin-bottom: 0;
+        border-radius: 12px;
+    }
+
+    .asideHeader .userProfile {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: #595959;
+        position: relative;
+    }
+    .asideHeader .userProfile i{
+        transition: all .4s linear;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+        z-index: 9;
+        opacity: 0;
+    }
+    .asideHeader .userProfile img {
+        width: inherit;
+        height: inherit;
+        border-radius: inherit;
+        object-fit: cover;
+    }
+    .asideHeader .userProfile::after{
+        content: '';
+        transition: all .4s linear;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        border-radius: 50%;
+        opacity: 0;
+        background-color: #000000c0;
+        cursor: pointer;
+    }
+    .asideHeader .userProfile:hover i{
+        opacity: 1;
+    }
+    .asideHeader .userProfile:hover:after{
+        opacity: 1;
+    }
+    .toggleButton {
+        display: inline-block;
+        width: 35px;
+        height: 35px;
+        border-radius: 3px;
+        background: #595959;
+        text-align: center;
+        line-height: 30px;
+        font-size: 20px;
+        position: absolute;
+        color: white;
+        left: 0;
+        top: 50%;
+        border: none;
+        opacity: 0.4;
+        outline: none;
+        transition: all .4s linear;
+        z-index: 999;
+    }
+    .toggleButton:hover{
+    opacity: 1;
+    }
+    .toggleButton.show  i {
+    rotate: 180deg;
     transition: all .4s linear;
-}
+    }
+    /* aside contact details */
+    .asideContacts {
+        padding-top: 12px;
+    }
 
-.asideHeader {
-    padding: 8px 12px;
-    margin: 10px;
-    margin-bottom: 0;
-    border-radius: 12px;
-}
+    .asideContacts .asideContactsItem {
+        padding: 8px;
+        cursor: pointer;
+        transition: all .4s linear;
+    }
 
-.asideHeader .userProfile {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background-color: #595959;
-}
+    .asideContacts .asideContactsItem:hover,.asideContacts .asideContactsItem.active {
+        background-color: var(--color-black);
+        box-shadow: 0 0 10px 2px #57545478;
+    }
+    .asideContacts .asideContactsItem.active {
+        box-shadow: none;
+    }
+    .asideContacts .asideContactsItem img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: var(--color-gray);
+    }
 
-.asideHeader .userProfile img {
-    width: inherit;
-    height: inherit;
-    border-radius: inherit;
-    object-fit: cover;
-}
- .toggleButton {
-    display: inline-block;
-    width: 35px;
-    height: 35px;
-    border-radius: 3px;
-    background: #595959;
-    text-align: center;
-    line-height: 30px;
-    font-size: 20px;
-    position: absolute;
-    color: white;
-    left: 0;
-    top: 50%;
+    .asideContactsItem .name h3 {
+        font-size: 20px;
+    }
+
+    .asideContactsItem .name p {
+        font-size: 14px;
+        color: var(--color-gray);
+        text-transform: capitalize;
+    }
+
+    /* aside footer  */
+
+    .asideFooter {
+        padding: 8px 12px;
+        position: sticky;
+        bottom: 0;
+        /* background-color: var(--color-black); */
+        background: linear-gradient(261deg, rgba(239, 96, 136, 0.30015756302521013) 10%, rgba(118, 127, 240, 0.3) 79%);
+
+    }
+    .asideFooterMenu {
+        display: flex; 
+        justify-content: space-around;
+    }
+    .asideFooterMenu a{
+    background: transparent;
     border: none;
-    opacity: 0.4;
-    outline: none;
-    transition: all .4s linear;
-    z-index: 999;
-}
- .toggleButton:hover{
-opacity: 1;
-}
-.toggleButton.show  i {
- rotate: 180deg;
- transition: all .4s linear;
-}
-/* aside contact details */
-.asideContacts {
-    padding-top: 12px;
-}
-
-.asideContacts .asideContactsItem {
-    padding: 8px;
-    cursor: pointer;
-    transition: all .4s linear;
-}
-
-.asideContacts .asideContactsItem:hover,.asideContacts .asideContactsItem.active {
-    background-color: var(--color-black);
-    box-shadow: 0 0 10px 2px #57545478;
-}
-.asideContacts .asideContactsItem.active {
-    box-shadow: none;
-}
-.asideContacts .asideContactsItem img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background-color: var(--color-gray);
-}
-
-.asideContactsItem .name h3 {
-    font-size: 20px;
-}
-
-.asideContactsItem .name p {
-    font-size: 14px;
-    color: var(--color-gray);
-    text-transform: capitalize;
-}
-
-/* aside footer  */
-
-.asideFooter {
-    padding: 8px 12px;
-    position: sticky;
-    bottom: 0;
-    /* background-color: var(--color-black); */
-    background: linear-gradient(261deg, rgba(239, 96, 136, 0.30015756302521013) 10%, rgba(118, 127, 240, 0.3) 79%);
-
-}
-.asideFooterMenu {
-    display: flex; 
-    justify-content: space-around;
-}
-.asideFooterMenu a{
- background: transparent;
- border: none;
- color: white;
- font-size: 22px;
-}
-
-/* Chat  */
-.chatInner {
-    padding: 30px;
-}
-
-.chatInput input {
-    background-color: var(--color-gray);
-    margin: 0;
-    color: black;
-
-}
-.chatInput .input .inputBlack{
-    margin: 0 !important;
-}
-
-.chatInput {
-    /* margin: 0 !important; */
-    /* position: absolute; */
-    bottom: 5%;
-    right: 5%;
-    left: 5%;
-}
-
-.chatInner input::placeholder {
-    color: black;
-}
-
-.chatInner input:focus{
-    color: white !important;
-}
-
-.chatInner input:focus::placeholder{
     color: white;
-}
-.sendButton button,.attachmentButton button {
-    font-size: 20px;
-    border: none;
-    padding: 4px 12px;
-    border-radius: 8px;
-    transition: all .4s linear;
-
-}
-.sendButton button{
-    background-color: white;
-    color: black;
-}
-.attachmentButton button:hover{
-    background-color: white;
-    color: black;
-}
-.sendButton button:hover{
-    background:  var(--color-primary);
-    color: white;
-}
-.attachmentButton button {
-    background-color: var(--color-black-light);
-    color: var(--color-gray);
-}
-/* chart header */
-.chatHeader .userProfile img{
-    width: 3.5rem;
-    height: 3.5rem;
-    background: red;
-    border-radius: 50%;
-}
-.chatHeader .userProfile p { 
-    color: var(--color-gray);
-    text-transform: capitalize;
-}
-.chatHeader .menu{
-    background-color: transparent;
-    color: white;
-    border: none;
-    outline: none;
     font-size: 22px;
-}
+    }
 
-/* animation  */
+    /* Chat  */
+    .chatInner {
+        padding: 30px;
+        /* background: url('./image/chatVectorBG.png');
+        background-size: cover; */
+    }
 
-.asideInner.hide{
-    /* transform: translateX(-100%); */
-    transform: scaleX(0);
-    transform-origin: left;
-    width: 0px;
-    z-index: 9999;
-}
-/* message */
-.message{
-   
-}
-.message p{
-    max-width: 100% ;
-    padding: 6px 12px;
-    width: fit-content;
-}
-.message .profile {
-    width: 28px;
-    height: 28px;  
-}
-.message .profile img{
-    width: inherit;
-    height: inherit;
-    object-fit: cover;
-    border-radius: 50%;
-}
-.message.send p{
-    background: rgb(255, 255, 255);
-    color: black;
-    border-radius: 12px 12px 12px 0;
-}
-.message.receive p{
-    background:var(--color-black-light);
-    color: white;
-    border-radius: 12px 12px 0 12px ;
-}
-.messageTime{
-    display: block;
-    font-size: 12px;
-    color: var(--color-gray);
-}
-.messageText{
-    width: fit-content;
-}
+    .chatInput input {
+        background-color: var(--color-gray);
+        margin: 0;
+        color: black;
 
-/* date part  */
-.datePart{
-    color: var(--color-gray);
-    margin: 12px 0;
-}
-.datePart .part{
-border: 1px solid var(--color-black-second);
-height: 2px;
-}
-.datePart p {
-    border: 1.5px solid var(--color-gray);
-    padding: 4px 12px;
-    border-radius: 20px;
-}
+    }
+    .chatInput .input .inputBlack{
+        margin: 0 !important;
+    }
+
+    .chatInput {
+        bottom: 5%;
+        right: 5%;
+        left: 5%;
+    }
+
+    .chatInner input::placeholder {
+        color: black;
+    }
+
+    .chatInner input:focus{
+        color: white !important;
+    }
+
+    .chatInner input:focus::placeholder{
+        color: white;
+    }
+    .sendButton button,.attachmentButton button {
+        font-size: 20px;
+        border: none;
+        padding: 4px 12px;
+        border-radius: 8px;
+        transition: all .4s linear;
+
+    }
+    .sendButton button{
+        background-color: white;
+        color: black;
+    }
+    .attachmentButton button:hover{
+        background-color: white;
+        color: black;
+    }
+    .sendButton button:hover{
+        background:  var(--color-primary);
+        color: white;
+    }
+    .attachmentButton button {
+        background-color: var(--color-black-light);
+        color: var(--color-gray);
+    }
+    /* chart header */
+    .chatHeader .userProfile img{
+        width: 3.5rem;
+        height: 3.5rem;
+        background: red;
+        border-radius: 50%;
+    }
+    .chatHeader .userProfile p { 
+        color: var(--color-gray);
+        text-transform: capitalize;
+    }
+    .chatHeader .menu{
+        background-color: transparent;
+        color: white;
+        border: none;
+        outline: none;
+        font-size: 22px;
+    }
+
+    /* animation  */
+
+    .asideInner.hide{
+        /* transform: translateX(-100%); */
+        transform: scaleX(0);
+        transform-origin: left;
+        width: 0px;
+        z-index: 9999;
+    }
+    /* message */
+    .message{
+    
+    }
+    .message p{
+        max-width: 100% ;
+        padding: 6px 12px;
+        width: fit-content;
+    }
+    .message .profile {
+        width: 28px;
+        height: 28px;  
+    }
+    .message .profile img{
+        width: inherit;
+        height: inherit;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+    .message.send p{
+        background: rgb(255, 255, 255);
+        color: black;
+        border-radius: 12px 12px 12px 0;
+    }
+    .message.receive p{
+        background:var(--color-black-light);
+        color: white;
+        border-radius: 12px 12px 0 12px ;
+    }
+    .messageTime{
+        display: block;
+        font-size: 12px;
+        color: var(--color-gray);
+    }
+    .messageText{
+        width: fit-content;
+    }
+
+    /* date part  */
+    .datePart{
+        color: var(--color-gray);
+        margin: 12px 0;
+    }
+    .datePart .part{
+    border: 1px solid var(--color-black-second);
+    height: 2px;
+    }
+    .datePart p {
+        border: 1.5px solid var(--color-gray);
+        padding: 4px 12px;
+        border-radius: 20px;
+    }
+
+    /* edit profile  */
+
+    .editUserProfile .profile {
+        width: 150px;
+        height: 150px;
+        border-radius: 12px;
+        overflow: hidden;
+        position: relative;
+        /* text-align: center;
+        line-height: 150px; */
+    }
+    .editUserProfile .profile img{
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .editUserProfile .profile i{
+        font-size: 26px;
+        position: absolute;
+        top: 50%;
+        right: 50%;
+        transform: translate(50%,-50%);
+        transition: all .4s linear;
+        opacity: 0;
+        z-index: 9;
+    }
+    .editUserProfile .profile::after{
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: rgba(0, 0, 0, 0.68);
+        transition: all .4s linear;
+opacity: 0;
+    }
+    .editUserProfile .profile:hover i,.editUserProfile .profile:hover::after{
+        opacity: 1;
+    }

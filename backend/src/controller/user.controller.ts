@@ -38,11 +38,13 @@ const userLogIn = async (req: any, res: any) => {
   try {
     let { email, password } = req.body;
     let user = await MQ.findOne<UserIN>(MODEL.USER_MODEL, { email: email });
+    console.log('user', user)
     if (!user) {
       return res.status(400).json({
         message: "invalid email address or password",
       });
     }
+    console.log('compare(password, user.password)', compare(password, user.password))
     if (!(await compare(password, user.password))) {
       return res.status(400).json({
         message: "invalid email address or password",

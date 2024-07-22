@@ -31,13 +31,14 @@ function Login() {
     const ref = useRef();
     const { register, formState: { errors }, handleSubmit } = useForm({
         defaultValues: {
-            email: 'r@gmail.com',
+            email: 'raxitdev55@gmail.com',
             password: 'ra@Patel.08',
         },
     });
 
     const logInHandler = async (data) => {
         try {
+            console.log('data', data)
             const response = await AxiosCLI.post(APP_URL.LOGIN, data);
             console.log('response', response)
             if (response.status === 200) {
