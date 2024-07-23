@@ -4,6 +4,8 @@ import { Button, Input, Password } from '../Form'
 import { Link } from 'react-router-dom'
 import ImagePreview from '../ImagePreview'
 import { useSelector } from 'react-redux'
+import { AxiosCLI } from '../../axios'
+import { APP_URL } from '../../constant'
 
 function EditProfile({
     id,
@@ -22,7 +24,18 @@ function EditProfile({
     const editProfileSubmit = async (data) => {
         try {
             console.log('data', data)
-            
+            const formData = new FormData()
+            if (data.profileImage[0]) {
+                console.log("############## ")
+                debugger
+                formData.append('profileImage',data.profileImage[0])
+            }
+            formData.append('userName', data.userName)
+            formData.append('DOB', data.DOB)
+            formData.append('userId',user._id)
+            const editResponse = await AxiosCLI.post(APP_URL.EDIT_USER_PROFILE, formData);
+            console.log('editResponse', editResponse)
+            debugger;
         } catch (error) {
             console.error('CATCH ERROR IN ::: editProfileSubmit', error);
         }
@@ -30,7 +43,7 @@ function EditProfile({
     return (
         <div>
             <div className={`modal fade  ${modalClass}`} id={id} tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <form className="modal-dialog modal-dialog-centered modal-xl" onSubmit={handleSubmit(editProfileSubmit)}>
+                <form className="modal-dialog modal-dialog-centered modal-xl" action='' onSubmit={handleSubmit(editProfileSubmit)}>
                     <div className={`modal-content`}>
                         <div className="modal-header">
                             <h1 className="modal-title fs-5" id="exampleModalLabel">Edit Profile</h1>
@@ -39,7 +52,7 @@ function EditProfile({
                         <div className="modal-body">
                             <div className="row">
                                 <div className="col-12 col-lg-3 col-xl-2">
-                                    <ImagePreview {...register("profileImage")} ref={ref} />
+                                    <ImagePreview {...register("profileImage")} />
     
                                 </div>
                                 <div className="col-12 col-lg-9 col-xl-10 flex-grow-1">
@@ -60,22 +73,13 @@ function EditProfile({
                                         <Input inputClass='inputBlack' type='date' placeholder='Enter your password ... ' label='Date Of Birth' ref={ref} {...register("DOB", {
                                             required: "Please enter your date of birth",
                                         })} />
-                                        {errors.DOB && <p className='validationError pb-2'>{errors.DOB.message}</p>}
-
-                                        {errors.CPassword && <p className='validationError pb-2'>{errors.CPassword.message}</p>}
-                                        <div className="d-flex mt-4">
-                                            <Button buttonClass='themGradient btnRounded me-2' type='submit' value='Sign Up' ref={ref} />
-                                            <Link to={'/'}>
-                                                <Button buttonClass='themBlueBordered btnRounded' type='button' value='Log In' ref={ref} />
-                                            </Link>
-                                        </div>
-
+                                    {errors.DOB && <p className='validationError pb-2'>{errors.DOB.message}</p>}
                                 </div>
                             </div>
                         </div>
                         <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" > Discard</button>
-                            <button type="submit" className="btn btn-primary"  >Save</button>
+                        <Button buttonClass='buttonBlack hover btnRounded me-2' type='button' value='Discard'  data-bs-dismiss="modal" ref={ref} />
+                        <Button buttonClass='themBlueBordered btnRounded' type='submit' value='Save'  ref={ref} />
                         </div>
                     </div>
                 </form>

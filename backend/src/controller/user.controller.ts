@@ -187,4 +187,33 @@ export const verifyEmail = async (req: any, res: any) => {
     
   }
 }
+
+export const editUserProfile = async (req: any, res: any) => {
+  try {
+    console.log("test edit data ")
+    console.log(req.body)
+    console.log(req.file)
+    const { userId, DOB, userName } = req.body;
+    if (!userId) {
+      return res.status(400).json({ message: "user data not found " });
+    }
+    const userData = await MQ.findById<UserIN>(MODEL.USER_MODEL, userId);
+    if (!userData) {
+      return res.status(400).json({ message: "user data not found " });
+    }
+    
+    if (req.file) {
+      if (userData.profilePicture) {
+        //delate user profile picture from drive
+      }
+      //upload user profile picture to drive 
+    }
+
+    res.status(200).json({message:'user profile update successfully'})
+  } catch (error) {
+    logger.error(`CATCH ERROR IN editUserProfile ::: ${error}`)
+    console.log('error', error)
+
+  }
+}
 export { registerUser, userLogIn, loginWithGoogleHandler };

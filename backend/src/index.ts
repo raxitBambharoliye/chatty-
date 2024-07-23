@@ -64,9 +64,9 @@ httpServer.listen(process.env.SERVER_PORT, async() => {
     await mongoDbConnection();
     await socketConnection();
 
-    let tunnel= await localtunnel(8080,{subdomain:"chatty-pie-host"})
-    tunnel.url;
-    console.log('tunnel.url', tunnel.url)
+    // let tunnel= await localtunnel(8080,{subdomain:"chatty-pie-host"})
+    // tunnel.url;
+    // console.log('tunnel.url', tunnel.url)
     logger.info(`server running on PORT ${process.env.SERVER_PORT}`);
 })
 export default io;

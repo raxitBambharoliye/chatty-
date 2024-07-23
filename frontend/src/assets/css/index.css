@@ -106,6 +106,17 @@ body{
     color: white;
 }
 
+.buttonBlack{
+    background-color: rgba(0, 0, 0, 0.584) ;
+    color: white;
+    transition: all .4s linear;
+    border: 2px solid transparent;
+}
+.buttonBlack.hover:hover{
+    background-color: black ;
+    border-color: var(--color-gray);
+}
+
 /* form */
 .formLink{
     color: var(--color-primary) !important;
@@ -153,5 +164,6 @@ body{
 }
 /* opther */
 .singlePreviewInput{
-    visibility: hidden;
+    /* visibility: hidden; */
+    width: 0;
 }
