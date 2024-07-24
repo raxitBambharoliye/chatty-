@@ -1,6 +1,7 @@
 import CryptoJS from 'crypto-js';
 // import Cookies from 'js-cookie';
 import jwt from 'jsonwebtoken';
+import logger from '../logger';
 const setCookieData = ( data: any) => {
   const secret = process.env.COOKIE_SECRET_KEY || 'chatyπ-!@#$$%%$#!@T*^%*^&}{}';
   let stringifiedData: string;
@@ -47,4 +48,5 @@ export const decryptData = (data:any) => {
   }
   return null;
 }
+
 export { setCookieData,createToken };

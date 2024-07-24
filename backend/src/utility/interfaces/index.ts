@@ -11,5 +11,6 @@ export interface UserIN {
   blockedUserId: string[];
   withEmail: Boolean;
   verifiedEmail: Boolean;
-  password:string
+  password: string;
+  profilePictureId: string;
 }

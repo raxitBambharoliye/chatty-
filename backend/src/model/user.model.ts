@@ -42,7 +42,8 @@ const userSchema = new Schema({
         default: false,
         required: true,
     },
-    verifiedEmail: { type: Boolean, default: false }
+    verifiedEmail: { type: Boolean, default: false },
+    profilePictureId: { type: String, }
 }, { timestamps: true })
 
 const USER = mongoose.model(MODEL.USER_MODEL, userSchema);

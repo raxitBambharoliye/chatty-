@@ -26,8 +26,6 @@ function EditProfile({
             console.log('data', data)
             const formData = new FormData()
             if (data.profileImage[0]) {
-                console.log("############## ")
-                debugger
                 formData.append('profileImage',data.profileImage[0])
             }
             formData.append('userName', data.userName)

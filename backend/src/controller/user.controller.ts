@@ -1,6 +1,6 @@
 import { compare, hash } from "bcrypt";
 import { MQ } from "../common";
-import { MODEL } from "../constant";
+import { DRIVE_FOLDER, MODEL } from "../constant";
 import logger from "../utility/logger";
 import jwt from "jsonwebtoken";
 import { createToken, decryptData, encryptData, setCookieData } from "../utility/common";
@@ -9,6 +9,7 @@ import path from 'path';
 import fs from 'fs';
 import handlebars from 'handlebars'
 import { sendMail } from "../services/sendmail.service";
+import { deleteFile, uploadFile } from "../services/googleDrive.service";
 const registerUser = async (req: any, res: any) => {
   try {
     req.body.password = await hash(req.body.password, 10);
@@ -38,13 +39,11 @@ const userLogIn = async (req: any, res: any) => {
   try {
     let { email, password } = req.body;
     let user = await MQ.findOne<UserIN>(MODEL.USER_MODEL, { email: email });
-    console.log('user', user)
     if (!user) {
       return res.status(400).json({
         message: "invalid email address or password",
       });
     }
-    console.log('compare(password, user.password)', compare(password, user.password))
     if (!(await compare(password, user.password))) {
       return res.status(400).json({
         message: "invalid email address or password",
@@ -201,19 +200,27 @@ export const editUserProfile = async (req: any, res: any) => {
     if (!userData) {
       return res.status(400).json({ message: "user data not found " });
     }
-    
     if (req.file) {
-      if (userData.profilePicture) {
-        //delate user profile picture from drive
+      console.log('req.file', req.file)
+      if (userData.profilePicture && userData.profilePictureId) {
+        await  deleteFile(userData.profilePictureId);
       }
-      //upload user profile picture to drive 
+      
+      const fileId = await uploadFile(req.file.filename, req.file.path, DRIVE_FOLDER.PROFILE);
+      if (!fileId) {
+        return res.status(500).json({ message: "Some thing want wrong, pleas try after some time." });
+      }
+      const profilePictureURL = `https://drive.google.com/file/d/${fileId}/view?usp=sharing`;
+      console.log('profilePictureURL', profilePictureURL)
+       req.body.profilePicture = profilePictureURL;
+       req.body.profilePictureId = fileId;
     }
-
-    res.status(200).json({message:'user profile update successfully'})
+    const updatedUser = await MQ.findByIdAndUpdate<UserIN>(MODEL.USER_MODEL, userId, req.body);
+    console.log('updatedUser', updatedUser)
+    res.status(200).json({ message: 'user profile update successfully' });
   } catch (error) {
     logger.error(`CATCH ERROR IN editUserProfile ::: ${error}`)
     console.log('error', error)
-
   }
 }
 export { registerUser, userLogIn, loginWithGoogleHandler };

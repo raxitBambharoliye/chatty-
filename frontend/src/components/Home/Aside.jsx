@@ -1,10 +1,15 @@
-import React from 'react'
+import React, { useState } from 'react'
 import AsideContactsItem from './AsideContactsItem'
 import { Link } from 'react-router-dom'
 import { APP_URL } from '../../constant'
 import EditProfile from './EditProfile'
+import { useSelector } from 'react-redux'
 
-function Aside({asideShow,contactArray,activeChat}) {
+function Aside({ asideShow, contactArray, activeChat }) {
+    const user = useSelector(state => state.userData.user);
+    const userProfile = useState(null)    
+    const imageUrl = "https://drive.google.com/uc?id=1ovnHXwAgw9ujNp2NPAoBSTpJDotZetOB";
+
     return (
         <>
             {/* aside start  */}
@@ -15,7 +20,8 @@ function Aside({asideShow,contactArray,activeChat}) {
                     <h1 className='m-0'>Chatty 𝝅</h1>
                     <div className="userProfile" >
                         <i className="fa-solid fa-pen pen"></i>
-                        <img src="./image/dummyProfile.png" alt="" />
+                        {/* <img src={user.profilePicture? user.profilePicture :"./image/dummyProfile.png"} alt="" /> */}
+                        <img src={imageUrl} alt="" />
                     </div>
                 </div>
                 <div className="asideContacts flex-grow-1 overflow-auto">
