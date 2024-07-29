@@ -1,3 +1,6 @@
 import MQ from './mongoQuery'
-
-export {MQ}
+import EVENT_NAME from './eventNames'
+export {
+    MQ,
+    EVENT_NAME,
+}

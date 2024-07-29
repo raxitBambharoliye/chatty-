@@ -44,20 +44,20 @@ class MQ {
       return null;
     }
   }
-  async find<T>(collection: string, query: any) : Promise<T | null>{
+  async find<T>(collection: string, query: any,projection:any = {}) : Promise<T | null>{
     try {
       this.setCollection(collection);
-      return await this.collection.find(query);
+      return await this.collection.find(query,projection);
     } catch (error) {
       logger.error(`🤦‍♂️🤦‍♂️🤦‍♂️🤦‍♂️ CATCH ERROR IN find: 🤦‍♂️🤦‍♂️🤦‍♂️🤦‍♂️ ::: ${error}`);
       console.log("error", error);
       return null;
     }
   }
-  async findByIdAndUpdate<T>(collection: string,id: any,data: any): Promise<T | null> {
+  async findByIdAndUpdate<T>(collection: string,id: any,data: any,newReturn=false): Promise<T | null> {
     try {
       this.setCollection(collection);
-      return await this.collection.findByIdAndUpdate(id, data);
+      return await this.collection.findByIdAndUpdate(id, data,{new:newReturn});
     } catch (error) {
       logger.error(`🤦‍♂️🤦‍♂️🤦‍♂️🤦‍♂️ CATCH ERROR IN findByIdAndUpdate: 🤦‍♂️🤦‍♂️🤦‍♂️🤦‍♂️ ::: ${error}`);
       console.log("error", error);

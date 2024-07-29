@@ -1,15 +1,56 @@
-import React, { useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Button, Input } from '../Form'
+import { AxiosCLI } from '../../axios'
 import '../../assets/css/modal.css'
+import { APP_URL, EVENT_NAME } from '../../constant';
+import _ from 'lodash';
+import { SocketEvent } from '../../soket/eventHandler';
+import { useSelector } from 'react-redux';
+
 function AddFriends({ id, modalClass = '' }) {
 
-    const [isLoading,setLoader]=useState(true);
-    const [searchResult,setSearchResult]=useState([]);
+    const [isLoading, setLoader] = useState(false);
+    const [searchResult, setSearchResult] = useState([]);
+    const [search, setSearch] = useState("");
+    const [searchCache, setSearchCache] = useState({});
+    const user= useSelector((state)=>state.userData.user)
 
-    const handleOnChange=async ()=>{
-        console.log('test ')
+
+    const debouncedSearch = useCallback(
+        _.debounce((searchQuery) => {
+            if (searchQuery === '') {
+                setSearchResult([]);
+          return;
+        }
+        setLoader(true);
+        if (searchCache[searchQuery]) {
+          setSearchResult(searchCache[searchQuery]);
+          setLoader(false);
+        } else {
+          AxiosCLI.get(`${APP_URL.SEARCH_USER}/${searchQuery}`)
+            .then((response) => {
+              if (response.status === 200 && response.data.searchResult) {
+                setSearchCache({ ...searchCache, [searchQuery]: response.data.searchResult });
+                setSearchResult(response.data.searchResult);
+                setLoader(false);
+              }
+            })
+            .catch((error) => {
+              console.error('Error:', error);
+              setLoader(false);
+            });
+        }
+      }, 500), []);
+    
+      useEffect(() => {
+        debouncedSearch(search);
+      }, [search, debouncedSearch]);
+
+
+    const SendFollowRequest = (id) => {
+        console.log("send reqest ", id)
+        SocketEvent.SendEvent(EVENT_NAME.FOLLOW,{receiverId:id,senderId:user._id})
     }
-
     return (
         <div>
             <div className={`modal fade  ${modalClass}`} id={id} tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -23,16 +64,18 @@ function AddFriends({ id, modalClass = '' }) {
                             <div className="d-flex flex-column h-100 flex-grow-1">
 
                                 <div className="searchBox">
-                                    <Input inputClass="addFriendSearch" placeHolder="Search User Name ..." onChange={handleOnChange}></Input>
+                                    <Input inputClass="addFriendSearch" placeholder="Search User Name ..." onChange={(e) => { setSearch(e.target.value) }}></Input>
                                 </div>
                                 <div className="searchResult px-3 d-flex align-items-center flex-column justify-content-center">
-                                    {isLoading && 
-                                    <>
-                                    <div class="loaderSearch "></div> 
-                                    <h2 className='mt-4'>SearchIng...</h2>
-                                    </>}
-                                    {!isLoading && [1, 2, 0, 0, 0, 0, 0, 0,].map((element) => (
-                                        <div className="searchResultItem w-100">
+                                    {isLoading &&
+                                        <>
+                                            <div className="loaderSearch "></div>
+                                            <h2 className='mt-4'>SearchIng...</h2>
+                                        </>}
+                                    {(!isLoading && searchResult.length == 0) && (<>
+                                    <h1>No data found</h1></>)}
+                                    {!isLoading && searchResult.map((element,index) => (
+                                        <div className="searchResultItem w-100" key={index}>
                                             <div className="d-flex align-items-center">
                                                 <div className="userProfile me-4">
                                                     <img src="./image/dummyProfile.png" alt="" />
@@ -40,10 +83,10 @@ function AddFriends({ id, modalClass = '' }) {
                                                 <div className="userData flex-grow-1 ">
                                                     <div className="d-flex justify-content-between align-items-center">
                                                         <div className="userName">
-                                                            <h3 className='m-0'>testUser</h3>
-                                                            <p className='m-0'>enjoy Your Life</p>
+                                                            <h3 className='m-0'>{element.userName}</h3>
+                                                            <p className='m-0'>{element.tagLine ? element.tagLine : "---"}</p>
                                                         </div>
-                                                        <Button type="button" value="follow" buttonClass="btn-outline-primary hover" />
+                                                        <Button type="button" value={user.sendedRequest.includes(element._id)?"requested":user.friendRequest.includes(element._id)?"follow back":"follow"} buttonClass="btn-outline-primary hover" disabled={user.sendedRequest.includes(element._id)?true:false} onClick={(e)=>{SendFollowRequest(element._id)}} />
                                                     </div>
                                                 </div>
                                             </div>

@@ -10,6 +10,7 @@ import fs from 'fs';
 import handlebars from 'handlebars'
 import { sendMail } from "../services/sendmail.service";
 import { deleteFile, uploadFile } from "../services/googleDrive.service";
+import { Request } from "express";
 const registerUser = async (req: any, res: any) => {
   try {
     req.body.password = await hash(req.body.password, 10);
@@ -224,6 +225,23 @@ export const editUserProfile = async (req: any, res: any) => {
   }
 }
 
+export const searchUser = async (req:Request, res: any) => {
+  try {
+    const search = req.params.search;
+    const users = await MQ.find<UserIN[]>(MODEL.USER_MODEL,
+      { $or: [{ userName: { $regex: '.*' + search + '.*', $options: 'i' } }] },
+      {userName:1,tagLine:1,profilePicture:1})
+    return res.status(200).json({success:true,searchResult:users})
+  } catch (error) {
+    logger.error(`CATCH ERROR : IN :: searchUser ${error}`);
+    console.log('error', error)
+  }
+}
+
+
+
+
+
 
 export const generateUser = async ()=>{
   try {
@@ -247,5 +265,8 @@ export const generateUser = async ()=>{
     console.log('error', error)
   }
 }
+
+
+
 
 export { registerUser, userLogIn, loginWithGoogleHandler };

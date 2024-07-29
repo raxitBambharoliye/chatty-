@@ -1,18 +1,24 @@
 import { io } from "socket.io-client";
+import { EVENT_NAME } from "../constant";
+import { follow } from "../controller/event.controller";
 
+const socket = io(import.meta.env.VITE_BASE_URL);
 class SocketEventCL { 
     
-    socket = io(import.meta.env.VITE_BASE_URL);
     SocketConnection() {
-        this.socket.on('connect', () => {
-            console.log("teset connection ")
+       socket.on('connect', () => {
+            console.log("teset connection ");
+            this.socket.on("test", (data) => {
+                console.log(data)
+                debugger;
+            })
         })
     }
     SendEvent(eventname, data) {
-        this.socket.emit(eventname, data);
+        socket.emit(eventname, data);
     }
 }
-    // socket.on('connect',()=> {
-    //   socket.emit('test', { test: "test check Data" });
-    // })
+
+socket.on(EVENT_NAME.FOLLOW,follow)
+
 export const SocketEvent = new SocketEventCL();

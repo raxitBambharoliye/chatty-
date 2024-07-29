@@ -42,6 +42,16 @@ const userSchema = new Schema({
         default: false,
         required: true,
     },
+    friendRequest: {
+        type: [{type:mongoose.Schema.Types.ObjectId,ref:MODEL.USER_MODEL}],
+        default: [],
+        required: true,
+    },
+    sendedRequest: {
+        type: [{ type: mongoose.Schema.Types.ObjectId, ref: MODEL.USER_MODEL }],
+        default: [],
+        required:true,
+    },
     verifiedEmail: { type: Boolean, default: false },
     profilePictureId: { type: String, }
 }, { timestamps: true })
