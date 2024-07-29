@@ -1,0 +1,42 @@
+/* add Friends modal */
+.addFriendsModal .modal-content{
+    min-height: 80vh;
+}
+.searchResult{
+    height: 60vh;
+    overflow: auto;
+}
+.addFriendSearch input{
+    background: black;
+    border: 1px solid var(--color-gray);
+    color: white !important;
+}
+.addFriendSearch input:focus{
+    background: black;
+    border: 1px solid var(--color-gray);
+    box-shadow: 0 0 0 .25rem rgba(118, 119, 119, 0.25);
+}
+
+.addFriendSearch input::placeholder{
+    color: var(--color-gray);
+}
+.addFriendsModal .searchResultItem{
+    padding: 12px;
+    margin: 8px 0;
+    border-radius: 12px;
+    border: 1.5px solid var(--color-gray);
+    cursor: pointer;
+    transition: all .1s linear;
+}
+.addFriendsModal .searchResultItem:hover{
+    background: black;
+}
+.addFriendsModal .searchResultItem .userProfile img{
+width: 50px;
+height: 50px;
+object-fit: cover;
+border-radius: 50%;
+}
+.addFriendsModal .searchResultItem p { 
+    color: var(--color-gray);
+}

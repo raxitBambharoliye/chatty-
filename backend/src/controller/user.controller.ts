@@ -223,4 +223,29 @@ export const editUserProfile = async (req: any, res: any) => {
     console.log('error', error)
   }
 }
+
+
+export const generateUser = async ()=>{
+  try {
+    return;
+    var userNameArrayOld:string[]= ["patel","kano","radha","radhe","raxit","test_check","__lol","mehul","meet","hari"]
+    var userNameArray:string[]= []
+    for(var i = 1 ; i<=10;i++){
+         const insertData= {
+      userName:userNameArray[i],
+      email:`${userNameArray[i]}@t.com`,
+      password:"123456",
+      tagLine:"testDelete"
+    }
+    insertData.password=await hash(insertData.password,10);
+    await MQ.insertOne(MODEL.USER_MODEL,insertData);
+    }
+ 
+
+  } catch (error) {
+    logger.error(`CATCH ERROR IN generateUser ::: ${error}`)
+    console.log('error', error)
+  }
+}
+
 export { registerUser, userLogIn, loginWithGoogleHandler };

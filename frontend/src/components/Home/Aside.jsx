@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { APP_URL } from '../../constant'
 import EditProfile from './EditProfile'
 import { useSelector } from 'react-redux'
-
+import {AddFriends} from '../../components/Models/index'
 function Aside({ asideShow, contactArray, activeChat }) {
     const user = useSelector(state => state.userData.user);
     const userProfile = useState(null)    
@@ -32,15 +32,16 @@ function Aside({ asideShow, contactArray, activeChat }) {
                 <div className="asideFooter">
                     <div className="asideFooterMenu">
                         <div className="menuItem"><Link><i className="fa-regular fa-address-book"></i></Link></div>
-                        <div className="menuItem"><Link><i className="fa-solid fa-user-plus"></i></Link></div>
+                        {/* add friends */}
+                        <div className="menuItem"><Link data-bs-toggle="modal" data-bs-target="#addFriendsModel"><i className="fa-solid fa-user-plus"></i></Link></div>
                         <div className="menuItem"><Link><i className="fa-solid fa-phone"></i></Link></div>
                         <div className="menuItem"><Link className="menuItem" title='search'><i className="fa-solid fa-magnifying-glass"></i></Link></div>
                         <div className="menuItem"><Link className="menuItem" title='logout' to={APP_URL.FE_LOGOUT}><i className="fa-solid fa-right-from-bracket"></i></Link></div>
-
                     </div>
                 </div>
             </div>
             <EditProfile id={'editUserProfile'} modalClass='secondBlackModal editUserProfile'></EditProfile>
+            <AddFriends id={"addFriendsModel"} modalClass='blackModal addFriendsModal '></AddFriends>
         </>
     )
 }
