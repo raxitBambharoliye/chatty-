@@ -42,7 +42,6 @@ function Login() {
             const response = await AxiosCLI.post(APP_URL.LOGIN, data);
             console.log('response', response)
             if (response.status === 200) {
-                SocketEvent.SocketConnection();
                 if (response.data.token && response.data.token != "") {
                     console.log("set token works")
                     setDataInCookie(COOKIE_KEY.TOKEN, response.data.token);

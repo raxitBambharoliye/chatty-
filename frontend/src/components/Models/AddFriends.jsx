@@ -14,7 +14,7 @@ function AddFriends({ id, modalClass = '' }) {
     const [search, setSearch] = useState("");
     const [searchCache, setSearchCache] = useState({});
     const user= useSelector((state)=>state.userData.user)
-
+    const socket = useSelector((state) => state.socket.socket)
 
     const debouncedSearch = useCallback(
         _.debounce((searchQuery) => {
@@ -51,6 +51,7 @@ function AddFriends({ id, modalClass = '' }) {
         console.log("send reqest ", id)
         SocketEvent.SendEvent(EVENT_NAME.FOLLOW,{receiverId:id,senderId:user._id})
     }
+
     return (
         <div>
             <div className={`modal fade  ${modalClass}`} id={id} tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">

@@ -1,4 +1,4 @@
-import  io  from '..';
+import  {io}  from '..';
 import { EVENT_NAME } from '../common';
 import { followRequest } from "../controller/chat.controller";
 import logger from "../utility/logger";
@@ -18,10 +18,11 @@ export const eventHandler = (socket:any) => {
 }
 
 
-export const sendToSocket=(socket: any, data: any)=> {
+export const sendToSocket=(socketId: any, data: any)=> {
     try {
-        logger.debug(`EVENT RECEIVED :: ${data.eventName} :: ${JSON.stringify(data.data)} :::::::::::::: `)
-        io.to(socket.id).emit(data.eventName, data.data);
+        console.log('socketId', socketId)
+        logger.info(`EVENT RECEIVED :: ${data.eventName} :: ${JSON.stringify(data.data)} :::::::::::::: `)
+        io.to(socketId).emit(data.eventName, data.data);
     } catch (error) {
         logger.error(`SEND DATA ERROR IN sendRToSocket: ${error}`)
         console.log('error', error)

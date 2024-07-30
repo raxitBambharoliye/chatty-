@@ -7,9 +7,6 @@ import { SocketEvent } from './soket/eventHandler'
 
 function App() {
   const [count, setCount] = useState(0)
-  useEffect(() => {
-    SocketEvent.SocketConnection();
-  })
   return (
     <>
     <h1>hello world </h1>

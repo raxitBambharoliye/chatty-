@@ -7,16 +7,23 @@ import { DatePart } from '../components/Message';
 import { Aside, AsideContactsItem } from '../components/Home';
 import { Link } from 'react-router-dom';
 import { APP_URL } from '../constant/index'
+import { io } from 'socket.io-client';
+import { useDispatch } from 'react-redux';
+import { setSocket } from '../reducers/socketReducer';
 function Home() {
   let [asideShow, setAsideShow] = useState(true);
   let [activeChat, setActiveChat] = useState(-1);
   const contactArray = new Array(20).fill(1)
-  console.log('contactArray', contactArray)
-  let asideContent = useState("contacts")
+  const dispatch = useDispatch();
+
+
+
+
+
   return (
     <div className='w-100 vh-100 homeBackground'>
       <div className="d-flex  gx-0 align-items-center">
-      <Aside asideShow={asideShow} contactArray={contactArray} activeChat={activeChat} />
+        <Aside asideShow={asideShow} contactArray={contactArray} activeChat={activeChat} />
         {/* aside end  */}
         {/* chat start  */}
         <div className="chatInner vh-100 text-white  flex-grow-1 position-relative d-flex flex-column justify-content-between">

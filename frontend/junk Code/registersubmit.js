@@ -4,7 +4,6 @@ const registerHandler = async (data) => {
         console.log(data);
         const response = await AxiosCLI.post(APP_URL.REGISTER, data);
         if (response.status === 200) {
-            SocketEvent.SocketConnection();
             if(!response.data.userData.verifiedEmail){}
             if (response.data.token && response.data.token != "") {
                 console.log("set token works")

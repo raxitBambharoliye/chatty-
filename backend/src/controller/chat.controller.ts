@@ -18,18 +18,19 @@ export const followRequest = async (socket: any, data:any)=>{
             return false;
         }
 
-        const updateSender = await MQ.findByIdAndUpdate<UserIN>(MODEL.USER_MODEL, sender.id, { $push: { sendedRequest: receiver.id } },true);   
-        const updateReceiver = await MQ.findByIdAndUpdate<UserIN>(MODEL.USER_MODEL, receiver.id, { $push: { friendRequest: sender.id } },true);
-        if (!updateSender || !updateReceiver) {
-            return;
-        }
+        // const updateSender = await MQ.findByIdAndUpdate<UserIN>(MODEL.USER_MODEL, sender.id, { $push: { sendedRequest: receiver.id } },true);   
+        // const updateReceiver = await MQ.findByIdAndUpdate<UserIN>(MODEL.USER_MODEL, receiver.id, { $push: { friendRequest: sender.id } },true);
+        // if (!updateSender || !updateReceiver) {
+        //     return;
+        // }
         let sendData:any = {
             eventName: EVENT_NAME.FOLLOW,
             data: {
-                user:updateSender,
+                user:sender,
             }
         }
-        sendToSocket(socket, sendData);
+        console.log('sendData', sendData)
+        sendToSocket(socket.id, sendData);
     } catch (error) {
         logger.error(`CATCH ERROR IN :: followRequest ${error}`);
         console.log('error', error)
