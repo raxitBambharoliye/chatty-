@@ -22,8 +22,7 @@ function Aside({ asideShow, contactArray, activeChat }) {
                     <h1 className='m-0'>Chatty 𝝅</h1>
                     <div className="userProfile" >
                         <i className="fa-solid fa-pen pen"></i>
-                        {/* <img src={user.profilePicture? user.profilePicture :"./image/dummyProfile.png"} alt="" /> */}
-                        <img src={imageUrl} alt="" />
+                        <img src="./image/dummyProfile.png" alt="" />
                     </div>
                 </div>
                 <div className="asideContacts flex-grow-1 overflow-auto">

@@ -23,10 +23,6 @@ const httpServer = createServer(app)
 const io = new Server(httpServer, {
     cors: {
         origin: '*',
-        methods: ['GET', 'POST', 'PUT', 'DELETE'],
-        credentials: true,
-        allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'X-Auth-Token'],
-        exposedHeaders: ['X-Auth-Token']
     }
 })
 

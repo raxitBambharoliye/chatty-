@@ -4,7 +4,6 @@ import { AxiosCLI } from '../../axios'
 import '../../assets/css/modal.css'
 import { APP_URL, EVENT_NAME } from '../../constant';
 import _ from 'lodash';
-import { SocketEvent } from '../../soket/eventHandler';
 import { useSelector } from 'react-redux';
 
 function AddFriends({ id, modalClass = '' }) {
@@ -14,7 +13,6 @@ function AddFriends({ id, modalClass = '' }) {
     const [search, setSearch] = useState("");
     const [searchCache, setSearchCache] = useState({});
     const user= useSelector((state)=>state.userData.user)
-    const socket = useSelector((state) => state.socket.socket)
 
     const debouncedSearch = useCallback(
         _.debounce((searchQuery) => {
@@ -48,8 +46,8 @@ function AddFriends({ id, modalClass = '' }) {
 
 
     const SendFollowRequest = (id) => {
-        console.log("send reqest ", id)
-        SocketEvent.SendEvent(EVENT_NAME.FOLLOW,{receiverId:id,senderId:user._id})
+        // socket.emit(EVENT_NAME, { receiverId: id, senderId: user._id });
+        console.log("send request ", id)
     }
 
     return (

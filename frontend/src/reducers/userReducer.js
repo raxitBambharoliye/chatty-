@@ -2,12 +2,13 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const userReducer = createSlice({
     name: "user",
-    initialState:{user:{},token:""},
+    initialState:{user:{},token:"",socket:null},
     reducers:{
         setUser: setUserFunction,
         getUser: getUserUserFunction,
         getUserToken:getUserTokenFunction,
-        setUserToken:setUserTokenFunction,
+        setUserToken: setUserTokenFunction,
+        setSocket:setSocketFunction
     }
 })
 
@@ -25,6 +26,9 @@ function setUserTokenFunction(state, action) {
     state.token = action.payload;
 }
 
+function setSocketFunction(state, action) {
+    state.socket = action.payload;
+}
 
-export const { setUser, getUser,getUserToken,setUserToken } = userReducer.actions;
+export const { setUser, getUser,getUserToken,setUserToken,setSocket } = userReducer.actions;
 export default  userReducer.reducer;

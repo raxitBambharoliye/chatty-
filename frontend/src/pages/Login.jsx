@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from 'react'
-import { SocketEvent } from '../soket/eventHandler'
 import '../assets/css/login.css'
 import Input from '../components/Form/Input';
 import { Button, Password } from '../components/Form';
@@ -20,11 +19,13 @@ function Login() {
     console.log('token', token)
     const userData = getCookieData(COOKIE_KEY.USER);
     console.log('userData', userData)
-    if (token && token !== "" && userData) {
-        useEffect(() => {
-            return navigate(APP_URL.FE_HOME);
-        },[])
-    }
+    useEffect(() => {
+        if (token && userData) {
+            navigate(APP_URL.FE_HOME);
+            return;
+        }
+    }, [token, userData, navigate])
+
     //NOTE - if not logged in 
     const dispatch = useDispatch();
     const user = useSelector((state) => state.userData);
@@ -96,7 +97,7 @@ function Login() {
                 </form>
                 <div className="loginWith">
                     <Link className='loginWithButton' onClick={openGoogleLogin}>
-                        <img src="./icon/google.png" className='iconImg' alt=""  />
+                        <img src="./icon/google.png" className='iconImg' alt="" />
                         Continue With Google
                     </Link>
                 </div>

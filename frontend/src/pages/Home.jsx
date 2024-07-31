@@ -4,22 +4,39 @@ import { Input } from '../components/Form'
 import SendMessage from '../components/Message/SendMessage';
 import ReceiveMessage from '../components/Message/ReceiveMessage';
 import { DatePart } from '../components/Message';
-import { Aside, AsideContactsItem } from '../components/Home';
-import { Link } from 'react-router-dom';
-import { APP_URL } from '../constant/index'
+import { Aside } from '../components/Home';
 import { io } from 'socket.io-client';
 import { useDispatch } from 'react-redux';
-import { setSocket } from '../reducers/socketReducer';
+import { setSocket } from '../reducers/userReducer';
+
+
+
 function Home() {
   let [asideShow, setAsideShow] = useState(true);
   let [activeChat, setActiveChat] = useState(-1);
-  const contactArray = new Array(20).fill(1)
-  const dispatch = useDispatch();
+  const contactArray = new Array(20).fill(1);
+  const dispatch= useDispatch()
+  useEffect(() => {
+    const socketConnection = io(import.meta.env.VITE_BASE_URL, {
+      auth:{token:"test check"}
+    });
+    socketConnection.on("test", (data) => {
+      console.log(data);
+    })
+    dispatch(setSocket(socketConnection));
+    return () => {
+      socketConnection.disconnect();
+    }
+    // (async() => {
+    //   socket.on(EVENT_NAME.FOLLOW,followHandler)
+    // })()
+  }, [])
 
+  
+  const followHandler = (data) => {
+    console.log(data)
 
-
-
-
+  }
   return (
     <div className='w-100 vh-100 homeBackground'>
       <div className="d-flex  gx-0 align-items-center">
