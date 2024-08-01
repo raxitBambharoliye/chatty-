@@ -5,13 +5,14 @@ function Input({
     type = "text",
     placeholder = "",
     label = "",
+    onChange=()=>{},
     ...props
 },ref) {
     const id = useId();
     return (
         <div className={`mb-3 ${inputClass}`}>
             {label && <label htmlFor={id} className="form-label">{label}</label>}
-            <input type={type} className="form-control" id={id} placeholder={placeholder} ref={ref} {...props} />
+            <input type={type} className="form-control" id={id} placeholder={placeholder} onChange={onChange} ref={ref} {...props} />
         </div>
     )
 }

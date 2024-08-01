@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import AsideContactsItem from './AsideContactsItem'
 import { Link } from 'react-router-dom'
 import { APP_URL } from '../../constant'
@@ -9,8 +9,15 @@ import { Input } from '../Form'
 function Aside({ asideShow, contactArray, activeChat }) {
     
     const user = useSelector(state => state.userData.user);
+    console.log('user', user)
     const userProfile = useState(null)    
     const imageUrl = "https://drive.google.com/uc?id=1ovnHXwAgw9ujNp2NPAoBSTpJDotZetOB";
+    const [friends, setFriends] = useState([]);
+
+    useEffect(() => {
+        //NOTE - set all friends data here ; 
+    //    setFriends() 
+    },[user])
 
     return (
         <>
@@ -18,9 +25,9 @@ function Aside({ asideShow, contactArray, activeChat }) {
             <div className={`asideInner  d-flex flex-column vh-100 position-relative ${asideShow ? 'show' : 'hide'} `}>
             {/* <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Launch demo modal</button> */}
 
-                <div className="asideHeader d-flex align-items-center justify-content-between position-sticky top-0" data-bs-toggle="modal" data-bs-target="#editUserProfile">
+                <div className="asideHeader d-flex align-items-center justify-content-between position-sticky top-0">
                     <h1 className='m-0'>Chatty 𝝅</h1>
-                    <div className="userProfile" >
+                    <div className="userProfile"  data-bs-toggle="modal" data-bs-target="#editUserProfile">
                         <i className="fa-solid fa-pen pen"></i>
                         <img src="./image/dummyProfile.png" alt="" />
                     </div>

@@ -190,42 +190,36 @@ export const verifyEmail = async (req: any, res: any) => {
 
 export const editUserProfile = async (req: any, res: any) => {
   try {
-    console.log("test edit data ")
-    console.log(req.body)
-    console.log(req.file)
-    const { userId, DOB, userName } = req.body;
+
+    const {userId} = req.body;
     if (!userId) {
       return res.status(400).json({ message: "user data not found " });
     }
     const userData = await MQ.findById<UserIN>(MODEL.USER_MODEL, userId);
     if (!userData) {
-      return res.status(400).json({ message: "user data not found " });
+      return res.status(400).json({errors:[{ msg: "user data not found " ,path:"root"}]});
     }
     if (req.file) {
-      console.log('req.file', req.file)
       if (userData.profilePicture && userData.profilePictureId) {
         await  deleteFile(userData.profilePictureId);
       }
-      
       const fileId = await uploadFile(req.file.filename, req.file.path, DRIVE_FOLDER.PROFILE);
       if (!fileId) {
-        return res.status(500).json({ message: "Some thing want wrong, pleas try after some time." });
+        return res.status(500).json({errors:[{ msg: "Some thing want wrong, pleas try after some time.",path:"root" }]});
       }
       const profilePictureURL = `https://drive.google.com/file/d/${fileId}/view?usp=sharing`;
-      console.log('profilePictureURL', profilePictureURL)
        req.body.profilePicture = profilePictureURL;
        req.body.profilePictureId = fileId;
     }
-    const updatedUser = await MQ.findByIdAndUpdate<UserIN>(MODEL.USER_MODEL, userId, req.body);
-    console.log('updatedUser', updatedUser)
-    res.status(200).json({ message: 'user profile update successfully' });
+    const updatedUser = await MQ.findByIdAndUpdate<UserIN>(MODEL.USER_MODEL, userId, req.body,true);
+    res.status(200).json({ message: 'user profile update successfully', user:updatedUser});
   } catch (error) {
     logger.error(`CATCH ERROR IN editUserProfile ::: ${error}`)
     console.log('error', error)
   }
 }
 
-export const searchUser = async (req:Request, res: any) => {
+  export const searchUser = async (req:Request, res: any) => {
   try {
     const search = req.params.search;
     const users = await MQ.find<UserIN[]>(MODEL.USER_MODEL,

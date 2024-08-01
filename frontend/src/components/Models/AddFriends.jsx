@@ -46,7 +46,7 @@ function AddFriends({ id, modalClass = '' }) {
 
 
     const SendFollowRequest = (id) => {
-        // socket.emit(EVENT_NAME, { receiverId: id, senderId: user._id });
+        socket.emit(EVENT_NAME, { receiverId: id, senderId: user._id });
         console.log("send request ", id)
     }
 

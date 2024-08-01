@@ -50,6 +50,13 @@ body{
 .validationError{
     color: red;
     font-size: 14px;
+
+}
+.rootErrorValidation{
+    background: rgba(111, 1, 1, 0.112);
+    border: 1.5px solid red;
+    color: rgb(249, 190, 190);
+    text-transform: capitalize;
 }
 .passwordIcon{
     background-color: transparent;
@@ -219,4 +226,3 @@ body{
       transform: translate(-10px, -10px);
     }
   }
-      

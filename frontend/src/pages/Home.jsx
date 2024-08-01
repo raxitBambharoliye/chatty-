@@ -15,24 +15,25 @@ function Home() {
   let [asideShow, setAsideShow] = useState(true);
   let [activeChat, setActiveChat] = useState(-1);
   const contactArray = new Array(20).fill(1);
+  const [chatHeaderMenu, setChatHeaderMenu] = useState(false)
   const dispatch= useDispatch()
   useEffect(() => {
-    const socketConnection = io(import.meta.env.VITE_BASE_URL, {
-      auth:{token:"test check"}
+    const socket = io(import.meta.env.VITE_BASE_URL, {
+      auth: { token: "test check" }
     });
-    socketConnection.on("test", (data) => {
+    socket.on("test", (data) => {
       console.log(data);
     })
-    dispatch(setSocket(socketConnection));
+    dispatch(setSocket(socket));
     return () => {
-      socketConnection.disconnect();
+      socket.disconnect();
     }
     // (async() => {
     //   socket.on(EVENT_NAME.FOLLOW,followHandler)
     // })()
   }, [])
 
-  
+
   const followHandler = (data) => {
     console.log(data)
 
@@ -57,10 +58,18 @@ function Home() {
                 <p >enjoy the life</p>
               </div>
             </div>
-            <div className="menu">
-              <button className="menu">
+            <div className="menu position-relative">
+              <button className="menuButton" onClick={(e)=>{setChatHeaderMenu(!chatHeaderMenu)}}>
                 <i className="fa-solid fa-ellipsis-vertical"></i>
               </button>
+              <div className="chatHeaderUserMenu">
+                <ul className={`m-0 p-0 ${chatHeaderMenu && "show"}`}>
+                  <li className='m-0'>block</li>
+                  <li className='m-0'>mute</li>
+                  <li className='m-0'>un follow</li>
+                  {/* <li>report</li> */}
+                </ul>
+              </div>
             </div>
           </div>
           {/* chat show */}
