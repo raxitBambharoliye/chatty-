@@ -9,6 +9,7 @@ export const eventHandler = (socket:any) => {
         switch (eventName) {
             case "test":
                 logger.info(`testing even received ${JSON.stringify(data)} ` );
+                socket.emit("test",{test:"backendTest check"})
                 break;
             case EVENT_NAME.FOLLOW:
                 followRequest(socket,data)

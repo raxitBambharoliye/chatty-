@@ -9,7 +9,6 @@ import { Input } from '../Form'
 function Aside({ asideShow, contactArray, activeChat }) {
     
     const user = useSelector(state => state.userData.user);
-    console.log('user', user)
     const userProfile = useState(null)    
     const imageUrl = "https://drive.google.com/uc?id=1ovnHXwAgw9ujNp2NPAoBSTpJDotZetOB";
     const [friends, setFriends] = useState([]);

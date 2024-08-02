@@ -1,27 +1,32 @@
-import { createContext, useContext, useEffect, useState } from 'react';
-import io from 'socket.io-client';
+import { createContext, useEffect, useState } from "react";
+import { getSocket } from ".";
 
-const SocketContext = createContext();
+export const SocketContext = createContext();
 
-export const useSocket = () => useContext(SocketContext);
-
-const SocketProvider = ({ children }) => {
-  const [socket, setSocket] = useState(null);
-
-  useEffect(() => {
-    const newSocket = io(import.meta.env.VITE_BASE_URL, { auth: { token: "test check" } });
-    setSocket(newSocket);
-
-    newSocket.on('test', (data) => {
-      console.log(data);
-    });
-
-    return () => newSocket.disconnect();
-  }, []);
-
+export const SocketProvider= ({children}) => {
+  const [socket,setSocket] = useState(null);
+  const [user,setUser]=useState("test")
+  useEffect(()=>{
+    const socketIns= getSocket();
+    setSocket(socketIns)
+  },[])
+  useEffect(()=>{
+    if(!socket){
+      return;
+    }
+    // socket.on('test',(data)=>{
+    //   console.log(data)
+    // })
+    // socket.emit("test",{test:"check test"})
+    return()=>{
+      if(socket){
+        socket.disconnect();
+      }
+    }
+  },[socket])
   return (
-    <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>
-  );
-};
-
-export default SocketProvider;
+    <SocketContext.Provider value={{socket,user}}>
+      {children}
+    </SocketContext.Provider>
+  )
+}

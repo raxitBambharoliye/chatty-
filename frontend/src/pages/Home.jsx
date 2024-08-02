@@ -1,14 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import '../assets/css/home.css'
 import { Input } from '../components/Form'
 import SendMessage from '../components/Message/SendMessage';
 import ReceiveMessage from '../components/Message/ReceiveMessage';
 import { DatePart } from '../components/Message';
 import { Aside } from '../components/Home';
-import { io } from 'socket.io-client';
-import { useDispatch } from 'react-redux';
-import { setSocket } from '../reducers/userReducer';
-
+import { SocketContext } from '../socket/SocketProvider'
 
 
 function Home() {
@@ -16,22 +13,17 @@ function Home() {
   let [activeChat, setActiveChat] = useState(-1);
   const contactArray = new Array(20).fill(1);
   const [chatHeaderMenu, setChatHeaderMenu] = useState(false)
-  const dispatch= useDispatch()
+  const { socket } = useContext(SocketContext)
   useEffect(() => {
-    const socket = io(import.meta.env.VITE_BASE_URL, {
-      auth: { token: "test check" }
-    });
-    socket.on("test", (data) => {
-      console.log(data);
-    })
-    dispatch(setSocket(socket));
-    return () => {
-      socket.disconnect();
+    if (!socket) {
+      return;
     }
-    // (async() => {
-    //   socket.on(EVENT_NAME.FOLLOW,followHandler)
-    // })()
-  }, [])
+    socket.emit("test", { test: "check test" })
+    socket.on('test', (data) => {
+      console.log(data)
+    })
+
+  }, [socket])
 
 
   const followHandler = (data) => {
@@ -59,7 +51,7 @@ function Home() {
               </div>
             </div>
             <div className="menu position-relative">
-              <button className="menuButton" onClick={(e)=>{setChatHeaderMenu(!chatHeaderMenu)}}>
+              <button className="menuButton" onClick={(e) => { setChatHeaderMenu(!chatHeaderMenu) }}>
                 <i className="fa-solid fa-ellipsis-vertical"></i>
               </button>
               <div className="chatHeaderUserMenu">
@@ -97,6 +89,7 @@ function Home() {
         </div>
       </div>
     </div>
+
   )
 }
 

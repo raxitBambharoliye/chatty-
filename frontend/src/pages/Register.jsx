@@ -42,7 +42,6 @@ function Register() {
             }
         } catch (error) {
             setLoading(false)
-            console.log('error.response.data.errors', error.response.data.errors.length)
             if (error.response.status === 400 && error.response.data.errors) {
                 for (let i = 0; i < error.response.data.errors.length; i++) {
                     let element = error.response.data.errors[i];

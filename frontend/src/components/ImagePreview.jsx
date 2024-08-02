@@ -7,8 +7,6 @@ function ImagePreview({
     const id = useId();
     const [image, setImage] = useState(src);
     const onChangeHandler = (e) => {
-        console.log("hello")
-        console.log(e.target.files[0])
         setImage(URL.createObjectURL(e.target.files[0]))
     }
     return (

@@ -21,8 +21,6 @@ function EmailVerify() {
       setSendingMail(true)
       const response = await AxiosCLI.post(APP_URL.SEND_VERIFICATION_MAIL, tempUserData);
       setSendingMail(false);
-      console.log('response', response)
-      debugger;
     }
   }
   return (

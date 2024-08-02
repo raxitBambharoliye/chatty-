@@ -16,9 +16,7 @@ function Login() {
 
     //NOTE - check for logged in or not 
     const token = getCookieData(COOKIE_KEY.TOKEN, true);
-    console.log('token', token)
     const userData = getCookieData(COOKIE_KEY.USER);
-    console.log('userData', userData)
     useEffect(() => {
         if (token && userData) {
             navigate(APP_URL.FE_HOME);
@@ -39,12 +37,9 @@ function Login() {
 
     const logInHandler = async (data) => {
         try {
-            console.log('data', data)
             const response = await AxiosCLI.post(APP_URL.LOGIN, data);
-            console.log('response', response)
             if (response.status === 200) {
                 if (response.data.token && response.data.token != "") {
-                    console.log("set token works")
                     setDataInCookie(COOKIE_KEY.TOKEN, response.data.token);
                 }
                 if (response.data.userData) {
