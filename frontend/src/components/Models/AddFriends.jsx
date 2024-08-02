@@ -1,12 +1,14 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { Button, Input } from '../Form'
 import { AxiosCLI } from '../../axios'
 import '../../assets/css/modal.css'
 import { APP_URL, EVENT_NAME } from '../../constant';
 import _ from 'lodash';
 import { useSelector } from 'react-redux';
+import { SocketContext } from '../../socket/SocketProvider';
 
 function AddFriends({ id, modalClass = '' }) {
+    const { sendRequest } = useContext(SocketContext);
 
     const [isLoading, setLoader] = useState(false);
     const [searchResult, setSearchResult] = useState([]);
@@ -43,10 +45,15 @@ function AddFriends({ id, modalClass = '' }) {
       useEffect(() => {
         debouncedSearch(search);
       }, [search, debouncedSearch]);
-
-
     const SendFollowRequest = (id) => {
-        socket.emit(EVENT_NAME, { receiverId: id, senderId: user._id });
+        let sendData = {
+            eventName: EVENT_NAME.FOLLOW,
+            data: {
+                receiverId: id,
+                senderId: user._id
+            }
+        }
+        sendRequest(sendData );
         console.log("send request ", id)
     }
 

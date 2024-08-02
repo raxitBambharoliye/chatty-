@@ -50,16 +50,18 @@ const userLogIn = async (req: any, res: any) => {
         message: "invalid email address or password",
       });
     }
-    await MQ.findByIdAndUpdate(MODEL.USER_MODEL, user.id, { isOnLine: true });
     let secret = process.env.JWT_SECRET || "";
     let token = jwt.sign({ userId: user.id, email: user.email }, secret, {
       expiresIn: 60 * 60 * 24,
     });
+    
     if (token) {
+      const notifications =await MQ.findWithPopulate(MODEL.NOTIFICATION_MODEL, { userId: user.id }, "userId","userName profilePicture");
       // delete user.password;
       return res.status(200).json({
         message: "user logged in successfully",
         userData: user,
+        notifications,
         token,
       });
     }
@@ -189,7 +191,7 @@ export const verifyEmail = async (req: any, res: any) => {
 }
 
 export const editUserProfile = async (req: any, res: any) => {
-  try {
+  try { 
 
     const {userId} = req.body;
     if (!userId) {
@@ -231,11 +233,6 @@ export const editUserProfile = async (req: any, res: any) => {
     console.log('error', error)
   }
 }
-
-
-
-
-
 
 export const generateUser = async ()=>{
   try {

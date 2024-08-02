@@ -52,6 +52,10 @@ const userSchema = new Schema({
         default: [],
         required:true,
     },
+    socketId: {
+        type: String,
+        default: null,
+    },
     verifiedEmail: { type: Boolean, default: false },
     profilePictureId: { type: String, }
 }, { timestamps: true })

@@ -9,6 +9,7 @@ import { AxiosCLI } from '../axios';
 import { getCookieData, setDataInCookie } from '../common';
 import { useDispatch, useSelector, } from 'react-redux';
 import { setUser } from '../reducers/userReducer';
+import {setNotification} from '../reducers/chatReducer'
 function Login() {
 
     let navigate = useNavigate();
@@ -45,6 +46,8 @@ function Login() {
                 if (response.data.userData) {
                     setDataInCookie(COOKIE_KEY.USER, response.data.userData);
                     dispatch(setUser(response.data.userData));
+                    setDataInCookie(COOKIE_KEY.NOTIFICATIONS,response.data.notifications)
+                    dispatch(setNotification(response.data.notifications))
                 }
                 navigate(APP_URL.FE_HOME)
             }

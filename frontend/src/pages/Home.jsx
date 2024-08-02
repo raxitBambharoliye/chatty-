@@ -13,23 +13,7 @@ function Home() {
   let [activeChat, setActiveChat] = useState(-1);
   const contactArray = new Array(20).fill(1);
   const [chatHeaderMenu, setChatHeaderMenu] = useState(false)
-  const { socket } = useContext(SocketContext)
-  useEffect(() => {
-    if (!socket) {
-      return;
-    }
-    socket.emit("test", { test: "check test" })
-    socket.on('test', (data) => {
-      console.log(data)
-    })
 
-  }, [socket])
-
-
-  const followHandler = (data) => {
-    console.log(data)
-
-  }
   return (
     <div className='w-100 vh-100 homeBackground'>
       <div className="d-flex  gx-0 align-items-center">

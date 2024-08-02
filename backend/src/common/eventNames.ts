@@ -1,3 +1,5 @@
 export default Object.freeze({
-    FOLLOW:'FOLLOW',
+    FOLLOW: 'FOLLOW',
+    ONLINE_USER: 'ONLINE_USER',
+    NOTIFICATION:'NOTIFICATION'
 })

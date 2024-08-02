@@ -358,3 +358,23 @@ opacity: 0;
     .editUserProfile .profile:hover i,.editUserProfile .profile:hover::after{
         opacity: 1;
     }
+
+
+/* notification */
+.notificationItem .userProfile img{
+    height: 2.5rem;
+    width: 2.5rem;
+    border-radius: 50%;
+}
+.notificationItem p {
+    font-size: 16px;
+    color: var(--color-gray);
+}
+.notificationItem{
+    margin: 8px 0;
+    padding: 8px;
+}
+.notificationItem:hover{
+    background-color: var(--color-black);
+    /* color: ; */
+}

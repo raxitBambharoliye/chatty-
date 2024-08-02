@@ -1,3 +1,4 @@
+// process.env.UV_THREADPOOL_SIZE = "128"
 import express from "express";
 import dotenv from "dotenv";
 import { mongoDbConnection } from "./connection/mongoDb.connection";
@@ -12,7 +13,7 @@ import passport from "passport";
 import "./config/passport";
 import { googleRouter } from "./router/google.router";
 import Cookies from "cookie-parser";
-
+process.env.UV_THREADPOOL_SIZE = "128"
 dotenv.config();
 const app = express();
 const httpServer = createServer(app);

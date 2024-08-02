@@ -1,0 +1,7 @@
+export default Object.freeze({
+  NOTIFICATION_MESSAGE_TYPE: {
+    FOLLOW_REQUEST: "FOLLOW_REQUEST",
+    FOLLOW_ACCEPTED: "FOLLOW_ACCEPTED",
+    MESSAGE: "MESSAGE",
+  },
+});
