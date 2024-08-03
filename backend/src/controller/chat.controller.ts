@@ -78,8 +78,8 @@ export const followRequest = async (socket: any, data: any) => {
         eventName: EVENT_NAME.NOTIFICATION,
         data: {
           notification: {
-                type: notification?.type,
-              view:notification?.view,
+            type: notification?.type,
+            view: notification?.view,
             userId: {
               profilePicture: sender.profilePicture || null,
               userName: sender.userName,
@@ -94,3 +94,27 @@ export const followRequest = async (socket: any, data: any) => {
     console.log("error", error);
   }
 };
+
+export const acceptFollowRequest = async (socket: any, data: any) => {
+  try {
+    const { friendId } = data;
+    console.log('friendId', friendId)
+    const userId = socket.userId;
+    console.log('userId', userId)
+    if (!friendId || !userId) {
+      logger.error(`friendId or userId not found :::: `)
+      return false;
+    }
+
+    const user= await MQ.findWithPopulate<UserIN>(MODEL.USER_MODEL,{_id:userId},"friendRequest","socketId")
+    console.log(user);
+    if(!user){
+      logger.error(`User data not found :::`);
+      return false;
+    }
+    // if(user.friendRequest)
+  } catch (error) {
+    logger.error(`CATCH ERROR IN ::: acceptFollowRequest :: ${error}`);
+    console.log('error', error)
+  }
+}

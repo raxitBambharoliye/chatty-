@@ -57,6 +57,7 @@ const userLogIn = async (req: any, res: any) => {
     
     if (token) {
       const notifications =await MQ.findWithPopulate(MODEL.NOTIFICATION_MODEL, { userId: user.id }, "userId","userName profilePicture");
+      console.log('notifications', notifications)
       // delete user.password;
       return res.status(200).json({
         message: "user logged in successfully",

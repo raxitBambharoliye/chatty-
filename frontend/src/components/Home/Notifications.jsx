@@ -1,15 +1,23 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
-
+import {SocketContext} from '../../socket/SocketProvider'
+import { EVENT_NAME } from '../../constant';
 function Notifications() {
   const notification = useSelector((state) => state.chat.notification);
   const [userNotifications, setUserNotifications] = useState(null)
+  const {sendRequest}=useContext(SocketContext)
+
+
   useEffect(() => {
     if (notification && notification.length > 0) {
+      console.log('notification', notification)
       setUserNotifications(notification)
     }
   }, [notification]);
-
+  const acceptFriendRequest= (id)=>{
+    sendRequest({eventName:EVENT_NAME.ACCEPT_FOLLOW_REQUEST,data:{friendId:id}});
+    console.log("accept running success fully ",id)
+  }
   return (
     <div className='h-100 '>
       {(!userNotifications || userNotifications.length <= 0) &&
@@ -26,7 +34,7 @@ function Notifications() {
             <p className='mb-0'>{element.type=="FOLLOW_REQUEST" ?`sent you a friend request.` :""}</p>
           </div>
           <div className="acceptButton">
-            <button className='btn btn-primary btn-sm'>Accept</button>
+            <button className='btn btn-primary btn-sm' onClick={(e)=>{acceptFriendRequest(element._id)}}> Accept</button>
           </div>
         </div>
       ))
