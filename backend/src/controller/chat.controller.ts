@@ -17,7 +17,35 @@ export const onlineUser = async (socket: any, data: any) => {
     if (!user) {
       return;
     }
+
     socket.userId = user?.id;
+
+    const notifications = await MQ.findWithPopulate(
+      MODEL.NOTIFICATION_MODEL,
+      { userId: user.id },
+      "senderId",
+      "userName profilePicture"
+    );
+    const userWithFriends = await MQ.findWithPopulate<UserIN[]>(
+      MODEL.USER_MODEL,
+      { _id: user.id },
+      "friends",
+      "userName profilePicture tagLine isOnLine "
+    );
+    if (!userWithFriends) {
+      return;
+    }
+
+    // delete user.password;
+    const onLineUserEventData = {
+      eventName: EVENT_NAME.ONLINE_USER,
+      data: {
+        notifications,
+        friends: userWithFriends[0].friends,
+      },
+    };
+
+    await sendToSocket(socket.id,onLineUserEventData);
   } catch (error) {
     logger.error(`CATCH ERROR IN : onlineUser ::: ${error}`);
     console.log("error", error);
@@ -56,7 +84,8 @@ export const followRequest = async (socket: any, data: any) => {
 
     const notificationInsertData = {
       type: CONFIG.NOTIFICATION_MESSAGE_TYPE.FOLLOW_REQUEST,
-      userId: sender.id,
+      userId: receiver.id,
+      senderId: sender.id,
     };
     const notification = await MQ.insertOne<NotificationIN>(
       MODEL.NOTIFICATION_MODEL,
@@ -97,24 +126,118 @@ export const followRequest = async (socket: any, data: any) => {
 
 export const acceptFollowRequest = async (socket: any, data: any) => {
   try {
-    const { friendId } = data;
-    console.log('friendId', friendId)
+    const { friendId, notificationId } = data;
+    console.log("friendId", friendId);
     const userId = socket.userId;
-    console.log('userId', userId)
+    console.log("userId", userId);
     if (!friendId || !userId) {
-      logger.error(`friendId or userId not found :::: `)
+      logger.error(`friendId or userId not found :::: `);
       return false;
     }
 
-    const user= await MQ.findWithPopulate<UserIN>(MODEL.USER_MODEL,{_id:userId},"friendRequest","socketId")
-    console.log(user);
-    if(!user){
+    let users = await MQ.findWithPopulate<UserIN[]>(
+      MODEL.USER_MODEL,
+      { _id: userId },
+      "friendRequest",
+      "socketId"
+    );
+    const friend = await MQ.find<UserIN[]>(MODEL.USER_MODEL, { _id: friendId });
+    console.log("friend", friend);
+    if (!users || users.length < 0 || !friend || friend.length < 0) {
       logger.error(`User data not found :::`);
       return false;
+    }
+    let user = users[0];
+    const checkFriend = user.friendRequest.findIndex(
+      (element: any) => element._id == friendId
+    );
+    if (checkFriend < 0) {
+      return false;
+    }
+    const updatedUser = await MQ.findByIdAndUpdate<UserIN>(
+      MODEL.USER_MODEL,
+      user.id,
+      {
+        $push: { friends: friend[0].id },
+        $pull: { friendRequest: friend[0].id },
+      },
+      true
+    );
+    const updateFriend = await MQ.findByIdAndUpdate<UserIN>(
+      MODEL.USER_MODEL,
+      friend[0].id,
+      { $push: { friends: user.id }, $pull: { sendedRequest: user.id } },
+      true
+    );
+    const updateNotification = await MQ.findByIdAndUpdate<NotificationIN>(
+      MODEL.NOTIFICATION_MODEL,
+      notificationId,
+      { type: CONFIG.NOTIFICATION_MESSAGE_TYPE.FOLLOW_ACCEPTED }
+    );
+
+    const acceptEventData = {
+      eventName: EVENT_NAME.ACCEPT_FOLLOW_REQUEST,
+      data: {
+        newFriend: {
+          _id: friendId,
+          userName: friend[0].userName,
+          profilePicture: friend[0].profilePicture,
+          tagLine: friend[0].tagLine,
+        },
+      },
+    };
+    await sendToSocket(socket.id, acceptEventData);
+    const notificationInsertData = {
+      type: CONFIG.NOTIFICATION_MESSAGE_TYPE.FOLLOW_ACCEPTED,
+      userId: friend[0].id,
+      senderId: user.id,
+    };
+    const notification = await MQ.insertOne<NotificationIN>(
+      MODEL.NOTIFICATION_MODEL,
+      notificationInsertData
+    );
+    if (!notification) {
+      throw new Error("notification data not added ");
+    }
+
+    // add notification
+    if (updateFriend && updateFriend.socketId) {
+      const sendNotificationData = {
+        eventname: EVENT_NAME.NOTIFICATION,
+        data: {
+          notification: {
+            type: notification?.type,
+            view: notification?.view,
+            userId: {
+              profilePicture: user.profilePicture || null,
+              userName: user.userName,
+            },
+          },
+        },
+      };
+      sendToSocket(updateFriend.socketId, sendNotificationData);
     }
     // if(user.friendRequest)
   } catch (error) {
     logger.error(`CATCH ERROR IN ::: acceptFollowRequest :: ${error}`);
-    console.log('error', error)
+    console.log("error", error);
   }
-}
+};
+
+export const disconnectHandler = async (userId: any) => {
+  try {
+    if (!userId) {
+      return;
+    }
+    const user = await MQ.findByIdAndUpdate<UserIN>(MODEL.USER_MODEL, userId, {
+      isOnLine: false,
+      socketId: null,
+    });
+    if (!user) {
+      return;
+    }
+  } catch (error) {
+    logger.error(`CATCH ERROR IN :: :: disconnectHandler :: ${error}`);
+    console.log("error", error);
+  }
+};

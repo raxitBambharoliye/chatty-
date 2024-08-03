@@ -7,7 +7,8 @@ import { useSelector } from 'react-redux'
 import { AddFriends } from '../../components/Models/index'
 import { Input } from '../Form'
 import Notifications from './Notifications'
-function Aside({ asideShow, contactArray, activeChat }) {
+import Friend from './Friend'
+function Aside({ asideShow }) {
     const [asideContext, setAsideContext] = useState("FRIENDS");
    
 
@@ -26,11 +27,7 @@ function Aside({ asideShow, contactArray, activeChat }) {
                     </div>
                 </div>
                 <div className="asideContacts flex-grow-1 overflow-auto">
-                    {asideContext === 'FRIENDS' && (<>
-                        <Input inputClass='inputBlack mx-2' placeholder="Search User Name ... "></Input>
-                        {contactArray.map((contact, index) => (
-                            <AsideContactsItem userName='Radhe Patel' tagLine='enjoy your life' index={index} activeChat={activeChat} key={index} onClick={(e) => { setActiveChat(index) }} />
-                        ))}</>)}
+                    {asideContext === 'FRIENDS' && (<Friend/>)}
                     {asideContext === 'NOTIFICATION' && (<>
                     <Notifications/>
                     </>)}

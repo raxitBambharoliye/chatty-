@@ -14,6 +14,11 @@ const notificationSchema = new Schema(
             ref: MODEL.USER_MODEL,
             required:true
         },
+        senderId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: MODEL.USER_MODEL,
+            required:true
+        },
         view: {
             type: Boolean,
             default: false

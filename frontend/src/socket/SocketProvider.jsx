@@ -4,7 +4,7 @@ import { EVENT_NAME } from '../constant/'
 import { useDispatch, useSelector } from "react-redux";
 import { setDataInCookie } from "../common";
 import { setUser } from "../reducers/userReducer";
-import { pushNotification } from "../reducers/chatReducer";
+import { pushFriend, pushNotification } from "../reducers/chatReducer";
 export const SocketContext = createContext();
 
 export const SocketProvider = ({ children }) => {
@@ -37,6 +37,13 @@ export const SocketProvider = ({ children }) => {
       dispatch(pushNotification(data.notification))
     })
 
+    socket.on(EVENT_NAME.ACCEPT_FOLLOW_REQUEST, (data) => {
+      /* {"newFriend":{"_id":"669de4006bda9f696cc6aae7","userName":"testCheck1","profilePicture":"https://drive.google.com/file/d/1v3pxXcaqbZ7BqG_FQOEpRrxuWIBX8nXT/view?usp=sharing","tagLine":"I am using chatty PIE 😎😎😎"}}*/
+      console.log(data);
+      if (data.newFriend) {
+        dispatch(pushFriend(data.newFriend))
+      }
+    })
     return () => {
       if (socket) {
         socket.disconnect();

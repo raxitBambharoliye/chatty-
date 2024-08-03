@@ -15,16 +15,17 @@ export interface UserIN {
   verifiedEmail: Boolean;
   password: string;
   profilePictureId: string;
-  sendedRequest:mongoose.Schema.Types.ObjectId;
-  friendRequest: mongoose.Schema.Types.ObjectId;
+  sendedRequest: mongoose.Schema.Types.ObjectId[];
+  friendRequest: mongoose.Schema.Types.ObjectId[];
+  friends: mongoose.Schema.Types.ObjectId[];
   isOnLine: Boolean;
   socketId: string;
 }
 
-
-export interface NotificationIN{
+export interface NotificationIN {
   _id: any;
   userId: mongoose.Schema.Types.ObjectId | UserIN;
+  senderId: mongoose.Schema.Types.ObjectId | UserIN;
   type: string;
-  view:Boolean
+  view: Boolean;
 }

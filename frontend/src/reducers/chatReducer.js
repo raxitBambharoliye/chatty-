@@ -7,7 +7,10 @@ const chatReducer = createSlice({
     initialState: { notification: null, friends: null, messages: null },
     reducers: {
         setNotification: setNotificationFun,
-        pushNotification: pushNotificationFun
+        pushNotification: pushNotificationFun,
+        setFriend: setFriendFun,
+        pushFriend: pushFriendFun,
+        changeNotificationStatus: changeNotificationStatusFun
     }
 })
 function setNotificationFun (state, action){
@@ -22,5 +25,24 @@ function pushNotificationFun(state, action) {
     }
 }
 
-export const { setNotification ,pushNotification} = chatReducer.actions;
+function setFriendFun(state, action) {
+    state.friends= action.payload;
+}
+function pushFriendFun(state, action) {
+    if (state.friends && state.friends.length > 0) {
+        state.friends.push(action.payload);
+    }
+    else {
+        state.friends = [action.payload];
+    }
+}
+function changeNotificationStatusFun(state, action) {
+    const { id, status } = action.payload;
+    const notification = state.notification;
+    const notificationIndex = notification.findIndex((element) => element._id == id);
+    if (notificationIndex >= 0) {
+        state.notification[notificationIndex].type = status;
+    }
+}
+export const { setNotification ,pushNotification,setFriend,pushFriend,changeNotificationStatus} = chatReducer.actions;
 export default chatReducer.reducer;

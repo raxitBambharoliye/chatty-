@@ -45,16 +45,24 @@ const userSchema = new Schema({
     friendRequest: {
         type: [{type:mongoose.Schema.Types.ObjectId,ref:MODEL.USER_MODEL}],
         default: [],
+        ref:MODEL.USER_MODEL,
         required: true,
     },
     sendedRequest: {
         type: [{ type: mongoose.Schema.Types.ObjectId, ref: MODEL.USER_MODEL }],
         default: [],
+        ref:MODEL.USER_MODEL,
         required:true,
     },
     socketId: {
         type: String,
         default: null,
+    },
+    friends: {
+        type: [{type:mongoose.Schema.Types.ObjectId,ref:MODEL.USER_MODEL}],
+        ref:MODEL.USER_MODEL,
+        default: [],
+        required: true,
     },
     verifiedEmail: { type: Boolean, default: false },
     profilePictureId: { type: String, }
