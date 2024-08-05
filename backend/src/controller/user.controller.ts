@@ -120,9 +120,6 @@ const loginWithGoogleHandler = async (req: any, res: any) => {
   }
 };
 
-
-
-
 export const sendVerificationMail =async (req: any, res: any) => {
   try {
     const { email, password, userName, DOB } = req.body;

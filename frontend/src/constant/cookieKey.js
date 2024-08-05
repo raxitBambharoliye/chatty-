@@ -3,5 +3,6 @@ export default Object.freeze({
     USER:'userData',
     TEM_USER: 'temUserData',
     NOTIFICATIONS:'notifications',
-    FRIENDS:'friends'
+    FRIENDS: 'friends',
+    ACTIVE_USER_CHAT:'activeUserChat'
 })

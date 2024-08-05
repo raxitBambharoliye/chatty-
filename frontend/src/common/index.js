@@ -1,7 +1,8 @@
 import crypto from 'crypto-js'
 import cookies from 'js-cookies'
+import { COOKIE_KEY } from '../constant';
 
-const setDataInCookie = (key,data) => {
+const setDataInCookie = (key, data) => {
     const secret = import.meta.env.VITE_SECRET_KEY;
     if (typeof data != 'string') {
         data = JSON.stringify(data);
@@ -12,7 +13,7 @@ const setDataInCookie = (key,data) => {
     }
 }
 
-const getCookieData = (key,string=false) => {
+const getCookieData = (key, string = false) => {
     const secret = import.meta.env.VITE_SECRET_KEY;
     const encryptedToken = cookies.getItem(key);
     if (encryptedToken) {
@@ -28,4 +29,10 @@ const getCookieData = (key,string=false) => {
 const removeCookieData = (key) => {
     cookies.removeItem(key);
 }
-export {setDataInCookie,getCookieData,removeCookieData}
+const clearAllCookiesData = () => {
+    const allCookies = COOKIE_KEY; 
+    Object.values(allCookies).forEach((cookieName) => {
+        cookies.removeItem(cookieName);
+    });
+}
+export { setDataInCookie, getCookieData, removeCookieData, clearAllCookiesData }

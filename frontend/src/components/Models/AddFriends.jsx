@@ -81,7 +81,7 @@ function AddFriends({ id, modalClass = '' }) {
                                     {(!isLoading && searchResult.length == 0) && (<>
                                     <h1>No data found</h1></>)}
                                     {!isLoading && searchResult.map((element,index) => (
-                                        <div className="searchResultItem w-100" key={index}>
+                                        <div className="searchResultItem w-100" key={`${index}AddFriendITem`}>
                                             <div className="d-flex align-items-center">
                                                 <div className="userProfile me-4">
                                                     <img src="./image/dummyProfile.png" alt="" />

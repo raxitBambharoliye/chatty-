@@ -13,6 +13,7 @@ import passport from "passport";
 import "./config/passport";
 import { googleRouter } from "./router/google.router";
 import Cookies from "cookie-parser";
+import { MessageModel } from "./model";
 process.env.UV_THREADPOOL_SIZE = "128"
 dotenv.config();
 const app = express();
@@ -60,6 +61,48 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.get("/", async (req: any, res: any) => {
+//   const senderId = "669de4006bda9f696cc6aae7";
+//   const receiverId ="66a66b8d31b9fcf4e9c40d6f"
+//   const date =await MessageModel.aggregate([
+//     // Match messages by senderId and receiverId
+//     { $match: { senderId, receiverId } },
+//     // Group by date (without time)
+//     {
+//         $group: {
+//             _id: {
+//                 year: { $year: "$createdAt" },
+//                 month: { $month: "$createdAt" },
+//                 day: { $dayOfMonth: "$createdAt" }
+//             },
+//             messages: { $push: "$$ROOT" }
+//         }
+//     },
+//     // Sort by date
+//     { $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 } }
+// ]);
+
+  /* 
+  
+  
+   await Message.aggregate([
+            // Match messages by senderId and receiverId
+            { $match: { senderId, receiverId } },
+            // Group by date (without time)
+            {
+                $group: {
+                    _id: {
+                        year: { $year: "$date" },
+                        month: { $month: "$date" },
+                        day: { $dayOfMonth: "$date" }
+                    },
+                    messages: { $push: "$$ROOT" }
+                }
+            },
+            // Sort by date
+            { $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 } }
+        ]);
+  */
+  // console.log('date', JSON.stringify(date))
   res.status(200).send({message: "server api call test successfully"});
 });
 app.use("/", router);

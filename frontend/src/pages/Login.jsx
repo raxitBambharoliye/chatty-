@@ -6,10 +6,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form'
 import { APP_URL, COOKIE_KEY } from '../constant';
 import { AxiosCLI } from '../axios';
-import { getCookieData, setDataInCookie } from '../common';
+import { clearAllCookiesData, getCookieData, setDataInCookie } from '../common';
 import { useDispatch, useSelector, } from 'react-redux';
 import { setUser } from '../reducers/userReducer';
-import {setNotification} from '../reducers/chatReducer'
+import { setNotification } from '../reducers/chatReducer'
 function Login() {
 
     let navigate = useNavigate();
@@ -40,13 +40,14 @@ function Login() {
         try {
             const response = await AxiosCLI.post(APP_URL.LOGIN, data);
             if (response.status === 200) {
+                clearAllCookiesData()
                 if (response.data.token && response.data.token != "") {
                     setDataInCookie(COOKIE_KEY.TOKEN, response.data.token);
                 }
                 if (response.data.userData) {
                     setDataInCookie(COOKIE_KEY.USER, response.data.userData);
                     dispatch(setUser(response.data.userData));
-                    setDataInCookie(COOKIE_KEY.NOTIFICATIONS,response.data.notifications)
+                    setDataInCookie(COOKIE_KEY.NOTIFICATIONS, response.data.notifications)
                     dispatch(setNotification(response.data.notifications))
                 }
                 navigate(APP_URL.FE_HOME)

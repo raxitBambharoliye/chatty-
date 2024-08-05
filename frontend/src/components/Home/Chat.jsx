@@ -1,30 +1,43 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { DatePart, ReceiveMessage, SendMessage } from '../Message';
 import { Input } from '../Form';
 import { useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
-import {SocketContext} from '../../socket/SocketProvider'
+import { SocketContext } from '../../socket/SocketProvider'
 import { EVENT_NAME } from '../../constant';
 function Chat() {
     const [chatHeaderMenu, setChatHeaderMenu] = useState(false)
     const activeUserChat = useSelector((state) => state.chat.activeUserChat);
-    const user= useSelector((state)=>state.userData.activeUserChat)
+    const user = useSelector((state) => state.userData.user)
+    const messages = useSelector((state) => state.chat.messages)
     console.log('activeUserChat', activeUserChat)
-    const {register,handleSubmit}=useForm();
-    const {sendRequest}=useContext(SocketContext);
-    const sendMessage= (data)=>{
+    const { register, handleSubmit, setValue } = useForm();
+    const { sendRequest } = useContext(SocketContext);
+    const sendMessage = (data) => {
         console.log(data)
-        if(activeUserChat && activeUserChat._id && data && data.message.length >=0){
-            sendRequest({eventName:EVENT_NAME.MESSAGE,data:{receiverId:activeUserChat._id,message:data.message}});
+        if (activeUserChat && activeUserChat._id && data && data.message.length >= 0) {
+            sendRequest({ eventName: EVENT_NAME.MESSAGE, data: { receiverId: activeUserChat._id, message: data.message } });
+            setValue("message", "");
         }
     }
+
+
+
+    const getChatTime = (dateStr) => {
+        const date = new Date(dateStr);
+        let op = { hour: 'numeric', minute: 'numeric', hour12: true }
+        const time = date.toLocaleTimeString('en-US', op);
+        console.log('time', time)
+        return time;
+    }
+
     return (
         <>
             {!activeUserChat && (<>
-            <div className="h-100 d-flex justify-content-center align-items-center">
-            <h1>Chatty 𝝅</h1>
-            </div>
-           
+                <div className="h-100 d-flex justify-content-center align-items-center">
+                    <h1>Chatty 𝝅</h1>
+                </div>
+
             </>)}
 
             {activeUserChat && (
@@ -37,7 +50,7 @@ function Chat() {
                             </div>
                             <div className="userInfo ms-3">
                                 <h2 className='mb-0'>{activeUserChat.userName}</h2>
-                                <p >{activeUserChat.tagLine??"-"}</p>
+                                <p >{activeUserChat.tagLine ?? "-"}</p>
                             </div>
                         </div>
                         <div className="menu position-relative">
@@ -54,12 +67,25 @@ function Chat() {
                             </div>
                         </div>
                     </div>
-                    {/* chat show */}
-                    <div className="chatBox flex-grow-1 d-flex flex-column justify-content-end">
-                        <DatePart />
-                        <SendMessage message="Hii" time="12:30 AM" />
-                        <ReceiveMessage message="Hello" />
-                    </div>
+                    {(messages && messages.length > 0) && (
+                        <>
+
+                            {/* chat show */}
+                            <div className="chatBox flex-grow-1  justify-content-end" >
+                                {/*  */}
+                                {messages.map((element, index) => (
+                                    <>
+                                    {element.type && <DatePart text={element.date} />}
+                                        {!element.type && (<>
+                                            {(element.senderId === user._id) && (<SendMessage message={element.message} time={getChatTime(element.createdAt)} key={`${element._id}Message`} />)}
+                                            {(element.senderId !== user._id) && (<ReceiveMessage message={element.message} key={`${element._id}Message`} time={getChatTime(element.createdAt)} />)}
+                                        </>)}
+                                        
+                                    </>
+                                ))}
+                            </div>
+                        </>
+                    )}
                     {/* chat Input  */}
                     <div className="chatInput  mt-3">
                         <form action="" onSubmit={handleSubmit(sendMessage)}>

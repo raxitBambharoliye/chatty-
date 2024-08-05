@@ -3,6 +3,7 @@ import { CONFIG, MODEL } from "../constant";
 import { sendToSocket } from "../eventHandlers";
 import { MessageIN, NotificationIN, UserIN } from "../utility/interfaces";
 import logger from "../utility/logger";
+import { formatChat } from "../utility/logic";
 
 export const onlineUser = async (socket: any, data: any) => {
   try {
@@ -217,7 +218,6 @@ export const acceptFollowRequest = async (socket: any, data: any) => {
       };
       sendToSocket(updateFriend.socketId, sendNotificationData);
     }
-    // if(user.friendRequest)
   } catch (error) {
     logger.error(`CATCH ERROR IN ::: acceptFollowRequest :: ${error}`);
     console.log("error", error);
@@ -270,7 +270,6 @@ export const messageHandler = async (socket: any, data: any) => {
       message:message
     }
     let messageData= await MQ.insertOne<MessageIN>(MODEL.MESSAGE_MODEL,insertMessageData);
-    console.log("messageData",messageData);
     if(!messageData){
       return false;
     }
@@ -279,16 +278,57 @@ export const messageHandler = async (socket: any, data: any) => {
       data:{
         newMessage:{
           message,
-          createAt:messageData.createdAt,
+          createdAt: messageData.createdAt,
+          senderId:user.id,
           receiverId
         }
       }
     }
     sendToSocket(socket.id,sendMessageData);
-  
+    if (friend.socketId) {
+      sendToSocket(friend.socketId,sendMessageData)
+    }
 
   } catch (error) {
     logger.error(`CATCH ERROR IN ::: messageHandler:: ${error}`)
+    console.log('error', error)
+  }
+}
+
+export const chatHandler = async (socket: any, data: any) => {
+  try {
+    const userId = socket.userId;
+    if (!userId) {
+      return false;
+    }
+    const receiverId = data.receiverId;
+    if (!receiverId) {
+      return false;
+    }
+
+    const user =await MQ.findById<UserIN>(MODEL.USER_MODEL,userId)
+    const receiver = await MQ.findById<UserIN>(MODEL.USER_MODEL, receiverId);
+    if (!user || !receiver) {
+      return false;
+    }
+
+    let chat = await MQ.find<MessageIN[]>(MODEL.MESSAGE_MODEL, {
+      $or: [{ senderId: userId, receiverId: receiverId }, { senderId: receiverId, receiverId: userId }],
+    })
+    let formatChatData;
+    if (chat) {
+       formatChatData = formatChat(chat);
+    }
+    const chatSendData = {
+      eventName: EVENT_NAME.CHATS,
+      data: {
+        chats:chat?formatChatData:[]
+      }
+    }
+    console.log('chatSendData', JSON.stringify(chatSendData))
+    await sendToSocket(socket.id, chatSendData);
+  } catch (error) {
+    logger.error(`CATCH ERROR IN ::: chatHandler:: ${error}`);
     console.log('error', error)
   }
 }

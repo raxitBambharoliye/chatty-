@@ -9,7 +9,7 @@
           </div>
           <div className="asideContacts flex-grow-1 overflow-auto">
             {contactArray.map((contact, index) => (
-              <AsideContactsItem userName='Radhe Patel' tagLine='enjoy your life' index={index} activeChat={activeChat} key={index} onClick={(e) => { setActiveChat(index) }} />
+              <AsideContactsItem userName='Radhe Patel' tagLine='enjoy your life' index={index} activeChat={activeChat} key={`${index}AsideItem`} onClick={(e) => { setActiveChat(index) }} />
             ))}
           </div>
           <div className="asideFooter">

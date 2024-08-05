@@ -1,20 +1,17 @@
-import React, { useEffect, useState } from 'react'
-import AsideContactsItem from './AsideContactsItem'
+import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { APP_URL } from '../../constant'
 import EditProfile from './EditProfile'
-import { useSelector } from 'react-redux'
 import { AddFriends } from '../../components/Models/index'
-import { Input } from '../Form'
 import Notifications from './Notifications'
 import Friend from './Friend'
 function Aside({ asideShow }) {
     const [asideContext, setAsideContext] = useState("FRIENDS");
-   
 
 
     return (
         <>
+
             {/* aside start  */}
             <div className={`asideInner  d-flex flex-column vh-100 position-relative ${asideShow ? 'show' : 'hide'} `}>
                 {/* <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Launch demo modal</button> */}
@@ -27,17 +24,16 @@ function Aside({ asideShow }) {
                     </div>
                 </div>
                 <div className="asideContacts flex-grow-1 overflow-auto">
-                    {asideContext === 'FRIENDS' && (<Friend/>)}
-                    {asideContext === 'NOTIFICATION' && (<>
-                    <Notifications/>
-                    </>)}
+                    {asideContext === 'FRIENDS' && (<Friend />)}
+                    {asideContext === 'NOTIFICATION' && (<Notifications />)}
                 </div>
                 <div className="asideFooter">
                     <div className="asideFooterMenu">
-                        <div className="menuItem" onClick={(e)=>{setAsideContext('FRIENDS')}}><Link><i className="fa-regular fa-address-book"></i></Link></div>
+                        {/* friends */}
+                        <div className="menuItem" onClick={(e) => { setAsideContext('FRIENDS') }}><Link><i className="fa-regular fa-address-book"></i></Link></div>
                         {/* add friends */}
                         <div className="menuItem"><Link data-bs-toggle="modal" data-bs-target="#addFriendsModel"><i className="fa-solid fa-user-plus"></i></Link></div>
-                        <div className="menuItem" onClick={(e)=>{setAsideContext('NOTIFICATION')}}><Link><i className="fa-solid fa-bell"></i></Link></div>
+                        <div className="menuItem" onClick={(e) => { setAsideContext('NOTIFICATION') }}><Link><i className="fa-solid fa-bell"></i></Link></div>
                         <div className="menuItem"><Link className="menuItem" title='search'><i className="fa-solid fa-magnifying-glass"></i></Link></div>
                         <div className="menuItem"><Link className="menuItem" title='logout' to={APP_URL.FE_LOGOUT}><i className="fa-solid fa-right-from-bracket"></i></Link></div>
                     </div>
@@ -50,3 +46,9 @@ function Aside({ asideShow }) {
 }
 
 export default Aside
+
+
+/* 
+
+
+*/
