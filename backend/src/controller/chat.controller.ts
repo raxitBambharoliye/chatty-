@@ -1,7 +1,7 @@
 import { EVENT_NAME, MQ } from "../common";
 import { CONFIG, MODEL } from "../constant";
 import { sendToSocket } from "../eventHandlers";
-import { NotificationIN, UserIN } from "../utility/interfaces";
+import { MessageIN, NotificationIN, UserIN } from "../utility/interfaces";
 import logger from "../utility/logger";
 
 export const onlineUser = async (socket: any, data: any) => {
@@ -45,7 +45,7 @@ export const onlineUser = async (socket: any, data: any) => {
       },
     };
 
-    await sendToSocket(socket.id,onLineUserEventData);
+    await sendToSocket(socket.id, onLineUserEventData);
   } catch (error) {
     logger.error(`CATCH ERROR IN : onlineUser ::: ${error}`);
     console.log("error", error);
@@ -241,3 +241,54 @@ export const disconnectHandler = async (userId: any) => {
     console.log("error", error);
   }
 };
+
+
+export const messageHandler = async (socket: any, data: any) => {
+  try {
+    const { receiverId ,message} = data;
+    if(!receiverId || !message){
+      return false;
+    }
+
+    const user=await MQ.findById<UserIN>(MODEL.USER_MODEL,socket.userId);
+    console.log('user', user)
+    if(!user || !user.friends.includes(receiverId)){
+      return false;
+    }
+    const friend=await MQ.findById<UserIN>(MODEL.USER_MODEL,receiverId);
+    console.log('friend', friend)
+
+    if(!friend || !friend.friends.includes(user._id)){
+      return false;
+    }
+
+
+    
+    const insertMessageData= {
+      senderId:socket.userId,
+      receiverId,
+      message:message
+    }
+    let messageData= await MQ.insertOne<MessageIN>(MODEL.MESSAGE_MODEL,insertMessageData);
+    console.log("messageData",messageData);
+    if(!messageData){
+      return false;
+    }
+    const sendMessageData= {
+      eventName:EVENT_NAME.MESSAGE,
+      data:{
+        newMessage:{
+          message,
+          createAt:messageData.createdAt,
+          receiverId
+        }
+      }
+    }
+    sendToSocket(socket.id,sendMessageData);
+  
+
+  } catch (error) {
+    logger.error(`CATCH ERROR IN ::: messageHandler:: ${error}`)
+    console.log('error', error)
+  }
+}

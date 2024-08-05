@@ -9,19 +9,22 @@ import { setNotification } from '../reducers/chatReducer';
 
 function Private() {
   const token = getCookieData(COOKIE_KEY.TOKEN, true);
+  console.log('token', token)
   const userData = getCookieData(COOKIE_KEY.USER);
+  console.log('userData', userData)
   const notifications = getCookieData(COOKIE_KEY.NOTIFICATIONS);
+  console.log('notifications', notifications)
   const dispatch = useDispatch();
   useEffect(() => {
-    if (!token || token === "" || !userData) {
-      return <LogOut />
-    } else {
+     if(token && userData)  {
       dispatch(setNotification(notifications))
       dispatch(setUser(userData));
       dispatch(setUserToken(token));
     }
   }, [token,userData])
-
+  if (!token || token === "" || !userData) {
+    <LogOut />
+ }
   return (
     <Outlet />
   )

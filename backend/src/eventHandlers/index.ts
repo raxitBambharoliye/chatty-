@@ -1,6 +1,6 @@
 import  {io}  from '..';
 import { EVENT_NAME } from '../common';
-import { acceptFollowRequest, followRequest, onlineUser } from "../controller/chat.controller";
+import { acceptFollowRequest, followRequest, messageHandler, onlineUser } from "../controller/chat.controller";
 import logger from "../utility/logger";
 
 export const eventHandler = (socket:any) => {
@@ -19,6 +19,8 @@ export const eventHandler = (socket:any) => {
                 break;
             case EVENT_NAME.ACCEPT_FOLLOW_REQUEST:
             acceptFollowRequest(socket,data);
+            case EVENT_NAME.MESSAGE:
+                messageHandler(socket,data);
             break;
         }
     })

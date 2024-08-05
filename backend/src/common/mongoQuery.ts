@@ -1,5 +1,5 @@
 import { MODEL } from "../constant";
-import { NotificationModal, USER } from "../model";
+import { NotificationModal, USER,MessageModel } from "../model";
 import logger from "../utility/logger";
 
 class MQ {
@@ -12,6 +12,9 @@ class MQ {
         break;
       case MODEL.NOTIFICATION_MODEL:
         this.collection = NotificationModal;
+        break;
+      case MODEL.MESSAGE_MODEL:
+        this.collection = MessageModel;
         break;
     }
   }

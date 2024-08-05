@@ -60,7 +60,7 @@ function AddFriends({ id, modalClass = '' }) {
     return (
         <div>
             <div className={`modal fade  ${modalClass}`} id={id} tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <form className="modal-dialog modal-dialog-centered modal-xl" action='' >
+                <div className="modal-dialog modal-dialog-centered modal-xl"  >
                     <div className={`modal-content`}>
                         <div className="modal-header ">
                             <h1 className="modal-title fs-5 " id="exampleModalLabel">Find New Friend's</h1>
@@ -106,7 +106,7 @@ function AddFriends({ id, modalClass = '' }) {
                             <Button buttonClass='buttonBlack hover btnRounded me-2' type='button' value='Close' data-bs-dismiss="modal" />
                         </div>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
 

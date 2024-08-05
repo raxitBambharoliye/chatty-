@@ -1,12 +1,20 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Input } from '../Form'
 import AsideContactsItem from './AsideContactsItem'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { changeActiveUserChat } from '../../reducers/chatReducer';
 
 function Friend() {
-    const friends = useSelector((state) => state.chat.friends)
+    const friends = useSelector((state) => state.chat.friends);
+    const dispatch = useDispatch();
     console.log('friends', friends)
-
+    const [activeChat,setActiveChat]=useState(-1)
+    useEffect(()=>{
+        if(activeChat<0){
+            return;
+        }
+        dispatch(changeActiveUserChat(friends[activeChat]));
+    },[activeChat])
     return (
         <>
             {(!friends || friends.length === 0) &&
@@ -16,8 +24,8 @@ function Friend() {
             }
             {(friends && friends.length>=0)&&(<>
                 <Input inputClass='inputBlack mx-2' placeholder="Search User Name ... "></Input>
-                {contactArray.map((contact, index) => (
-                    <AsideContactsItem userName='Radhe Patel' tagLine='enjoy your life' index={index} activeChat={activeChat} key={index} onClick={(e) => { setActiveChat(index) }} />
+                {friends.map((contact, index) => (
+                    <AsideContactsItem userName={contact.userName} tagLine={contact.tagLine??"-"} index={index} activeChat={activeChat} key={index} onClick={(e) => { setActiveChat(index) }} />
                 ))}
             </>)}
         </>

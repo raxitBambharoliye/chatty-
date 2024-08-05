@@ -1,10 +1,10 @@
 import { createContext, useCallback, useEffect, useState } from "react";
 import { getSocket } from ".";
-import { EVENT_NAME } from '../constant/'
+import { COOKIE_KEY, EVENT_NAME } from '../constant/'
 import { useDispatch, useSelector } from "react-redux";
 import { setDataInCookie } from "../common";
 import { setUser } from "../reducers/userReducer";
-import { pushFriend, pushNotification } from "../reducers/chatReducer";
+import { pushFriend, pushNotification, setFriend, setNotification } from "../reducers/chatReducer";
 export const SocketContext = createContext();
 
 export const SocketProvider = ({ children }) => {
@@ -12,6 +12,9 @@ export const SocketProvider = ({ children }) => {
   const dispatch = useDispatch();
   const user = useSelector((state)=>state.userData.user)
   const notification= useSelector((state)=>state.chat.notification)
+  const friends= useSelector((state)=>state.chat.friends)
+  const activeUserChat= useSelector((state)=>state.chat.activeUserChat)
+  console.log('activeUserChat ::::::::: LLLLLLLLLL', activeUserChat)
   useEffect(() => {
     if (!user || !user._id) {
       return;
@@ -44,6 +47,18 @@ export const SocketProvider = ({ children }) => {
         dispatch(pushFriend(data.newFriend))
       }
     })
+    socket.on(EVENT_NAME.ONLINE_USER,(data)=>{
+      console.log("online user data",data)
+      dispatch(setFriend(data.friends))
+      dispatch(setNotification(data.notifications))
+    })
+    socket.on(EVENT_NAME.MESSAGE,(data)=>{
+      console.log("::::::::::               IIIII",activeUserChat)
+      console.log(data);
+      if(data.receiverId == activeUserChat._id){
+        console.log("set message data ")
+      }
+    })
     return () => {
       if (socket) {
         socket.disconnect();
@@ -57,7 +72,13 @@ export const SocketProvider = ({ children }) => {
     socket.emit(data.eventName, data.data)
     console.log(`SENDING EVENT ::: ${data.eventName} ::: DATA ::: ${JSON.stringify(data.data)}`)
   }, [socket])
-
+//NOTE - CHANGE VALUE IN COOKIE WHEN IT'S CHANGE IN STORE
+  useEffect(()=>{
+    setDataInCookie(COOKIE_KEY.NOTIFICATIONS,notification);
+  },[notification])
+  useEffect(()=>{
+    setDataInCookie(COOKIE_KEY.FRIENDS,friends);
+  },[friends])
   return (
     <SocketContext.Provider value={{ socket, sendRequest }}>
       {children}
