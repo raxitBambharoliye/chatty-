@@ -3,7 +3,8 @@ export default Object.freeze({
     SEND_VERIFICATION_MAIL:'/user/sendVerificationMail',
     GET_USER_DATA: '/auth/login/success',
     EDIT_USER_PROFILE: '/user/editUserProfile',
-    SEARCH_USER:'/user/searchUser',
+    SEARCH_USER: '/user/searchUser',
+    GET_MESSAGE:'/user/getMessage',
     // SEND_VERIFICATION_MAIL:'/user/'
 
     FE_LOGIN: '/login',

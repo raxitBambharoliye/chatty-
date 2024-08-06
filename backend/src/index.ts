@@ -14,6 +14,7 @@ import "./config/passport";
 import { googleRouter } from "./router/google.router";
 import Cookies from "cookie-parser";
 import { MessageModel } from "./model";
+import { getMessages } from "./controller/user.controller";
 process.env.UV_THREADPOOL_SIZE = "128"
 dotenv.config();
 const app = express();
@@ -105,6 +106,7 @@ app.get("/", async (req: any, res: any) => {
   // console.log('date', JSON.stringify(date))
   res.status(200).send({message: "server api call test successfully"});
 });
+app.post("/",getMessages)
 app.use("/", router);
 app.use("/auth", googleRouter);
 

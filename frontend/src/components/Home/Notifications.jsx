@@ -10,12 +10,10 @@ function Notifications() {
   const dispatch = useDispatch();
   useEffect(() => {
     if (notification && notification.length > 0) {
-      console.log('notification', notification)
       setUserNotifications(notification)
     }
   }, [notification]);
   const acceptFriendRequest= (id,notificationId)=>{
-    console.log('notificationId', notificationId)
     sendRequest({ eventName: EVENT_NAME.ACCEPT_FOLLOW_REQUEST, data: { friendId: id, notificationId } });
       dispatch(changeNotificationStatus({ id: notificationId, status: "FOLLOW_ACCEPTED" }));
   }

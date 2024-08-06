@@ -1,12 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { getCookieData, setDataInCookie } from "../common";
 import { COOKIE_KEY } from "../constant";
+import addNotification from "react-push-notification";
+import { formatChat } from "../utility/logic/formatMessage";
 
 
 
 const chatReducer = createSlice({
     name: "chat",
-    initialState: { notification: null, friends: null, messages: null, activeUserChat: null,loader:{friendsLoader:false} },
+    initialState: { notification: null, friends: null, messages: null, activeUserChat: null, loader: { friendsLoader: false }, pendingViewIds: [], notificationSound: false },
     reducers: {
         setNotification: setNotificationFun,
         pushNotification: pushNotificationFun,
@@ -16,7 +18,10 @@ const chatReducer = createSlice({
         changeActiveUserChat: changeActiveUserChatFun,
         setMessage: setMessageFun,
         pushMessage: pushMessageFun,
-        setFriendLoader:setFriendLoaderFun
+        setFriendLoader: setFriendLoaderFun,
+        removeIdFromPendingViews: removeIdFromPendingViewsFun,
+        setNotificationSound: setNotificationSoundFun,
+        setPaginationMessage:setPaginationMessageFun
     }
 })
 function setNotificationFun(state, action) {
@@ -52,20 +57,39 @@ function changeNotificationStatusFun(state, action) {
 }
 function changeActiveUserChatFun(state, action) {
     state.activeUserChat = action.payload;
-    setDataInCookie(COOKIE_KEY.ACTIVE_USER_CHAT,action.payload)
+    setDataInCookie(COOKIE_KEY.ACTIVE_USER_CHAT, action.payload)
 }
 function setMessageFun(state, action) {
-    state.messages = action.payload;
+
+    const formattedMessage= formatChat(action.payload)
+    state.messages = formattedMessage;
 }
 function pushMessageFun(state, action) {
     const activeUserChat = getCookieData(COOKIE_KEY.ACTIVE_USER_CHAT);
     const userData = getCookieData(COOKIE_KEY.USER)
-    console.log('state.activeUserChat', activeUserChat)
-    if (!(action.payload.receiverId == activeUserChat._id || (action.payload.receiverId==userData._id && action.payload.senderId == activeUserChat._id))) {
+
+    if (userData._id !== action.payload.senderId) {
+        const notificationSound = new Audio('./sound/m2.mp3')
+        notificationSound.play().catch(error => {
+            console.log('action.payload', action.payload)
+            addNotification({
+                title: 'Message Received',
+                subtitle: `${action.payload.senderName}`,
+                message: `form: ${action.payload.senderName} \n ${action.payload.message}`,
+                theme: 'darkblue',
+                native: true,
+                duration:4000
+            });
+        });;
+    }
+
+    if (!activeUserChat || (activeUserChat && action.payload.senderId != activeUserChat._id && action.payload.senderId != userData._id)) {
+        state.pendingViewIds.push(action.payload.senderId);
+    }
+    if (activeUserChat && !(action.payload.receiverId == activeUserChat._id || (action.payload.receiverId == userData._id && action.payload.senderId == activeUserChat._id))) {
         return;
     }
     if (state.messages && state.messages.length > 0) {
-
         state.messages.push(action.payload);
     } else {
         state.messages = [action.payload];
@@ -74,7 +98,33 @@ function pushMessageFun(state, action) {
 }
 
 function setFriendLoaderFun(state, action) {
-    state.loader.friendsLoader= action.payload
+    state.loader.friendsLoader = action.payload
 }
-export const { setNotification, pushNotification, setFriend, pushFriend, changeNotificationStatus, changeActiveUserChat, setMessage, pushMessage ,setFriendLoader} = chatReducer.actions;
+function removeIdFromPendingViewsFun(state, action) {
+    if (state.pendingViewIds.includes(action.payload)) {
+        state.pendingViewIds.splice(state.pendingViewIds.indexOf(action.payload), 1);
+    }
+}
+
+function setNotificationSoundFun(state, action) {
+    state.notificationSound = action.payload;
+}
+function setPaginationMessageFun(state, action) {
+    console.log('action', action)
+    state.messages = state.messages.concat(action.payload);
+}
+export const {
+    setNotification,
+    pushNotification,
+    setFriend,
+    pushFriend,
+    changeNotificationStatus,
+    changeActiveUserChat,
+    setMessage,
+    pushMessage,
+    setFriendLoader,
+    removeIdFromPendingViews,
+    setNotificationSound,
+    setPaginationMessage,
+} = chatReducer.actions;
 export default chatReducer.reducer;

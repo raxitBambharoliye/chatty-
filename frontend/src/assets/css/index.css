@@ -282,4 +282,17 @@ body{
     0% { transform: rotate(0deg) }
     100% { transform: rotate(360deg) }
   }
+
+
+
+/* pending ball  */
+.pendingBall::before{
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: red;
+  right: 2%;
+  border-radius: 50%;
+}
    

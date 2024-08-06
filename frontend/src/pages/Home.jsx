@@ -1,14 +1,13 @@
-import React, {  useState } from 'react'
+import React, {  useEffect, useRef, useState } from 'react'
 import '../assets/css/home.css'
 import { Aside, Chat } from '../components/Home';
-
-
+import {Notifications } from 'react-push-notification'
 function Home() {
   let [asideShow, setAsideShow] = useState(true);
-
   return (
     <div className='w-100 vh-100 homeBackground'>
       <div className="d-flex  gx-0 align-items-center">
+        <Notifications/>
         <Aside asideShow={asideShow}  />
         {/* aside end  */}
         {/* chat start  */}

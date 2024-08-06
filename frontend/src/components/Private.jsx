@@ -9,11 +9,8 @@ import { setNotification } from '../reducers/chatReducer';
 
 function Private() {
   const token = getCookieData(COOKIE_KEY.TOKEN, true);
-  console.log('token', token)
   const userData = getCookieData(COOKIE_KEY.USER);
-  console.log('userData', userData)
   const notifications = getCookieData(COOKIE_KEY.NOTIFICATIONS);
-  console.log('notifications', notifications)
   const dispatch = useDispatch();
   useEffect(() => {
      if(token && userData)  {

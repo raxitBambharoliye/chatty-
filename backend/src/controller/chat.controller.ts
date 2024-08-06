@@ -143,7 +143,6 @@ export const acceptFollowRequest = async (socket: any, data: any) => {
       "socketId"
     );
     const friend = await MQ.find<UserIN[]>(MODEL.USER_MODEL, { _id: friendId });
-    console.log("friend", friend);
     if (!users || users.length < 0 || !friend || friend.length < 0) {
       logger.error(`User data not found :::`);
       return false;
@@ -280,6 +279,7 @@ export const messageHandler = async (socket: any, data: any) => {
           message,
           createdAt: messageData.createdAt,
           senderId:user.id,
+          senderName:user.userName,
           receiverId
         }
       }
@@ -312,17 +312,15 @@ export const chatHandler = async (socket: any, data: any) => {
       return false;
     }
 
-    let chat = await MQ.find<MessageIN[]>(MODEL.MESSAGE_MODEL, {
-      $or: [{ senderId: userId, receiverId: receiverId }, { senderId: receiverId, receiverId: userId }],
-    })
-    let formatChatData;
-    if (chat) {
-       formatChatData = formatChat(chat);
-    }
+    let chat = await MQ.findWithPagination(MODEL.MESSAGE_MODEL, {
+      $or:
+      [{ senderId: userId, receiverId: receiverId }, { senderId: receiverId, receiverId: userId }],
+    },50,1,{createdAt:1})
+
     const chatSendData = {
       eventName: EVENT_NAME.CHATS,
       data: {
-        chats:chat?formatChatData:[]
+        chats:chat?chat:[]
       }
     }
     console.log('chatSendData', JSON.stringify(chatSendData))

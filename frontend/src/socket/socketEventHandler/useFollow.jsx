@@ -9,5 +9,4 @@ export const useFollow = (data) => {
     //     setDataInCookie(data.use);
     //     dispatch(setUser(data.user));
     // }
-    console.log("::::::::::::::::::::::::::::::: ")
 }

@@ -14,7 +14,6 @@ function Login() {
 
     let navigate = useNavigate();
 
-
     //NOTE - check for logged in or not 
     const token = getCookieData(COOKIE_KEY.TOKEN, true);
     const userData = getCookieData(COOKIE_KEY.USER);

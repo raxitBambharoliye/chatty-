@@ -2,7 +2,7 @@ import { createContext, useCallback, useEffect, useState } from "react";
 import { getSocket } from ".";
 import { COOKIE_KEY, EVENT_NAME } from '../constant/'
 import { useDispatch, useSelector } from "react-redux";
-import { setDataInCookie } from "../common";
+import { removeCookieData, setDataInCookie } from "../common";
 import { setUser } from "../reducers/userReducer";
 import { pushFriend, pushMessage, pushNotification, setFriend, setFriendLoader, setMessage, setNotification } from "../reducers/chatReducer";
 export const SocketContext = createContext();
@@ -31,14 +31,13 @@ export const SocketProvider = ({ children }) => {
     }
 
     socket.on(EVENT_NAME.ONLINE_USER, (data) => {
-      console.log("online user data", data)
+      removeCookieData(COOKIE_KEY.ACTIVE_USER_CHAT)
       dispatch(setFriend(data.friends))
       dispatch(setNotification(data.notifications))
       dispatch(setFriendLoader(false));
     })
 
     socket.on(EVENT_NAME.FOLLOW, (data) => {
-      console.log(data);
       if (data.user) {
         setDataInCookie(data.use);
         dispatch(setUser(data.user));
@@ -48,15 +47,12 @@ export const SocketProvider = ({ children }) => {
       dispatch(pushNotification(data.notification))
     })
     socket.on(EVENT_NAME.ACCEPT_FOLLOW_REQUEST, (data) => {
-      /* {"newFriend":{"_id":"669de4006bda9f696cc6aae7","userName":"testCheck1","profilePicture":"https://drive.google.com/file/d/1v3pxXcaqbZ7BqG_FQOEpRrxuWIBX8nXT/view?usp=sharing","tagLine":"I am using chatty PIE 😎😎😎"}}*/
-      console.log(data);
       if (data.newFriend) {
         dispatch(pushFriend(data.newFriend))
       }
     })
-  
+
     socket.on(EVENT_NAME.MESSAGE, (data) => {
-      console.log(data);
       dispatch(pushMessage(data.newMessage));
     })
     socket.on(EVENT_NAME.CHATS, (data) => {
@@ -86,6 +82,7 @@ export const SocketProvider = ({ children }) => {
   }, [friends])
   return (
     <SocketContext.Provider value={{ socket, sendRequest }}>
+      
       {children}
     </SocketContext.Provider>
   )

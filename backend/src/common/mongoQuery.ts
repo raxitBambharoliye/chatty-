@@ -86,20 +86,20 @@ class MQ {
 
   async findWithPopulate<T>(collection: string, query: any, populateKey: any,populateProperty:any=""):Promise<T | null>{
     try {
-      /*     path: 'posts',
-    populate: {
-        path: 'comments',
-        model: 'Comment',
-        populate: {
-            path: 'author',
-            model: 'User'
-        }
-    } */
+
       this.setCollection(collection);
       return await this.collection.find(query).populate(populateKey,populateProperty).exec();
     } catch (error) {
       logger.error(`🤦‍♂️🤦‍♂️🤦‍♂️🤦‍♂️ CATCH ERROR IN findWithPopulate: 🤦‍♂️🤦‍♂️🤦‍♂️🤦‍♂️ ::: ${error}`);
       console.log("error", error);
+      return null;
+    }
+  }
+  async findWithPagination<T>(collection:string, query:any, limit:number, page:number,sortQuery:any): Promise<T | null>{
+    try {
+      this.setCollection(collection);
+      return await this.collection.find(query).skip((page - 1) * limit).limit(limit).sort(sortQuery).exec();
+    } catch {
       return null;
     }
   }

@@ -255,7 +255,25 @@ export const generateUser = async ()=>{
   }
 }
 
-
+export const getMessages = async (req: any, res: any)=>{
+  try {
+    const { senderId, receiverId,page } = req.body;
+    console.log('page', page)
+    let limit = 50;
+    console.log('limit, page ,userId,receiverId', limit, page ,senderId,receiverId)
+    if (!limit || !page) {
+      return res.status(400).json({message:"something want wrong, please try agin."})
+    }
+    const messages = await MQ.findWithPagination(MODEL.MESSAGE_MODEL, {
+      $or:
+      [{ senderId: senderId, receiverId: receiverId }, { senderId: receiverId, receiverId: senderId }],
+    },limit,page,{createdAt:1})
+    res.send(messages)
+  } catch (error) {
+    logger.error(`CATCH ERROR IN getMessage ::: ${error}`)
+    console.log('error', error)
+  }
+}
 
 
 export { registerUser, userLogIn, loginWithGoogleHandler };
