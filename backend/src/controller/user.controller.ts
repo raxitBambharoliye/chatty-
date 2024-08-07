@@ -4,7 +4,7 @@ import { DRIVE_FOLDER, MODEL } from "../constant";
 import logger from "../utility/logger";
 import jwt from "jsonwebtoken";
 import { createToken, decryptData, encryptData, setCookieData } from "../utility/common";
-import { UserIN } from "../utility/interfaces";
+import { MessageIN, UserIN } from "../utility/interfaces";
 import path from 'path';  
 import fs from 'fs';
 import handlebars from 'handlebars'
@@ -264,11 +264,15 @@ export const getMessages = async (req: any, res: any)=>{
     if (!limit || !page) {
       return res.status(400).json({message:"something want wrong, please try agin."})
     }
-    const messages = await MQ.findWithPagination(MODEL.MESSAGE_MODEL, {
+    const messages = await MQ.findWithPagination<MessageIN[]>(MODEL.MESSAGE_MODEL, {
       $or:
       [{ senderId: senderId, receiverId: receiverId }, { senderId: receiverId, receiverId: senderId }],
-    },limit,page,{createdAt:1})
-    res.send(messages)
+    }, limit, page, { createdAt: 1 })
+    if (!messages) {
+      return res.status(400).json({ message: "something want wrong" });
+    }
+
+    res.send(messages.reverse())
   } catch (error) {
     logger.error(`CATCH ERROR IN getMessage ::: ${error}`)
     console.log('error', error)

@@ -6,15 +6,15 @@ export const formatChat=(chats,preDate=null)=>{
     let i = 0;
    
     for (const element of chats) {
+        if (!element._id) {
+            continue;
+        }
         if (date == null) {
             date = new Date(element.createdAt);
             chatsData.push({ type: "date",  date:formatDate(date) });
-            
         }
         if (getDate(date) != getDate(element.createdAt)) { 
             
-            console.log('New Day',getDate(element.createdAt) ,"::::::::",getDate(date));
-            console.log(element.createdAt)
             date = new Date(element.createdAt);
             i++;
             chatsData.push({ type: "date", date:formatDate(date) });

@@ -5,10 +5,23 @@ import addNotification from "react-push-notification";
 import { formatChat } from "../utility/logic/formatMessage";
 
 
+const initialState = {
+    notification: null,
+    friends: null,
+    messages: null,
+    activeUserChat: null,    
+    loader:{
+        friendsLoader: false ,
+        chatLoader:false
+    },
+    pendingViewIds: [],
+    notificationSound: false
+}
+
 
 const chatReducer = createSlice({
     name: "chat",
-    initialState: { notification: null, friends: null, messages: null, activeUserChat: null, loader: { friendsLoader: false }, pendingViewIds: [], notificationSound: false },
+    initialState:initialState,
     reducers: {
         setNotification: setNotificationFun,
         pushNotification: pushNotificationFun,
@@ -21,7 +34,8 @@ const chatReducer = createSlice({
         setFriendLoader: setFriendLoaderFun,
         removeIdFromPendingViews: removeIdFromPendingViewsFun,
         setNotificationSound: setNotificationSoundFun,
-        setPaginationMessage:setPaginationMessageFun
+        setPaginationMessage: setPaginationMessageFun,
+        setChatLoader: setChatLoaderFun
     }
 })
 function setNotificationFun(state, action) {
@@ -61,7 +75,7 @@ function changeActiveUserChatFun(state, action) {
 }
 function setMessageFun(state, action) {
 
-    const formattedMessage= formatChat(action.payload)
+    const formattedMessage = formatChat(action.payload)
     state.messages = formattedMessage;
 }
 function pushMessageFun(state, action) {
@@ -78,7 +92,7 @@ function pushMessageFun(state, action) {
                 message: `form: ${action.payload.senderName} \n ${action.payload.message}`,
                 theme: 'darkblue',
                 native: true,
-                duration:4000
+                duration: 4000
             });
         });;
     }
@@ -110,8 +124,13 @@ function setNotificationSoundFun(state, action) {
     state.notificationSound = action.payload;
 }
 function setPaginationMessageFun(state, action) {
-    console.log('action', action)
-    state.messages = state.messages.concat(action.payload);
+    if (action.payload.length > 0) {
+        const newChatArray = formatChat(action.payload.concat(state.messages))
+        state.messages = newChatArray;
+    }
+}
+function setChatLoaderFun(state, action) {
+    state.loader.chatLoader = action.payload;
 }
 export const {
     setNotification,
@@ -126,5 +145,6 @@ export const {
     removeIdFromPendingViews,
     setNotificationSound,
     setPaginationMessage,
+    setChatLoader
 } = chatReducer.actions;
 export default chatReducer.reducer;
