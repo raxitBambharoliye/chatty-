@@ -1,36 +1,21 @@
 
-export const formatChat=(chats,preDate=null)=>{
 
-    let date = preDate;
-    let chatsData = [];
-    let i = 0;
-   
-    for (const element of chats) {
-        if (!element._id) {
-            continue;
-        }
-        if (date == null) {
-            date = new Date(element.createdAt);
-            chatsData.push({ type: "date",  date:formatDate(date) });
-        }
-        if (getDate(date) != getDate(element.createdAt)) { 
-            
-            date = new Date(element.createdAt);
-            i++;
-            chatsData.push({ type: "date", date:formatDate(date) });
-        } else {
-            chatsData.push(element);
-        }
-    }
-    return chatsData;
-}
-const getDate = (dateStr) => {
+ const getDate = (dateStr) => {
 const date = new Date(dateStr);
 const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
 const formattedDate = date.toLocaleDateString('en-CA', options);
 return formattedDate;
 }
-function formatDate(dateString) {
+export const checkDatePrint = (currentDate, preDate,lastDate=false) => {
+    const date1= getDate(currentDate)
+    const date2 = getDate(preDate)
+    if (date1 != date2 || lastDate) {
+        return formatDate(currentDate);
+    } else {
+        return false;
+    }
+} 
+ function formatDate(dateString) {
     const inputDate = new Date(dateString);
     const today = new Date();
     const inputDateString = inputDate.toISOString().split('T')[0];

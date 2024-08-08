@@ -1,6 +1,6 @@
 import { compare, hash } from "bcrypt";
 import { MQ } from "../common";
-import { DRIVE_FOLDER, MODEL } from "../constant";
+import { CONFIG, DRIVE_FOLDER, MODEL } from "../constant";
 import logger from "../utility/logger";
 import jwt from "jsonwebtoken";
 import { createToken, decryptData, encryptData, setCookieData } from "../utility/common";
@@ -258,20 +258,16 @@ export const generateUser = async ()=>{
 export const getMessages = async (req: any, res: any)=>{
   try {
     const { senderId, receiverId,page } = req.body;
-    console.log('page', page)
-    let limit = 50;
-    console.log('limit, page ,userId,receiverId', limit, page ,senderId,receiverId)
-    if (!limit || !page) {
+    if ( !page || !senderId || !receiverId) {
       return res.status(400).json({message:"something want wrong, please try agin."})
     }
     const messages = await MQ.findWithPagination<MessageIN[]>(MODEL.MESSAGE_MODEL, {
       $or:
       [{ senderId: senderId, receiverId: receiverId }, { senderId: receiverId, receiverId: senderId }],
-    }, limit, page, { createdAt: 1 })
+    }, CONFIG.MESSAGE_LOAD_LIMIT, page, { createdAt: -1 })
     if (!messages) {
       return res.status(400).json({ message: "something want wrong" });
     }
-
     res.send(messages.reverse())
   } catch (error) {
     logger.error(`CATCH ERROR IN getMessage ::: ${error}`)

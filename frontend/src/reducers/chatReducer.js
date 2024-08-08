@@ -2,7 +2,6 @@ import { createSlice } from "@reduxjs/toolkit";
 import { getCookieData, setDataInCookie } from "../common";
 import { COOKIE_KEY } from "../constant";
 import addNotification from "react-push-notification";
-import { formatChat } from "../utility/logic/formatMessage";
 
 
 const initialState = {
@@ -74,9 +73,7 @@ function changeActiveUserChatFun(state, action) {
     setDataInCookie(COOKIE_KEY.ACTIVE_USER_CHAT, action.payload)
 }
 function setMessageFun(state, action) {
-
-    const formattedMessage = formatChat(action.payload)
-    state.messages = formattedMessage;
+    state.messages = action.payload;
 }
 function pushMessageFun(state, action) {
     const activeUserChat = getCookieData(COOKIE_KEY.ACTIVE_USER_CHAT);
@@ -125,8 +122,7 @@ function setNotificationSoundFun(state, action) {
 }
 function setPaginationMessageFun(state, action) {
     if (action.payload.length > 0) {
-        const newChatArray = formatChat(action.payload.concat(state.messages))
-        state.messages = newChatArray;
+        state.messages = action.payload.concat(state.messages);
     }
 }
 function setChatLoaderFun(state, action) {

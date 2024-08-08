@@ -4,4 +4,5 @@ export default Object.freeze({
     FOLLOW_ACCEPTED: "FOLLOW_ACCEPTED",
     MESSAGE: "MESSAGE",
   },
+  MESSAGE_LOAD_LIMIT:20
 });

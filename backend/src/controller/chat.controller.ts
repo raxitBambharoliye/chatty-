@@ -312,15 +312,17 @@ export const chatHandler = async (socket: any, data: any) => {
       return false;
     }
 
-    let chat = await MQ.findWithPagination(MODEL.MESSAGE_MODEL, {
+    let chat = await MQ.findWithPagination<MessageIN[]>(MODEL.MESSAGE_MODEL, {
       $or:
       [{ senderId: userId, receiverId: receiverId }, { senderId: receiverId, receiverId: userId }],
-    },50,1,{createdAt:1})
-
+    },CONFIG.MESSAGE_LOAD_LIMIT,1,{createdAt:-1})
+    if (!chat) {
+      chat=[]
+    }
     const chatSendData = {
       eventName: EVENT_NAME.CHATS,
       data: {
-        chats:chat?chat:[]
+        chats:chat?chat.reverse():[]
       }
     }
     console.log('chatSendData', JSON.stringify(chatSendData))
