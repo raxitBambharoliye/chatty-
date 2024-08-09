@@ -15,20 +15,20 @@ export const SocketProvider = ({ children }) => {
   const friends = useSelector((state) => state.chat.friends)
 
 
-  useEffect(() => {
-    if (!user || !user._id) {
-      return;
-    }
+  //Note - Socket Connection Function
+  const connectSocket= ()=>{
+
     const socketIns = getSocket();
-    dispatch(setFriendLoader(true));
-    socketIns.emit(EVENT_NAME.ONLINE_USER, { userId: user._id });
     setSocket(socketIns)
-  }, [user])
+  }
   //NOTE -  event handler 
   useEffect(() => {
     if (!socket) {
       return;
     }
+    dispatch(setFriendLoader(true));
+
+    socket.emit(EVENT_NAME.ONLINE_USER, { userId: user._id });
 
     socket.on(EVENT_NAME.ONLINE_USER, (data) => {
       removeCookieData(COOKIE_KEY.ACTIVE_USER_CHAT)
@@ -44,6 +44,7 @@ export const SocketProvider = ({ children }) => {
       }
     })
     socket.on(EVENT_NAME.NOTIFICATION, (data) => {
+      console.log('data', data)
       dispatch(pushNotification(data.notification))
     })
     socket.on(EVENT_NAME.ACCEPT_FOLLOW_REQUEST, (data) => {
@@ -73,15 +74,18 @@ export const SocketProvider = ({ children }) => {
     socket.emit(data.eventName, data.data)
     console.log(`SENDING EVENT ::: ${data.eventName} ::: DATA ::: ${JSON.stringify(data.data)}`)
   }, [socket])
+
+  
   //NOTE - CHANGE VALUE IN COOKIE WHEN IT'S CHANGE IN STORE
   useEffect(() => {
     setDataInCookie(COOKIE_KEY.NOTIFICATIONS, notification);
   }, [notification])
   useEffect(() => {
+    console.log('friends', friends)
     setDataInCookie(COOKIE_KEY.FRIENDS, friends);
   }, [friends])
   return (
-    <SocketContext.Provider value={{ socket, sendRequest }}>
+    <SocketContext.Provider value={{ socket, sendRequest,connectSocket }}>
       
       {children}
     </SocketContext.Provider>

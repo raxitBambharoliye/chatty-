@@ -53,6 +53,7 @@ function setFriendFun(state, action) {
     state.friends = action.payload;
 }
 function pushFriendFun(state, action) {
+    console.log('action', action)
     if (state.friends && state.friends.length > 0) {
         state.friends.push(action.payload);
     }
@@ -80,7 +81,7 @@ function pushMessageFun(state, action) {
     const userData = getCookieData(COOKIE_KEY.USER)
 
     if (userData._id !== action.payload.senderId) {
-        const notificationSound = new Audio('./sound/m2.mp3')
+        const notificationSound = new Audio('./sound/messageNotification.wav')
         notificationSound.play().catch(error => {
             console.log('action.payload', action.payload)
             addNotification({

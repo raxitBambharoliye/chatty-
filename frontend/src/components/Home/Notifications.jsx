@@ -8,8 +8,11 @@ function Notifications() {
   const [userNotifications, setUserNotifications] = useState(null)
   const { sendRequest } = useContext(SocketContext)
   const dispatch = useDispatch();
+
+
   useEffect(() => {
     if (notification && notification.length > 0) {
+      console.log('notification', notification)
       setUserNotifications(notification)
     }
   }, [notification]);
@@ -25,16 +28,17 @@ function Notifications() {
         </div>}
       {(notification && notification.length > 0) && notification.map((element, index) => (
         <div className="notificationItem d-flex align-items-center justify-content-around" key={`${index}NotificationItem`}>
+          {console.log(notification)}
           <div className="userProfile">
             {/* <img src={element.senderId.profilePicture?element.senderId.profilePicture:"./image/dummyProfile.png"} alt="" /> */}
             <img src={"./image/dummyProfile.png"} alt="" />
             </div>
             <div className="text">
-            <h5>{element.senderId.userName}</h5>
+            <h5>{element.senderId.userName ?? "--"}</h5>
             <p className='mb-0'>{element.type=="FOLLOW_REQUEST" ?`sent you a friend request.` :element.type=="FOLLOW_ACCEPTED"?`accepted your follow request`:''}</p>
           </div>
           {element.type=="FOLLOW_REQUEST"&&<div className="acceptButton">
-            <button className='btn btn-primary btn-sm' onClick={(e)=>{acceptFriendRequest(element.senderId._id,element._id)}}> Accept</button>
+            <button className='btn btn-primary btn-sm' onClick={(e)=>{acceptFriendRequest(element.senderId._id,element._id)}} type='button'> Accept</button>
           </div>
           }
           

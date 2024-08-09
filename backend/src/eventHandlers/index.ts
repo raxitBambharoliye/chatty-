@@ -33,7 +33,7 @@ export const eventHandler = (socket:any) => {
 export const sendToSocket=async(socketId: any, data: any)=> {
     try {
         console.log('socketId', socketId)
-        logger.info(`EVENT RECEIVED :: ${data.eventName} :: ${JSON.stringify(data.data)} :::::::::::::: `)
+        logger.info(`EVENT SENDING :: ${data.eventName} :: ${JSON.stringify(data.data)} :::::::::::::: `)
         await io.to(socketId).emit(data.eventName, data.data);
     } catch (error) {
         logger.error(`SEND DATA ERROR IN sendRToSocket: ${error}`)

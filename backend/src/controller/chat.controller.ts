@@ -79,6 +79,7 @@ export const followRequest = async (socket: any, data: any) => {
       { $push: { friendRequest: sender.id } },
       true
     );
+
     if (!updateSender || !updateReceiver) {
       return;
     }
@@ -104,13 +105,14 @@ export const followRequest = async (socket: any, data: any) => {
     await sendToSocket(socket.id, sendData);
 
     if (updateReceiver.socketId) {
+      console.log('updateReceiver.socketId', updateReceiver.socketId)
       const notificationEventData = {
         eventName: EVENT_NAME.NOTIFICATION,
         data: {
           notification: {
             type: notification?.type,
             view: notification?.view,
-            userId: {
+            senderId: {
               profilePicture: sender.profilePicture || null,
               userName: sender.userName,
             },

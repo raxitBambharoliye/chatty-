@@ -12,7 +12,10 @@ function Private() {
   const userData = getCookieData(COOKIE_KEY.USER);
   const notifications = getCookieData(COOKIE_KEY.NOTIFICATIONS);
   const dispatch = useDispatch();
+  console.log("private running:::::")
   useEffect(() => {
+    console.log('token', token)
+    console.log('userData', userData)
      if(token && userData)  {
       dispatch(setNotification(notifications))
       dispatch(setUser(userData));
