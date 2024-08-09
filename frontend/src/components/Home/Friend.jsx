@@ -52,7 +52,7 @@ function Friend() {
                 <>
                 <Input inputClass='inputBlack mx-2' placeholder="Search User Name ... "></Input>
                 {friends.map((contact, index) => (
-                <AsideContactsItem userName={contact.userName}  itemClass={pendingViewsId.includes(contact._id)? "pendingBall":""} tagLine={contact.tagLine ?? "-"} index={index} activeChat={activeChat} key={`${index}FriendsItems`} onClick={(e) => { setActiveChat(index) }} />
+                <AsideContactsItem userName={contact.userName}  profile={contact.profilePicture??"./image/dummyProfile.png"} itemClass={pendingViewsId.includes(contact._id)? "pendingBall":""} tagLine={contact.tagLine ?? "-"} index={index} activeChat={activeChat} key={`${index}FriendsItems`} onClick={(e) => { setActiveChat(index) }} />
                 ))}
             </>)}
         </>

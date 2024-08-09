@@ -36,8 +36,9 @@ export const onlineUser = async (socket: any, data: any) => {
     if (!userWithFriends) {
       return;
     }
-
     // delete user.password;
+    console.log('userWithFriends', userWithFriends)
+
     const onLineUserEventData = {
       eventName: EVENT_NAME.ONLINE_USER,
       data: {

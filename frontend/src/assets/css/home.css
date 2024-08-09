@@ -212,7 +212,7 @@
     .chatHeader .userProfile img{
         width: 3.5rem;
         height: 3.5rem;
-        background: red;
+        /* background: red; */
         border-radius: 50%;
     }
     .chatHeader .userProfile p { 

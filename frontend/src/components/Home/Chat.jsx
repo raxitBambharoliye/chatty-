@@ -76,7 +76,7 @@ function Chat() {
                     <div className="chatHeader d-flex justify-content-between align-items-center">
                         <div className="userProfile d-flex">
                             <div className="img">
-                                <img src="./image/profile1.jpg" alt="" />
+                                <img src={activeUserChat.profilePicture??"./image/profile1.jpg"} alt="" />
                             </div>
                             <div className="userInfo ms-3">
                                 <h2 className="mb-0">{activeUserChat.userName}</h2>

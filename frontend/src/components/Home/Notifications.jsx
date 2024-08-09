@@ -31,7 +31,7 @@ function Notifications() {
           {console.log(notification)}
           <div className="userProfile">
             {/* <img src={element.senderId.profilePicture?element.senderId.profilePicture:"./image/dummyProfile.png"} alt="" /> */}
-            <img src={"./image/dummyProfile.png"} alt="" />
+            <img src={element.profilePicture??"./image/dummyProfile.png"} alt="" />
             </div>
             <div className="text">
             <h5>{element.senderId.userName ?? "--"}</h5>

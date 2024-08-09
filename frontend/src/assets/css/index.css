@@ -295,4 +295,8 @@ body{
   right: 2%;
   border-radius: 50%;
 }
+.notificationBall.pendingBall::before{
+  top: 0;
+  right: 11%;
+}
    

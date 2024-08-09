@@ -1,6 +1,6 @@
 import { compare, hash } from "bcrypt";
 import { MQ } from "../common";
-import { CONFIG, DRIVE_FOLDER, MODEL } from "../constant";
+import { CONFIG, DRIVE_FOLDER, MODEL, UPLOAD_FOLDER } from "../constant";
 import logger from "../utility/logger";
 import jwt from "jsonwebtoken";
 import { createToken, decryptData, encryptData, setCookieData } from "../utility/common";
@@ -200,16 +200,20 @@ export const editUserProfile = async (req: any, res: any) => {
       return res.status(400).json({errors:[{ msg: "user data not found " ,path:"root"}]});
     }
     if (req.file) {
+      console.log('req.file', req.file)
       if (userData.profilePicture && userData.profilePictureId) {
         await  deleteFile(userData.profilePictureId);
       }
-      const fileId = await uploadFile(req.file.filename, req.file.path, DRIVE_FOLDER.PROFILE);
-      if (!fileId) {
-        return res.status(500).json({errors:[{ msg: "Some thing want wrong, pleas try after some time.",path:"root" }]});
-      }
-      const profilePictureURL = `https://drive.google.com/file/d/${fileId}/view?usp=sharing`;
-       req.body.profilePicture = profilePictureURL;
-       req.body.profilePictureId = fileId;
+      //NOTE - code for upload file in google drive
+      // const fileId = await uploadFile(req.file.filename, req.file.path, DRIVE_FOLDER.PROFILE);
+      // if (!fileId) {
+      //   return res.status(500).json({errors:[{ msg: "Some thing want wrong, pleas try after some time.",path:"root" }]});
+      // }
+      // const profilePictureURL = `https://drive.google.com/file/d/${fileId}/view?usp=sharing`;
+      //  req.body.profilePicture = profilePictureURL;
+      //  req.body.profilePictureId = fileId;
+
+      req.body.profilePicture = `http://localhost:${process.env.SERVER_PORT}${UPLOAD_FOLDER.USER_PROFILE}/${req.file.filename}`;
     }
     const updatedUser = await MQ.findByIdAndUpdate<UserIN>(MODEL.USER_MODEL, userId, req.body,true);
     res.status(200).json({ message: 'user profile update successfully', user:updatedUser});

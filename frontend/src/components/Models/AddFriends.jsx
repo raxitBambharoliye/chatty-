@@ -84,7 +84,7 @@ function AddFriends({ id, modalClass = '' }) {
                                         <div className="searchResultItem w-100" key={`${index}AddFriendITem`}>
                                             <div className="d-flex align-items-center">
                                                 <div className="userProfile me-4">
-                                                    <img src="./image/dummyProfile.png" alt="" />
+                                                    <img src={element.profilePicture??"./image/dummyProfile.png"} alt="" />
                                                 </div>
                                                 <div className="userData flex-grow-1 ">
                                                     <div className="d-flex justify-content-between align-items-center">

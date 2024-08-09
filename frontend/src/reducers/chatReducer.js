@@ -14,7 +14,9 @@ const initialState = {
         chatLoader:false
     },
     pendingViewIds: [],
-    notificationSound: false
+    notificationSound: false,
+    activeAside: "FRIENDS",
+    notificationViewPending: false,
 }
 
 
@@ -34,13 +36,18 @@ const chatReducer = createSlice({
         removeIdFromPendingViews: removeIdFromPendingViewsFun,
         setNotificationSound: setNotificationSoundFun,
         setPaginationMessage: setPaginationMessageFun,
-        setChatLoader: setChatLoaderFun
+        setChatLoader: setChatLoaderFun,
+        changeAsideContent: changeAsideContentFun,
+        setPendingNotificationView:setPendingNotificationViewFun
     }
 })
 function setNotificationFun(state, action) {
     state.notification = action.payload;
 }
 function pushNotificationFun(state, action) {
+    if (state.activeAside !== 'NOTIFICATION') {
+        state.notificationViewPending = true;
+    }
     if (state.notification && state.notification.length > 0) {
         state.notification.push(action.payload);
     }
@@ -53,7 +60,6 @@ function setFriendFun(state, action) {
     state.friends = action.payload;
 }
 function pushFriendFun(state, action) {
-    console.log('action', action)
     if (state.friends && state.friends.length > 0) {
         state.friends.push(action.payload);
     }
@@ -129,6 +135,14 @@ function setPaginationMessageFun(state, action) {
 function setChatLoaderFun(state, action) {
     state.loader.chatLoader = action.payload;
 }
+
+function changeAsideContentFun(state, action) {
+    state.activeAside = action.payload;
+}
+function setPendingNotificationViewFun(state, action) {
+    state.notificationViewPending = action.payload;
+}
+
 export const {
     setNotification,
     pushNotification,
@@ -142,6 +156,8 @@ export const {
     removeIdFromPendingViews,
     setNotificationSound,
     setPaginationMessage,
-    setChatLoader
+    setChatLoader,
+    changeAsideContent,
+    setPendingNotificationView
 } = chatReducer.actions;
 export default chatReducer.reducer;

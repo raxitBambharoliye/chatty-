@@ -44,7 +44,6 @@ export const SocketProvider = ({ children }) => {
       }
     })
     socket.on(EVENT_NAME.NOTIFICATION, (data) => {
-      console.log('data', data)
       dispatch(pushNotification(data.notification))
     })
     socket.on(EVENT_NAME.ACCEPT_FOLLOW_REQUEST, (data) => {

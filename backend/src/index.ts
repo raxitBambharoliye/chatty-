@@ -15,6 +15,7 @@ import { googleRouter } from "./router/google.router";
 import Cookies from "cookie-parser";
 import { MessageModel } from "./model";
 import { getMessages } from "./controller/user.controller";
+import path from 'path';  
 process.env.UV_THREADPOOL_SIZE = "128"
 dotenv.config();
 const app = express();
@@ -37,6 +38,8 @@ const io = new Server(httpServer, {
 app.use(cors());
 app.use(express.json());
 app.use(Cookies());
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 app.use(
   cookieSession({
     name: "google",

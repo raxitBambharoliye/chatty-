@@ -69,7 +69,10 @@ function EditProfile({
     const activeSave = (field) => {
         if (defaultValues[field] != getValues(field)) {
             setSubmitButton(false)
-        } else {
+        } else if (field == "profilePicture") {
+            setSubmitButton(false)
+        }
+        else {
             setSubmitButton(true)
         }
     }
@@ -87,7 +90,7 @@ function EditProfile({
                             <div className="row">
                                 {errors.root && <p className='alert rootErrorValidation text-center' role="alert">{errors.root.message }</p>}
                                 <div className="col-12 col-lg-3 col-xl-2">
-                                    <ImagePreview {...register("profileImage")} />
+                                    <ImagePreview {...register("profileImage",)} SubmitButtonStatus={activeSave} />
                                 </div>
                                 <div className="col-12 col-lg-9 col-xl-10 flex-grow-1">
                                     <Input inputClass='inputBlack' type='text' placeholder='Enter your User name ... ' label='User Name' ref={ref}  {...register("userName", {
