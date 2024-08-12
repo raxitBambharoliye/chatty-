@@ -13,7 +13,6 @@ function Aside({ asideShow }) {
     const asideContext = useSelector((state) => state.chat.activeAside);
     const pendingNotificationView = useSelector((state) => state.chat.notificationViewPending);
     const user= useSelector((state)=>state.userData.user)
-    console.log('user', user)
     useEffect(() => {
         if (asideContext == "NOTIFICATION") {
             setNotificationPreview(false);
@@ -57,9 +56,3 @@ function Aside({ asideShow }) {
 }
 
 export default Aside
-
-
-/* 
-
-
-*/
