@@ -1,7 +1,7 @@
-import React, { useId, useState } from 'react'
+import React, { useEffect, useId, useState } from 'react'
 
 function ImagePreview({
-    src = "./image/dummyProfile.png",
+    src=null,
     SubmitButtonStatus=()=>{},
     ...props
 },ref) {
@@ -11,6 +11,9 @@ function ImagePreview({
         setImage(URL.createObjectURL(e.target.files[0]))
         SubmitButtonStatus("profilePicture")
     }
+    useEffect(() => {
+        
+    },[])
     return (
         <>
             <label className="profile " htmlFor={id}>
@@ -21,5 +24,4 @@ function ImagePreview({
         </>
     )
 }
-                
 export default React.forwardRef(ImagePreview)

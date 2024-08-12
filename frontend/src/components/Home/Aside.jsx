@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { APP_URL } from '../../constant'
 import EditProfile from './EditProfile'
-import { AddFriends } from '../../components/Models/index'
+import { AddFriends, CreateGroup } from '../../components/Models/index'
 import Notifications from './Notifications'
 import Friend from './Friend'
 import { useDispatch, useSelector } from 'react-redux'
@@ -12,10 +12,10 @@ function Aside({ asideShow }) {
     const dispatch = useDispatch()
     const asideContext = useSelector((state) => state.chat.activeAside);
     const pendingNotificationView = useSelector((state) => state.chat.notificationViewPending);
-    const user= useSelector((state)=>state.userData.user)
+    const user = useSelector((state) => state.userData.user)
     useEffect(() => {
         if (asideContext == "NOTIFICATION") {
-            setNotificationPreview(false);
+            // setNotificationPreview(false);
             dispatch(setPendingNotificationView(false));
         }
     }, [asideContext])
@@ -30,7 +30,7 @@ function Aside({ asideShow }) {
                     <h1 className='m-0'>Chatty 𝝅</h1>
                     <div className="userProfile" data-bs-toggle="modal" data-bs-target="#editUserProfile">
                         <i className="fa-solid fa-pen pen"></i>
-                        <img src={(user && user.profilePicture)? user.profilePicture:"./image/dummyProfile.png"} alt="" />
+                        <img src={(user && user.profilePicture) ? user.profilePicture : "./image/dummyProfile.png"} alt="" />
                     </div>
                 </div>
                 <div className="asideContacts flex-grow-1 overflow-auto">
@@ -40,17 +40,21 @@ function Aside({ asideShow }) {
                 <div className="asideFooter">
                     <div className="asideFooterMenu">
                         {/* friends */}
-                        <div className="menuItem" onClick={(e) => { dispatch(changeAsideContent("FRIENDS")) }}><Link><i className="fa-regular fa-address-book"></i></Link></div>
+                        <div className="menuItem" onClick={(e) => { dispatch(changeAsideContent("FRIENDS")) }}><Link className={` ${asideContext == "FRIENDS" ? "active" : ''}`}><i className={`fa-regular fa-address-book`}></i></Link></div>
                         {/* add friends */}
                         <div className="menuItem"><Link data-bs-toggle="modal" data-bs-target="#addFriendsModel"><i className="fa-solid fa-user-plus"></i></Link></div>
-                        <div className="menuItem" onClick={(e) => {  dispatch(changeAsideContent("NOTIFICATION"))}}><Link className={`${pendingNotificationView?"pendingBall notificationBall position-relative":''}`}><i className="fa-solid fa-bell"></i></Link></div>
-                        <div className="menuItem"><Link className="menuItem" title='search'><i className="fa-solid fa-magnifying-glass"></i></Link></div>
+                        {/* notification  */}
+                        <div className="menuItem" onClick={(e) => { dispatch(changeAsideContent("NOTIFICATION")) }}><Link className={`${pendingNotificationView ? "pendingBall notificationBall position-relative" : ''} ${asideContext == "NOTIFICATION" ? "active" : ''}`}><i className="fa-solid fa-bell"></i></Link></div>
+                        {/* create group  */}
+                        <div className="menuItem"><Link className="menuItem" title='search' data-bs-toggle="modal" data-bs-target="#createGroupModal"><i className="fa-solid fa-users" title="create group "></i></Link></div>
+                        {/* log out  */}
                         <div className="menuItem"><Link className="menuItem" title='logout' to={APP_URL.FE_LOGOUT}><i className="fa-solid fa-right-from-bracket"></i></Link></div>
                     </div>
                 </div>
             </div>
             <EditProfile id={'editUserProfile'} modalClass='secondBlackModal editUserProfile'></EditProfile>
             <AddFriends id={"addFriendsModel"} modalClass='blackModal addFriendsModal '></AddFriends>
+            <CreateGroup id={"createGroupModal" } modalClass='secondBlackModal editUserProfile'/>
         </>
     )
 }

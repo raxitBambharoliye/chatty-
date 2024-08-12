@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { Input } from '../Form'
 import AsideContactsItem from './AsideContactsItem'
 import { useDispatch, useSelector } from 'react-redux'
-import { changeActiveUserChat, removeIdFromPendingViews } from '../../reducers/chatReducer';
+import { changeActiveUserChat, changeChangeChatLoader, removeIdFromPendingViews } from '../../reducers/chatReducer';
 import { SocketContext } from '../../socket/SocketProvider';
 import { EVENT_NAME } from '../../constant';
 
@@ -35,8 +35,20 @@ function Friend() {
             }
         }
         dispatch(removeIdFromPendingViews(friends[activeChat]._id));
+        dispatch(changeChangeChatLoader(true))
         sendRequest(sendData);
     }, [activeChat])
+
+    useEffect(() => {
+        if (friendSearch) {
+            console.log("friendSearch", friendSearch)
+            let newFriends = friends.filter(user => user.userName.toLowerCase().includes(friendSearch.toLowerCase()));
+            setFriends(newFriends);
+        } else {
+            setFriends(friendsState);
+            setFriendsSearch("");
+        }
+    }, [friendSearch])
 
     if (friendLoader) {
 
@@ -47,21 +59,9 @@ function Friend() {
             </div>
         )
     }
-    // useEffect(() => {
-    //     // if(!friendSearch){
-    //     //     // setFriends(friendsState);
-    //     //     // return;
-    //     // }else{
-    //         // if(friendSearch){
-
-    //             // let newFriends = friends.filter(user => user.userName.toLowerCase().includes(friendSearch.toLowerCase()));
-    //         //     // setFriends(newFriends);
-    //         // }
-    //     // }
-    // }, [friendSearch])
-
     return (
         <>
+            <Input inputClass='inputBlack mx-2' placeholder="Search User Name ... " onChange={(e) => { setFriendsSearch(e.target.value) }}></Input>
             {(!friends || friends.length === 0) &&
                 <div className='h-100 d-flex flex-column justify-content-center align-items-center '>
                     <h4 className='emptyMessage'>Friends not found</h4>
@@ -69,7 +69,6 @@ function Friend() {
             }
             {(friends && friends.length >= 0) && (
                 <>
-                    <Input inputClass='inputBlack mx-2' placeholder="Search User Name ... " onChange={(e) => { setFriendsSearch(e.target.value) }}></Input>
                     {friends.map((contact, index) => (
                         <AsideContactsItem userName={contact.userName} profile={contact.profilePicture ?? "./image/dummyProfile.png"} itemClass={pendingViewsId.includes(contact._id) ? "pendingBall" : ""} tagLine={contact.tagLine ?? "-"} index={index} activeChat={activeChat} key={`${index}FriendsItems`} onClick={(e) => { setActiveChat(index) }} />
                     ))}

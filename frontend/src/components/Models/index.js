@@ -1,3 +1,6 @@
 import AddFriends from "./AddFriends";
-
-export { AddFriends }
+import CreateGroup from "./CreateGroup/CreateGroup";
+export {
+    CreateGroup,
+    AddFriends
+}

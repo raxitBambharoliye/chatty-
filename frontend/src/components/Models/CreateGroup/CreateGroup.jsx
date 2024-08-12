@@ -1,38 +1,25 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { Button, Input, Password } from '../Form'
+import { Button, Input, Password, Selection } from '../../Form'
 import { Link } from 'react-router-dom'
-import ImagePreview from '../ImagePreview'
+import ImagePreview from '../../ImagePreview'
 import { useDispatch, useSelector } from 'react-redux'
-import { AxiosCLI } from '../../axios'
-import { APP_URL, COOKIE_KEY } from '../../constant'
-import { setUser } from '../../reducers/userReducer'
-import { setDataInCookie } from '../../common'
+import { AxiosCLI } from '../../../axios'
+import { APP_URL, COOKIE_KEY } from '../../../constant'
+import { setUser } from '../../../reducers/userReducer'
+import { setDataInCookie } from '../../../common'
+import AddFriendInGroup from './AddFriendInGroup'
 
-function EditProfile({id,modalClass = ''
-}) {
+function CreateGroup({ id, modalClass = '' }) {
     const ref = useRef()
     const user = useSelector((state) => state.userData.user)
     const [submitButton, setSubmitButton] = useState(true);
     const [defaultValues, setDefaultValues] = useState(user)
     const dispatch = useDispatch();
-    const { register, getValues, formState: { errors }, setError,handleSubmit, setValue } = useForm({
-        defaultValues: {
-            email: user.email,
-            userName: user.userName,
-            DOB: user.DOB,
-            tagLine: user.tagLine ? user.tagLine : null
-        }
-    })
+    const { register, getValues, formState: { errors }, setError, handleSubmit, setValue } = useForm();
 
 
-    useEffect(() => {
-        setValue("email", user.email);
-        setValue("userName", user.userName);
-        setValue("DOB", user.DOB);
-        setValue("tagLine", user.tagLine);
-        setDefaultValues(user)
-    }, [user])
+
 
     const closeButtonRef = useRef();
 
@@ -74,64 +61,51 @@ function EditProfile({id,modalClass = ''
             setSubmitButton(true)
         }
     }
-
+    const createGroup = (data) => {
+        console.log("hello")
+        console.log(data)
+    }
     return (
         <div>
             <div className={`modal fade  ${modalClass}`} id={id} tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <form className="modal-dialog modal-dialog-centered modal-xl" action='' onSubmit={handleSubmit(editProfileSubmit)}>
+                <form className="modal-dialog modal-dialog-centered modal-xl" action='' onSubmit={handleSubmit(createGroup)}>
                     <div className={`modal-content`}>
                         <div className="modal-header">
-                            <h1 className="modal-title fs-5" id="exampleModalLabel">Edit Profile</h1>
+                            <h1 className="modal-title fs-5 text-center w-100" id="exampleModalLabel">Create New Group</h1>
                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" />
                         </div>
                         <div className="modal-body">
                             <div className="row">
-                                {errors.root && <p className='alert rootErrorValidation text-center' role="alert">{errors.root.message }</p>}
+                                {errors.root && <p className='alert rootErrorValidation text-center' role="alert">{errors.root.message}</p>}
                                 <div className="col-12 col-lg-3 col-xl-2">
                                     <ImagePreview {...register("profileImage",)} src={user.profilePicture ?? "./image/dummyProfile.png"} SubmitButtonStatus={activeSave} />
                                 </div>
                                 <div className="col-12 col-lg-9 col-xl-10 flex-grow-1">
-                                    <Input inputClass='inputBlack' type='text' placeholder='Enter your User name ... ' label='User Name' ref={ref}  {...register("userName", {
-                                        required: "Please enter your user name",
-                                        onChange: () => { activeSave("userName") }
+                                    <Input inputClass='inputBlack' type='text' placeholder='Enter your group name ... ' label='Group Name' ref={ref}  {...register("userName", {
+                                        required: "Please enter your group name",
+                                        onChange: () => { activeSave("groupName") }
                                     })}
-
                                     />
-                                    {errors.userName && <p className='validationError pb-2'>{errors.userName.message}</p>}
+                                    {errors.groupName && <p className='validationError pb-2'>{errors.groupName.message}</p>}
 
-                                    <Input inputClass='inputBlack' type='email' placeholder='Enter your email address ... ' label='Email Address' ref={ref} disabled {...register("email", {
+                                    <Input inputClass='inputBlack' type='text' placeholder='Enter your groups tag line ... ' label='Tag Line    ' ref={ref}  {...register("tagLine", {
                                         required: "Please enter your email address",
-                                        pattern: {
-                                            value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/,
-                                            message: 'Enter a valid email address',
-                                        },
+                                    })} />
+                                    {errors.tagLine && <p className='7 pb-2'>{errors.tagLine.message}</p>}
+                                    <AddFriendInGroup/>
 
-                                    })} />
-                                    {errors.email && <p className='7 pb-2'>{errors.email.message}</p>}
-                                    <Input inputClass='inputBlack' type='date' placeholder='Enter your password ... ' label='Date Of Birth' ref={ref} onChange={(e) => { activeSave("DOB", e.target.value) }} {...register("DOB", {
-                                        required: "Please enter your date of birth",
-                                        onChange: () => { activeSave("DOB") }
-
-                                    })} />
-                                    {errors.DOB && <p className='validationError pb-2'>{errors.DOB.message}</p>}
-                                    {/* tagLine */}
-                                    <Input inputClass='inputBlack' type='text' placeholder='Enter your Tag Line ... ' label='Tag Line' ref={ref} onChange={(e) => { activeSave("tagLine", e.target.value) }} {...register("tagLine", {
-                                        onChange: () => { activeSave("tagLine") }
-                                    })} />
-                                    {errors.DOB && <p className='validationError pb-2'>{errors.DOB.message}</p>}
                                 </div>
                             </div>
                         </div>
                         <div className="modal-footer">
                             <Button buttonClass='buttonBlack hover btnRounded me-2' type='button' value='Discard' data-bs-dismiss="modal" ref={closeButtonRef} />
-                            <Button buttonClass='themBlueBordered btnRounded' type='submit' value='Save' disabled={submitButton} ref={ref} />
+                            <Button buttonClass='themBlueBordered btnRounded' type='submit' value='Save' ref={ref} />
                         </div>
                     </div>
                 </form>
             </div>
         </div>
-
     )
 }
 
-export default EditProfile
+export default CreateGroup

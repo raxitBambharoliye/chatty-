@@ -22,7 +22,7 @@ function Chat() {
     const bottomRef = useRef();
     const scrollREF = useRef();
     const [prevScrollHeight, setPrevScrollHeight] = useState(0);
-
+    const changeChatLoader=useSelector((state)=>state.chat.loader.changeChatLoader)
     const sendMessage = (data) => {
         if (activeUserChat && activeUserChat._id && data && data.message.length >= 0) {
             sendRequest({ eventName: EVENT_NAME.MESSAGE, data: { receiverId: activeUserChat._id, message: data.message } });
@@ -52,6 +52,7 @@ function Chat() {
     useEffect(() => {
         setPage(2);
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+        
     }, [activeUserChat]);
 
     useEffect(() => {
@@ -70,13 +71,18 @@ function Chat() {
 
     return (
         <>
-            {activeUserChat && (
+            {changeChatLoader && (<>
+                <div className="w-100 h-100 d-flex align-items-center justify-content-center">
+                                    <div className="asideLoader"></div>
+                                </div>
+            </>)}
+            {(activeUserChat && !changeChatLoader) && (
                 <>
                     {/* chat header */}
                     <div className="chatHeader d-flex justify-content-between align-items-center">
                         <div className="userProfile d-flex">
                             <div className="img">
-                                <img src={activeUserChat.profilePicture??"./image/profile1.jpg"} alt="" />
+                                <img src={activeUserChat.profilePicture??"./image/dummyProfile.png"} alt="" />
                             </div>
                             <div className="userInfo ms-3">
                                 <h2 className="mb-0">{activeUserChat.userName}</h2>

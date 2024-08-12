@@ -11,7 +11,8 @@ const initialState = {
     activeUserChat: null,    
     loader:{
         friendsLoader: false ,
-        chatLoader:false
+        chatLoader: false,
+        changeChatLoader:false,
     },
     pendingViewIds: [],
     notificationSound: false,
@@ -38,7 +39,8 @@ const chatReducer = createSlice({
         setPaginationMessage: setPaginationMessageFun,
         setChatLoader: setChatLoaderFun,
         changeAsideContent: changeAsideContentFun,
-        setPendingNotificationView:setPendingNotificationViewFun
+        setPendingNotificationView: setPendingNotificationViewFun,
+        changeChangeChatLoader:changeChangeChatLoaderFun
     }
 })
 function setNotificationFun(state, action) {
@@ -142,7 +144,9 @@ function changeAsideContentFun(state, action) {
 function setPendingNotificationViewFun(state, action) {
     state.notificationViewPending = action.payload;
 }
-
+function changeChangeChatLoaderFun(state, action) {
+    state.changeChatLoader= action.payload
+}
 export const {
     setNotification,
     pushNotification,
@@ -158,6 +162,7 @@ export const {
     setPaginationMessage,
     setChatLoader,
     changeAsideContent,
-    setPendingNotificationView
+    setPendingNotificationView,
+    changeChangeChatLoader
 } = chatReducer.actions;
 export default chatReducer.reducer;

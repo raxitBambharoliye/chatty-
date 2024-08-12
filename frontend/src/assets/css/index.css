@@ -23,17 +23,17 @@ body{
 
 
 
-.inputBlack input{
+.inputBlack input,.inputBlack select{
     background-color: var(--color-black);
     border: none;
     color: var(--color-gray) ;
 }
-.inputBlack input:focus{
+.inputBlack input:focus,.inputBlack select:focus{
     background-color: var(--color-black) !important;
     color: white !important;
     box-shadow: 0 0 0 .25rem #5b5b5b40;
 }
-.inputBlack input::placeholder{
+.inputBlack input::placeholder,.inputBlack select::placeholder{
     color: var(--color-gray);
 }
 ::-webkit-calendar-picker-indicator{
@@ -47,6 +47,14 @@ body{
     color: var(--color-gray);
     font-size: 17px;
 }
+
+.inputBlack option{
+  background-color: red;
+}
+/* select option:hover{background-color:yellow;} */
+    
+
+
 .validationError{
     color: red;
     font-size: 14px;

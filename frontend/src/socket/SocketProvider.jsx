@@ -4,7 +4,7 @@ import { COOKIE_KEY, EVENT_NAME } from '../constant/'
 import { useDispatch, useSelector } from "react-redux";
 import { removeCookieData, setDataInCookie } from "../common";
 import { setUser } from "../reducers/userReducer";
-import { pushFriend, pushMessage, pushNotification, setFriend, setFriendLoader, setMessage, setNotification } from "../reducers/chatReducer";
+import { changeChangeChatLoader, pushFriend, pushMessage, pushNotification, setFriend, setFriendLoader, setMessage, setNotification } from "../reducers/chatReducer";
 export const SocketContext = createContext();
 
 export const SocketProvider = ({ children }) => {
@@ -57,6 +57,7 @@ export const SocketProvider = ({ children }) => {
     })
     socket.on(EVENT_NAME.CHATS, (data) => {
       dispatch(setMessage(data.chats))
+      dispatch(changeChangeChatLoader(false));
     })
 
     return () => {

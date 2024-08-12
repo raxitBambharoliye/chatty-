@@ -146,7 +146,7 @@
     justify-content: center;
     transition: all .2s linear;
     }
-    .asideFooterMenu a:hover{
+    .asideFooterMenu a:hover,.asideFooterMenu a.active{
         background: white;
         color: black;
     }
@@ -242,6 +242,7 @@
         scale: 0;
         transition: all .4s ease-in-out;
         transform-origin: top right;
+        z-index: 9999;
     }
     .chatHeaderUserMenu ul.show{
         scale:1;
