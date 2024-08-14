@@ -91,7 +91,6 @@ function pushMessageFun(state, action) {
     if (userData._id !== action.payload.senderId) {
         const notificationSound = new Audio('./sound/messageNotification.wav')
         notificationSound.play().catch(error => {
-            console.log('action.payload', action.payload)
             addNotification({
                 title: 'Message Received',
                 subtitle: `${action.payload.senderName}`,
@@ -104,7 +103,11 @@ function pushMessageFun(state, action) {
     }
 
     if (!activeUserChat || (activeUserChat && action.payload.senderId != activeUserChat._id && action.payload.senderId != userData._id)) {
-        state.pendingViewIds.push(action.payload.senderId);
+        if (action.payload.isGroup) {
+            state.pendingViewIds.push(action.payload.receiverId);
+        } else {
+            state.pendingViewIds.push(action.payload.senderId);
+        }
     }
     if (activeUserChat && !(action.payload.receiverId == activeUserChat._id || (action.payload.receiverId == userData._id && action.payload.senderId == activeUserChat._id))) {
         return;

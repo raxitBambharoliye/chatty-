@@ -31,7 +31,8 @@ function Friend() {
             eventName: EVENT_NAME.CHATS,
             data: {
                 senderId: user._id,
-                receiverId: friends[activeChat]._id
+                receiverId: friends[activeChat]._id,
+                isGroup:(friends[activeChat].type && friends[activeChat].type==="GROUP")?true:false,
             }
         }
         dispatch(removeIdFromPendingViews(friends[activeChat]._id));
@@ -70,7 +71,7 @@ function Friend() {
             {(friends && friends.length >= 0) && (
                 <>
                     {friends.map((contact, index) => (
-                        <AsideContactsItem userName={contact.userName} profile={contact.profilePicture ?? "./image/dummyProfile.png"} itemClass={pendingViewsId.includes(contact._id) ? "pendingBall" : ""} tagLine={contact.tagLine ?? "-"} index={index} activeChat={activeChat} key={`${index}FriendsItems`} onClick={(e) => { setActiveChat(index) }} />
+                        <AsideContactsItem  userName={contact.type&& contact.type=="GROUP"?contact.groupName:contact.userName} profile={contact.type&& contact.type=="GROUP"?contact.groupProfile??"./image/dummyGroupProfile.png":contact.profilePicture ?? "./image/dummyProfile.png"} itemClass={pendingViewsId.includes(contact._id) ? "pendingBall" : ""} tagLine={contact.tagLine ?? "-"} index={index} activeChat={activeChat} key={`${index}FriendsItems`} onClick={(e) => { setActiveChat(index) }} />
                     ))}
                 </>)}
         </>

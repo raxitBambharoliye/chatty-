@@ -4,8 +4,9 @@ import { UPLOAD_FOLDER } from '../constant';
 const multerObj = multer.diskStorage({
     destination: (req, file, cb) => {
         if (file.fieldname === "profileImage") {
-            
             cb(null,path.join(__dirname,`..${UPLOAD_FOLDER.USER_PROFILE}`))
+        } else if (file.fieldname === "groupProfile") {
+            cb(null,path.join(__dirname,`..${UPLOAD_FOLDER.GROUP_PROFILE}`))
         }
     },
     filename: (req, file, cb) => {

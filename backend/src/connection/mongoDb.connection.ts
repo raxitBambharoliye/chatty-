@@ -6,7 +6,8 @@ import logger from "../utility/logger";
 export const mongoDbConnection = async () => {
     try {
         const dbUrl = process.env.MONGO_URL || "";
-        if(!dbUrl) throw new Error("db url is not defined")
+        if (!dbUrl) throw new Error("db url is not defined")
+        mongoose.set('strictPopulate', false);
         mongoose.connect(dbUrl);
         const db = mongoose.connection;
         db.once("open", () => logger.info("MongoDB Connected"));

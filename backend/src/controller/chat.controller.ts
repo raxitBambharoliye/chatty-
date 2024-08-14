@@ -1,9 +1,8 @@
 import { EVENT_NAME, MQ } from "../common";
 import { CONFIG, MODEL } from "../constant";
-import { sendToSocket } from "../eventHandlers";
-import { MessageIN, NotificationIN, UserIN } from "../utility/interfaces";
+import { sendToRoom, sendToSocket } from "../eventHandlers";
+import { GroupIN, MessageIN, NotificationIN, UserIN } from "../utility/interfaces";
 import logger from "../utility/logger";
-import { formatChat } from "../utility/logic";
 
 export const onlineUser = async (socket: any, data: any) => {
   try {
@@ -24,31 +23,35 @@ export const onlineUser = async (socket: any, data: any) => {
     const notifications = await MQ.findWithPopulate(
       MODEL.NOTIFICATION_MODEL,
       { userId: user.id },
-      "senderId",
+      "senderId ",
       "userName profilePicture"
     );
     const userWithFriends = await MQ.findWithPopulate<UserIN[]>(
       MODEL.USER_MODEL,
       { _id: user.id },
-      "friends",
-      "userName profilePicture tagLine isOnLine "
+      "friends groups",
+      "userName profilePicture tagLine isOnLine groupName groupProfile type"
     );
     if (!userWithFriends) {
       return;
     }
     // delete user.password;
-    console.log('userWithFriends', userWithFriends)
-
+    console.log('userWithFriends', JSON.stringify(userWithFriends))
+    if (userWithFriends[0].groups) {
+      userWithFriends[0].groups.forEach((element:any) => {
+        socket.join(element.id.toString());
+      });
+    }
     const onLineUserEventData = {
       eventName: EVENT_NAME.ONLINE_USER,
       data: {
         notifications,
-        friends: userWithFriends[0].friends,
+        friends: [...userWithFriends[0].friends,...userWithFriends[0].groups],
       },
     };
 
     await sendToSocket(socket.id, onLineUserEventData);
-  } catch (error) {
+  } catch (error){
     logger.error(`CATCH ERROR IN : onlineUser ::: ${error}`);
     console.log("error", error);
   }
@@ -247,31 +250,51 @@ export const disconnectHandler = async (userId: any) => {
 
 export const messageHandler = async (socket: any, data: any) => {
   try {
-    const { receiverId ,message} = data;
+    const { receiverId ,message,isGroup} = data;
+    
     if(!receiverId || !message){
       return false;
     }
 
+
     const user=await MQ.findById<UserIN>(MODEL.USER_MODEL,socket.userId);
     console.log('user', user)
-    if(!user || !user.friends.includes(receiverId)){
-      return false;
-    }
-    const friend=await MQ.findById<UserIN>(MODEL.USER_MODEL,receiverId);
-    console.log('friend', friend)
+    if (isGroup) {
+      if(!user || !user.groups.includes(receiverId)){
+        return false;
+      }
+    } else {
+      if(!user || !user.friends.includes(receiverId)){
+        return false;
+      }
+  }
 
-    if(!friend || !friend.friends.includes(user._id)){
-      return false;
+    let friend;
+    if (!isGroup) {
+        friend=await MQ.findById<UserIN>(MODEL.USER_MODEL,receiverId);
+        if(!friend || !friend.friends.includes(user._id)){
+          return false;
+        }
     }
-
+   
+    let groupData;
+    if (isGroup) {
+       groupData = await MQ.findById<GroupIN>(MODEL.GROUP_MODEL, receiverId);
+       console.log('groupData', groupData)
+      if (!groupData || !(groupData.groupMembers.includes(user._id))) {
+        logger.error(`SENDER WAS NOT FRIENDS `);
+        return false;
+      }
+    }
 
     
     const insertMessageData= {
       senderId:socket.userId,
-      receiverId,
+      receiverId:isGroup?groupData?.id:receiverId,
       message:message
     }
     let messageData= await MQ.insertOne<MessageIN>(MODEL.MESSAGE_MODEL,insertMessageData);
+    console.log('messageData', messageData)
     if(!messageData){
       return false;
     }
@@ -283,15 +306,19 @@ export const messageHandler = async (socket: any, data: any) => {
           createdAt: messageData.createdAt,
           senderId:user.id,
           senderName:user.userName,
-          receiverId
+          receiverId,
+          isGroup,
         }
       }
     }
-    sendToSocket(socket.id,sendMessageData);
-    if (friend.socketId) {
-      sendToSocket(friend.socketId,sendMessageData)
+    if (isGroup) {
+      sendToRoom(receiverId, sendMessageData);
+    } else {
+      sendToSocket(socket.id, sendMessageData);
+      if (friend?.socketId) {
+        sendToSocket(friend.socketId, sendMessageData)
+      }
     }
-
   } catch (error) {
     logger.error(`CATCH ERROR IN ::: messageHandler:: ${error}`)
     console.log('error', error)
@@ -309,16 +336,25 @@ export const chatHandler = async (socket: any, data: any) => {
       return false;
     }
 
-    const user =await MQ.findById<UserIN>(MODEL.USER_MODEL,userId)
-    const receiver = await MQ.findById<UserIN>(MODEL.USER_MODEL, receiverId);
+    const user = await MQ.findById<UserIN>(MODEL.USER_MODEL, userId)
+    let receiver;
+    if (!data.isGroup) {
+      receiver = await MQ.findById<UserIN>(MODEL.USER_MODEL, receiverId);
+    } else {
+      receiver = await MQ.findById<UserIN>(MODEL.GROUP_MODEL, receiverId);
+    }
     if (!user || !receiver) {
       return false;
     }
-
-    let chat = await MQ.findWithPagination<MessageIN[]>(MODEL.MESSAGE_MODEL, {
+    let query:any = {
       $or:
-      [{ senderId: userId, receiverId: receiverId }, { senderId: receiverId, receiverId: userId }],
-    },CONFIG.MESSAGE_LOAD_LIMIT,1,{createdAt:-1})
+        [{ senderId: userId, receiverId: receiverId }, { senderId: receiverId, receiverId: userId }],
+    };
+    if (data.isGroup) {
+      query={ receiverId }
+    }
+    let chat = await MQ.findWithPagination<MessageIN[]>(MODEL.MESSAGE_MODEL,query ,CONFIG.MESSAGE_LOAD_LIMIT,1,{createdAt:-1})
+    console.log('chat', chat)
     if (!chat) {
       chat=[]
     }
@@ -332,6 +368,23 @@ export const chatHandler = async (socket: any, data: any) => {
     await sendToSocket(socket.id, chatSendData);
   } catch (error) {
     logger.error(`CATCH ERROR IN ::: chatHandler:: ${error}`);
+    console.log('error', error)
+  }
+}
+
+export const joinGroupChatHandler = async (socket: any, data: any) => {
+  try {
+    if (!data.groupId) {
+      return false;
+
+    }
+    const group = await MQ.findById<GroupIN>(MODEL.GROUP_MODEL, data.groupId);
+    if (!group) {
+      return false;
+    }
+    socket.join(group.id);
+  } catch (error) {
+    logger.error(`CATCH ERROR IN : joinGroupChatHandler ${error}`)
     console.log('error', error)
   }
 }

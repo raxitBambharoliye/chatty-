@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { editUserProfile, getMessages, searchUser, sendVerificationMail, userLogIn, verifyEmail} from "../controller/user.controller";
+import { createGroup, editUserProfile, getMessages, searchUser, sendVerificationMail, userLogIn, verifyEmail} from "../controller/user.controller";
 import { reqEditUserProfileValidation, reqLoginValidation, reqUserRegisterValidation } from "../validation/requestValidator";
 import { verifyToken } from "../middleware";
 import { uploadImage } from "../common/multer";
@@ -12,6 +12,6 @@ router.post('/login', reqLoginValidation, userLogIn);
 router.get("/verifyEmail", verifyEmail)
 router.post("/editUserProfile",verifyToken,uploadImage.single("profileImage"),reqEditUserProfileValidation,editUserProfile)
 router.get("/searchUser/:search",verifyToken, searchUser);
-
-router.post("/getMessage",verifyToken,getMessages)
+router.post("/getMessage", verifyToken, getMessages)
+router.post("/createGroup", /* verifyToken, */ uploadImage.single("groupProfile"),createGroup);
 export { router as userRouter };

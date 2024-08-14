@@ -8,24 +8,24 @@ import { APP_URL, EVENT_NAME } from '../../constant';
 import { AxiosCLI } from '../../axios';
 import { setChatLoader, setPaginationMessage } from '../../reducers/chatReducer';
 import { checkDatePrint } from '../../utility/logic/formatMessage';
-
+/* with of full picture 767 */
 function Chat() {
-    const [chatHeaderMenu, setChatHeaderMenu] = useState(false);
+    const bottomRef = useRef();
     const activeUserChat = useSelector((state) => state.chat.activeUserChat);
+    const changeChatLoader = useSelector((state) => state.chat.loader.changeChatLoader)
     const user = useSelector((state) => state.userData.user);
     const messages = useSelector((state) => state.chat.messages);
-    const [page, setPage] = useState(2);
-    const { register, handleSubmit, setValue } = useForm();
-    const { sendRequest } = useContext(SocketContext);
-    const dispatch = useDispatch();
     const chatLoader = useSelector((state) => state.chat.loader.chatLoader);
-    const bottomRef = useRef();
-    const scrollREF = useRef();
+    const { sendRequest } = useContext(SocketContext);
+    const [chatHeaderMenu, setChatHeaderMenu] = useState(false);
+    const [page, setPage] = useState(2);
     const [prevScrollHeight, setPrevScrollHeight] = useState(0);
-    const changeChatLoader=useSelector((state)=>state.chat.loader.changeChatLoader)
+    const dispatch = useDispatch();
+    const scrollREF = useRef();
+    const { register, handleSubmit, setValue } = useForm();
     const sendMessage = (data) => {
         if (activeUserChat && activeUserChat._id && data && data.message.length >= 0) {
-            sendRequest({ eventName: EVENT_NAME.MESSAGE, data: { receiverId: activeUserChat._id, message: data.message } });
+            sendRequest({ eventName: EVENT_NAME.MESSAGE, data: { receiverId: activeUserChat._id, message: data.message, isGroup: (activeUserChat.type && activeUserChat.type == 'GROUP') ? true : false }});
             setValue("message", "");
             bottomRef.current?.scrollIntoView({ behavior: "smooth" });
         }
@@ -52,7 +52,7 @@ function Chat() {
     useEffect(() => {
         setPage(2);
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-        
+
     }, [activeUserChat]);
 
     useEffect(() => {
@@ -73,8 +73,8 @@ function Chat() {
         <>
             {changeChatLoader && (<>
                 <div className="w-100 h-100 d-flex align-items-center justify-content-center">
-                                    <div className="asideLoader"></div>
-                                </div>
+                    <div className="asideLoader"></div>
+                </div>
             </>)}
             {(activeUserChat && !changeChatLoader) && (
                 <>
@@ -82,10 +82,10 @@ function Chat() {
                     <div className="chatHeader d-flex justify-content-between align-items-center">
                         <div className="userProfile d-flex">
                             <div className="img">
-                                <img src={activeUserChat.profilePicture??"./image/dummyProfile.png"} alt="" />
+                                <img src={activeUserChat.type && activeUserChat.type == 'GROUP' ? activeUserChat.groupProfile ?? "./image/dummyGroupProfile.png" : activeUserChat.profilePicture ?? "./image/dummyProfile.png"} alt="" />
                             </div>
                             <div className="userInfo ms-3">
-                                <h2 className="mb-0">{activeUserChat.userName}</h2>
+                                <h2 className="mb-0">{activeUserChat.type && activeUserChat.type == 'GROUP' ? activeUserChat.groupName : activeUserChat.userName}</h2>
                                 <p>{activeUserChat.tagLine ?? "-"}</p>
                             </div>
                         </div>
@@ -97,7 +97,7 @@ function Chat() {
                                 <ul className={`m-0 p-0 ${chatHeaderMenu && "show"}`}>
                                     <li className="m-0">block</li>
                                     <li className="m-0">mute</li>
-                                    <li className="m-0">unfollow</li>
+                                    <li className="m-0">un follow</li>
                                 </ul>
                             </div>
                         </div>

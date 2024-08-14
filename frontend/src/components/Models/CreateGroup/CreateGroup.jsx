@@ -1,70 +1,47 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { Button, Input, Password, Selection } from '../../Form'
-import { Link } from 'react-router-dom'
+import { Button, Input,  } from '../../Form'
 import ImagePreview from '../../ImagePreview'
 import { useDispatch, useSelector } from 'react-redux'
 import { AxiosCLI } from '../../../axios'
-import { APP_URL, COOKIE_KEY } from '../../../constant'
-import { setUser } from '../../../reducers/userReducer'
-import { setDataInCookie } from '../../../common'
+import { APP_URL } from '../../../constant'
 import AddFriendInGroup from './AddFriendInGroup'
+import { pushFriend } from '../../../reducers/chatReducer'
 
 function CreateGroup({ id, modalClass = '' }) {
     const ref = useRef()
     const user = useSelector((state) => state.userData.user)
-    const [submitButton, setSubmitButton] = useState(true);
-    const [defaultValues, setDefaultValues] = useState(user)
     const dispatch = useDispatch();
-    const { register, getValues, formState: { errors }, setError, handleSubmit, setValue } = useForm();
-
-
-
-
+    const { register,  formState: { errors }, setError, handleSubmit, setValue } = useForm();
+    const [selectedFriendsIds, setSelectedFriendsIds] = useState([])
     const closeButtonRef = useRef();
-
-    const editProfileSubmit = async (data) => {
-        try {
-            const formData = new FormData()
-            if (data.profileImage[0]) {
-                formData.append('profileImage', data.profileImage[0])
-            }
-            formData.append('userName', data.userName)
-            formData.append('DOB', data.DOB)
-            formData.append('userId', user._id)
-            formData.append("tagLine", data.tagLine);
-            const editResponse = await AxiosCLI.post(APP_URL.EDIT_USER_PROFILE, formData);
-            if (editResponse && editResponse.status == 200 && editResponse.data && editResponse.data.user) {
-                dispatch(setUser(editResponse.data.user));
-                setDataInCookie(COOKIE_KEY.USER, editResponse.data.user);
-                closeButtonRef.current.click();
-            }
-        } catch (error) {
-            console.error('CATCH ERROR IN ::: editProfileSubmit', error);
-            if (error.response.status === 400 && error.response.data.errors) {
-                for (let i = 0; i < error.response.data.errors.length; i++) {
-                    let element = error.response.data.errors[i];
-                    setError(element.path, {
-                        message: element.msg
-                    })
-                }
-            }
+    const createGroup = async (data) => {
+        if (!data.groupMember || data.groupMember.length == 0) {
+            return setError("groupMember", {
+                message: "please select Friends"
+            })
+        }
+        const formData = new FormData();
+        if (data.groupProfile[0]) {
+            formData.append('groupProfile', data.groupProfile[0])
+        }
+        formData.append('groupName', data.groupName)
+        formData.append('groupMember', data.groupMember)
+        formData.append("tagLine", data.tagLine);
+        formData.append("creator", user._id);
+        const createGroupResponse = await AxiosCLI.post(APP_URL.CREATE_GROUP, formData);
+        if (createGroupResponse.status === 200) {
+            dispatch(pushFriend({ ...createGroupResponse.data.newGroup, type: "GROUP" }));
+            closeButtonRef.current.click();
         }
     }
-    const activeSave = (field) => {
-        if (defaultValues[field] != getValues(field)) {
-            setSubmitButton(false)
-        } else if (field == "profilePicture") {
-            setSubmitButton(false)
+    useEffect(() => {
+        if (selectedFriendsIds && selectedFriendsIds.length > 0) {
+            setValue("groupMember", selectedFriendsIds)
+        } else {
+            setValue("groupMember", null);
         }
-        else {
-            setSubmitButton(true)
-        }
-    }
-    const createGroup = (data) => {
-        console.log("hello")
-        console.log(data)
-    }
+    }, [selectedFriendsIds])
     return (
         <div>
             <div className={`modal fade  ${modalClass}`} id={id} tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -78,28 +55,26 @@ function CreateGroup({ id, modalClass = '' }) {
                             <div className="row">
                                 {errors.root && <p className='alert rootErrorValidation text-center' role="alert">{errors.root.message}</p>}
                                 <div className="col-12 col-lg-3 col-xl-2">
-                                    <ImagePreview {...register("profileImage",)} src={user.profilePicture ?? "./image/dummyProfile.png"} SubmitButtonStatus={activeSave} />
+                                    <ImagePreview {...register("groupProfile",)} src={user.profilePicture ?? "./image/dummyProfile.png"} />
                                 </div>
                                 <div className="col-12 col-lg-9 col-xl-10 flex-grow-1">
-                                    <Input inputClass='inputBlack' type='text' placeholder='Enter your group name ... ' label='Group Name' ref={ref}  {...register("userName", {
+                                    <Input inputClass='inputBlack' type='text' placeholder='Enter your group name ... ' label='Group Name' ref={ref}  {...register("groupName", {
                                         required: "Please enter your group name",
-                                        onChange: () => { activeSave("groupName") }
                                     })}
                                     />
                                     {errors.groupName && <p className='validationError pb-2'>{errors.groupName.message}</p>}
 
-                                    <Input inputClass='inputBlack' type='text' placeholder='Enter your groups tag line ... ' label='Tag Line    ' ref={ref}  {...register("tagLine", {
-                                        required: "Please enter your email address",
-                                    })} />
-                                    {errors.tagLine && <p className='7 pb-2'>{errors.tagLine.message}</p>}
-                                    <AddFriendInGroup/>
+                                    <Input inputClass='inputBlack' type='text' placeholder='Enter your groups tag line ... ' label='Tag Line    ' ref={ref}  {...register("tagLine")} />
+                                    {errors.tagLine && <p className='validationError pb-2'>{errors.tagLine.message}</p>}
+                                    <AddFriendInGroup selectedFriendsIds={selectedFriendsIds} setSelectedFriendsIds={setSelectedFriendsIds} />
+                                    {errors.groupMember && <p className='validationError pb-2 mb-2'>{errors.groupMember.message}</p>}
 
                                 </div>
                             </div>
                         </div>
                         <div className="modal-footer">
                             <Button buttonClass='buttonBlack hover btnRounded me-2' type='button' value='Discard' data-bs-dismiss="modal" ref={closeButtonRef} />
-                            <Button buttonClass='themBlueBordered btnRounded' type='submit' value='Save' ref={ref} />
+                            <Button buttonClass='themBlueBordered btnRounded' type='submit' value='Create Group' ref={ref} />
                         </div>
                     </div>
                 </form>

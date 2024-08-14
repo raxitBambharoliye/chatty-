@@ -4,12 +4,13 @@ export default Object.freeze({
     GET_USER_DATA: '/auth/login/success',
     EDIT_USER_PROFILE: '/user/editUserProfile',
     SEARCH_USER: '/user/searchUser',
-    GET_MESSAGE:'/user/getMessage',
+    GET_MESSAGE: '/user/getMessage',
+    CREATE_GROUP: '/user/createGroup',
     // SEND_VERIFICATION_MAIL:'/user/'
 
     FE_LOGIN: '/login',
     FE_HOME: '/home',
-    FE_REGISTER: '/register',
+    FE_REGISTER: '/register',   
     FE_LOGOUT:'/logout',
     FE_EMAIL_VERIFY:'/verifyEmail'
 })

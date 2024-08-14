@@ -1,17 +1,19 @@
 import { compare, hash } from "bcrypt";
-import { MQ } from "../common";
+import { EVENT_NAME, MQ } from "../common";
 import { CONFIG, DRIVE_FOLDER, MODEL, UPLOAD_FOLDER } from "../constant";
 import logger from "../utility/logger";
 import jwt from "jsonwebtoken";
 import { createToken, decryptData, encryptData, setCookieData } from "../utility/common";
-import { MessageIN, UserIN } from "../utility/interfaces";
+import { GroupIN, MessageIN, UserIN } from "../utility/interfaces";
 import path from 'path';  
 import fs from 'fs';
 import handlebars from 'handlebars'
 import { sendMail } from "../services/sendmail.service";
 import { deleteFile, uploadFile } from "../services/googleDrive.service";
 import { Request } from "express";
-const registerUser = async (req: any, res: any) => {
+import { removeFile } from "../utility/logic/file";
+import { sendToSocket } from "../eventHandlers";
+export const registerUser = async (req: any, res: any) => {
   try {
     req.body.password = await hash(req.body.password, 10);
     const user = await MQ.insertOne<UserIN>(MODEL.USER_MODEL, req.body);
@@ -36,7 +38,7 @@ const registerUser = async (req: any, res: any) => {
   }
 };
 
-const userLogIn = async (req: any, res: any) => {
+export const userLogIn = async (req: any, res: any) => {
   try {
     let { email, password } = req.body;
     let user = await MQ.findOne<UserIN>(MODEL.USER_MODEL, { email: email });
@@ -73,7 +75,7 @@ const userLogIn = async (req: any, res: any) => {
 };
 
 
-const loginWithGoogleHandler = async (req: any, res: any) => {
+export const loginWithGoogleHandler = async (req: any, res: any) => {
   try {
 /* 
 // This function is called after successful authentication
@@ -279,5 +281,80 @@ export const getMessages = async (req: any, res: any)=>{
   }
 }
 
+export const createGroup = async (req: any, res: any) => {
+  try {
+    console.log(req.body);
+    console.log(typeof req.body.groupMember)
 
-export { registerUser, userLogIn, loginWithGoogleHandler };
+    /* 
+    {
+  groupName: 'cholate ',
+  groupMember: '66a66acc351b0bec2848d11f,66a66b8d31b9fcf4e9c40d6f,66a66b8e31b9fcf4e9c40d77',
+  tagLine: 'testDelete',
+  creator: '669de4006bda9f696cc6aae7'
+}
+
+     */
+    const user = await MQ.findById<UserIN>(MODEL.USER_MODEL, req.body.creator);
+    if (!user) {
+      return res.status(400).json({ message: "user not found" });
+    }
+    let groupMember = req.body.groupMember.split(',').map((id:string) => id);
+    groupMember = groupMember.filter((value:string, index:number, array:string[]) => array.indexOf(value) === index);
+    for (var i = 0; i < groupMember.length; i++){
+      const checkUser = await MQ.findById<UserIN>(MODEL.USER_MODEL, groupMember[i]);
+      if (!checkUser) {
+        if (req.file) {
+          removeFile( path.join(__dirname,'../',UPLOAD_FOLDER.GROUP_PROFILE,req.file.filename))
+        }
+        return res.status(400).json({ message: "giver friends are not in record "});
+      }
+      if (!user.friends.includes(checkUser._id)) {
+        if (req.file) {
+          removeFile( path.join(__dirname,'../',UPLOAD_FOLDER.GROUP_PROFILE,req.file.filename))
+        }
+        return res.status(400).json({ message: "you cant add user that is not your friend" });
+      }
+    }
+    let insertGroupData:any = {
+      admin: [user.id],
+      groupName: req.body.groupName,
+      tagLine: req.body.tagLine,
+      creator: req.body.creator,
+      groupMembers: [...groupMember,req.body.creator],
+      groupProfile:null,
+    }
+    if (req.file) {
+      insertGroupData.groupProfile=`http://localhost:${process.env.SERVER_PORT}${UPLOAD_FOLDER.GROUP_PROFILE}/${req.file.filename}`
+    }
+    const groupData = await MQ.insertOne<GroupIN>(MODEL.GROUP_MODEL, insertGroupData);
+    if (groupData) {
+      await MQ.findByIdAndUpdate(MODEL.USER_MODEL, user.id, { $push: { groups: groupData.id } });
+      for (var i = 0; i < groupMember.length; i++){
+        if (user.id == groupMember[i]) {
+          console.log('group success ')
+          continue;
+        }
+        let updateMember = await MQ.findByIdAndUpdate<UserIN>(MODEL.USER_MODEL, groupMember[i], { $push: { groups: groupData.id } },true);
+        console.log('updateMember', updateMember)
+        if (!updateMember) {
+          continue;
+        }
+        if (updateMember && updateMember?.socketId) {
+          const sendEventData = {
+            eventName: EVENT_NAME.ACCEPT_FOLLOW_REQUEST,
+            data: {newFriend:groupData}
+            }
+            sendToSocket(updateMember.socketId, sendEventData);
+          }
+      }
+      return res.status(200).json({ message: "Group created successfully", newGroup: groupData });
+    }
+    return res.status(400).json({message:"something went wrong"})
+  } catch (error) {
+    logger.error(`CATCH ERROR IN createGroup ::: ${error }`)
+    console.log('error', error);
+    return res.status(400).json({message:"something went wrong"})
+
+  }
+}

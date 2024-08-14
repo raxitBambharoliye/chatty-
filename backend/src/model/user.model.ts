@@ -64,6 +64,12 @@ const userSchema = new Schema({
         default: [],
         required: true,
     },
+    groups: {
+        type: [{type:mongoose.Schema.Types.ObjectId,ref:MODEL.GROUP_MODEL}],
+        ref:MODEL.USER_MODEL,
+        default: [],
+        required: true,
+    },
     verifiedEmail: { type: Boolean, default: false },
     profilePictureId: { type: String, }
 }, { timestamps: true })

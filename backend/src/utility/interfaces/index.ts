@@ -20,8 +20,9 @@ export interface UserIN {
   friends: mongoose.Schema.Types.ObjectId[];
   isOnLine: Boolean;
   socketId: string;
-  createdAt:Date;
-  updatedAt:Date; 
+  createdAt: Date;
+  updatedAt: Date;
+  groups: mongoose.Schema.Types.ObjectId[] | GroupIN[];
 }
 
 export interface NotificationIN {
@@ -30,16 +31,28 @@ export interface NotificationIN {
   senderId: mongoose.Schema.Types.ObjectId | UserIN;
   type: string;
   view: Boolean;
-  createdAt:Date;
-  updatedAt:Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
+export interface MessageIN {
+  _id: any;
+  id: mongoose.Schema.Types.ObjectId | string;
+  senderId: mongoose.Schema.Types.ObjectId | UserIN;
+  receiver: mongoose.Schema.Types.ObjectId | UserIN;
+  message: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
-export interface MessageIN{
-  _id:any;
-  senderId:mongoose.Schema.Types.ObjectId|UserIN;
-  receiver:mongoose.Schema.Types.ObjectId|UserIN;
-  message:string;
-  createdAt:Date;
-  updatedAt:Date;
+export interface GroupIN {
+  id: mongoose.Schema.Types.ObjectId | string;
+  _id: mongoose.Schema.Types.ObjectId | string;
+  groupName:string;
+  tagLine:string;
+  groupMembers:string[]|UserIN[];
+  creator:string|UserIN;
+  admin:string[]|UserIN[];
+  groupProfile:string;
+  type:string;
 }
