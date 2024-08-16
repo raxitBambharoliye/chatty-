@@ -29,9 +29,11 @@ export const onlineUser = async (socket: any, data: any) => {
     const userWithFriends = await MQ.findWithPopulate<UserIN[]>(
       MODEL.USER_MODEL,
       { _id: user.id },
-      "friends groups",
-      "userName profilePicture tagLine isOnLine groupName groupProfile type"
+      "friends ",
+      "userName profilePicture tagLine isOnLine "
     );
+    const userGroup = await MQ.findWithPopulate<GroupIN[]>(MODEL.GROUP_MODEL, { groupMembers: user.id }, "groupMembers", "profilePicture tagLine userName");
+    console.log('userGroup', userGroup)
     if (!userWithFriends) {
       return;
     }
@@ -46,7 +48,7 @@ export const onlineUser = async (socket: any, data: any) => {
       eventName: EVENT_NAME.ONLINE_USER,
       data: {
         notifications,
-        friends: [...userWithFriends[0].friends,...userWithFriends[0].groups],
+        friends:userGroup &&userGroup.length>0 ? [...userWithFriends[0].friends,...userGroup]:[...userWithFriends[0].friends],
       },
     };
 

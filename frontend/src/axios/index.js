@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getCookieData } from "../common";
+import { getCookieData, removeCookieData } from "../common";
 import { COOKIE_KEY } from "../constant";
 
 
@@ -17,7 +17,14 @@ axiosClient.interceptors.request.use(
         return config;
     }
 )
-
+axiosClient.interceptors.response.use((response) => {
+    if (response.status == 1000) {
+        removeCookieData(COOKIE_KEY.USER);
+        removeCookieData(COOKIE_KEY.TOKEN);
+    } else {
+        return response;
+    }
+})
 
 
 export { axiosClient as AxiosCLI };

@@ -8,6 +8,7 @@ import { APP_URL, EVENT_NAME } from '../../constant';
 import { AxiosCLI } from '../../axios';
 import { setChatLoader, setPaginationMessage } from '../../reducers/chatReducer';
 import { checkDatePrint } from '../../utility/logic/formatMessage';
+import { ChatHeader } from './ChatComponents';
 /* with of full picture 767 */
 function Chat() {
     const bottomRef = useRef();
@@ -17,7 +18,6 @@ function Chat() {
     const messages = useSelector((state) => state.chat.messages);
     const chatLoader = useSelector((state) => state.chat.loader.chatLoader);
     const { sendRequest } = useContext(SocketContext);
-    const [chatHeaderMenu, setChatHeaderMenu] = useState(false);
     const [page, setPage] = useState(2);
     const [prevScrollHeight, setPrevScrollHeight] = useState(0);
     const dispatch = useDispatch();
@@ -79,29 +79,7 @@ function Chat() {
             {(activeUserChat && !changeChatLoader) && (
                 <>
                     {/* chat header */}
-                    <div className="chatHeader d-flex justify-content-between align-items-center">
-                        <div className="userProfile d-flex">
-                            <div className="img">
-                                <img src={activeUserChat.type && activeUserChat.type == 'GROUP' ? activeUserChat.groupProfile ?? "./image/dummyGroupProfile.png" : activeUserChat.profilePicture ?? "./image/dummyProfile.png"} alt="" />
-                            </div>
-                            <div className="userInfo ms-3">
-                                <h2 className="mb-0">{activeUserChat.type && activeUserChat.type == 'GROUP' ? activeUserChat.groupName : activeUserChat.userName}</h2>
-                                <p>{activeUserChat.tagLine ?? "-"}</p>
-                            </div>
-                        </div>
-                        <div className="menu position-relative">
-                            <button className="menuButton" onClick={() => setChatHeaderMenu(!chatHeaderMenu)}>
-                                <i className="fa-solid fa-ellipsis-vertical"></i>
-                            </button>
-                            <div className="chatHeaderUserMenu">
-                                <ul className={`m-0 p-0 ${chatHeaderMenu && "show"}`}>
-                                    <li className="m-0">block</li>
-                                    <li className="m-0">mute</li>
-                                    <li className="m-0">un follow</li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
+                    <ChatHeader/>
                     {messages && messages.length > 0 && (
                         <>
                             {chatLoader && (

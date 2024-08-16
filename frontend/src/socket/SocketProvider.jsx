@@ -1,10 +1,10 @@
 import { createContext, useCallback, useEffect, useState } from "react";
 import { getSocket } from ".";
-import { COOKIE_KEY, EVENT_NAME } from '../constant/'
+import { APP_URL, COOKIE_KEY, EVENT_NAME } from '../constant/'
 import { useDispatch, useSelector } from "react-redux";
-import { removeCookieData, setDataInCookie } from "../common";
+import { clearAllCookiesData, removeCookieData, setDataInCookie } from "../common";
 import { setUser } from "../reducers/userReducer";
-import { changeChangeChatLoader, pushFriend, pushMessage, pushNotification, setFriend, setFriendLoader, setMessage, setNotification } from "../reducers/chatReducer";
+import { changeChangeChatLoader, pushFriend, pushMessage, pushNotification, setFriend, setFriendLoader, setMessage, setNotification, setPopup } from "../reducers/chatReducer";
 export const SocketContext = createContext();
 
 export const SocketProvider = ({ children }) => {
@@ -16,8 +16,7 @@ export const SocketProvider = ({ children }) => {
 
 
   //Note - Socket Connection Function
-  const connectSocket= ()=>{
-
+  const connectSocket = () => {
     const socketIns = getSocket();
     setSocket(socketIns)
   }
@@ -26,6 +25,16 @@ export const SocketProvider = ({ children }) => {
     if (!socket) {
       return;
     }
+    socket.on(EVENT_NAME.TOKEN_EXPIRE, (data) => {
+      console.log('EVENT_NAME.TOKEN_EXPIRE', EVENT_NAME.TOKEN_EXPIRE)
+      console.log('data', data)
+      clearAllCookiesData();
+      dispatch(setPopup({
+        message: data.message,
+        redirectUrl: APP_URL.FE_LOGOUT,
+        button: "LogIn Again",
+      }))
+    })
     dispatch(setFriendLoader(true));
 
     socket.emit(EVENT_NAME.ONLINE_USER, { userId: user._id });
@@ -59,7 +68,16 @@ export const SocketProvider = ({ children }) => {
       dispatch(setMessage(data.chats))
       dispatch(changeChangeChatLoader(false));
     })
-
+    socket.on('connect_error', (error) => {
+      if (error.message == "Authentication error") {
+        clearAllCookiesData();
+        dispatch(setPopup({
+          message: "access token expire, please login again",
+          redirectUrl: APP_URL.FE_LOGOUT,
+          button: "LogIn Again",
+        }))
+      }
+    });
     return () => {
       if (socket) {
         socket.disconnect();
@@ -75,7 +93,7 @@ export const SocketProvider = ({ children }) => {
     console.log(`SENDING EVENT ::: ${data.eventName} ::: DATA ::: ${JSON.stringify(data.data)}`)
   }, [socket])
 
-  
+
   //NOTE - CHANGE VALUE IN COOKIE WHEN IT'S CHANGE IN STORE
   useEffect(() => {
     setDataInCookie(COOKIE_KEY.NOTIFICATIONS, notification);
@@ -85,8 +103,8 @@ export const SocketProvider = ({ children }) => {
     setDataInCookie(COOKIE_KEY.FRIENDS, friends);
   }, [friends])
   return (
-    <SocketContext.Provider value={{ socket, sendRequest,connectSocket }}>
-      
+    <SocketContext.Provider value={{ socket, sendRequest, connectSocket }}>
+
       {children}
     </SocketContext.Provider>
   )

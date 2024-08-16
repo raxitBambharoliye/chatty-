@@ -4,6 +4,7 @@ import { Aside, Chat } from '../components/Home';
 import {Notifications } from 'react-push-notification'
 import { SocketContext } from '../socket/SocketProvider';
 import { useSelector } from 'react-redux';
+import PopUp from '../components/PopUp';
 function Home() {
   let [asideShow, setAsideShow] = useState(true);
   const {connectSocket}=useContext(SocketContext);
@@ -12,6 +13,9 @@ function Home() {
     connectSocket();
   },[])
   return (
+    <>
+          <PopUp/>
+
     <div className='w-100 vh-100 homeBackground'>
       <div className="d-flex  gx-0 align-items-center">
         <Notifications/>
@@ -31,7 +35,7 @@ function Home() {
         </div>
       </div>
     </div>
-
+    </>
   )
 }
 

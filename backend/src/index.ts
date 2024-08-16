@@ -13,10 +13,10 @@ import passport from "passport";
 import "./config/passport";
 import { googleRouter } from "./router/google.router";
 import Cookies from "cookie-parser";
-import { MessageModel } from "./model";
-import { getMessages } from "./controller/user.controller";
-import path from 'path';  
-process.env.UV_THREADPOOL_SIZE = "128"
+import path from "path";
+import jwt from "jsonwebtoken";
+
+process.env.UV_THREADPOOL_SIZE = "128"; //NOTE - for core upgread
 dotenv.config();
 const app = express();
 const httpServer = createServer(app);
@@ -35,10 +35,29 @@ const io = new Server(httpServer, {
   },
 });
 
+io.use(async (socket, next) => {
+  try {
+    let token = socket.handshake.auth.token;
+    const secret = process.env.JWT_SECRET || "";
+    const verify = await jwt.verify(token, secret);
+    if (!token) {
+      return next(new Error("Authentication error"));
+    }
+    if (verify) {
+      next();
+    } else {
+      return next(new Error("Authentication error"));
+    }
+  } catch (error) {
+      return next(new Error("Authentication error"));
+
+  }
+});
+
 app.use(cors());
 app.use(express.json());
 app.use(Cookies());
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use(
   cookieSession({
@@ -65,57 +84,12 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.get("/", async (req: any, res: any) => {
-//   const senderId = "669de4006bda9f696cc6aae7";
-//   const receiverId ="66a66b8d31b9fcf4e9c40d6f"
-//   const date =await MessageModel.aggregate([
-//     // Match messages by senderId and receiverId
-//     { $match: { senderId, receiverId } },
-//     // Group by date (without time)
-//     {
-//         $group: {
-//             _id: {
-//                 year: { $year: "$createdAt" },
-//                 month: { $month: "$createdAt" },
-//                 day: { $dayOfMonth: "$createdAt" }
-//             },
-//             messages: { $push: "$$ROOT" }
-//         }
-//     },
-//     // Sort by date
-//     { $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 } }
-// ]);
-
-  /* 
-  
-  
-   await Message.aggregate([
-            // Match messages by senderId and receiverId
-            { $match: { senderId, receiverId } },
-            // Group by date (without time)
-            {
-                $group: {
-                    _id: {
-                        year: { $year: "$date" },
-                        month: { $month: "$date" },
-                        day: { $dayOfMonth: "$date" }
-                    },
-                    messages: { $push: "$$ROOT" }
-                }
-            },
-            // Sort by date
-            { $sort: { "_id.year": 1, "_id.month": 1, "_id.day": 1 } }
-        ]);
-  */
-  // console.log('date', JSON.stringify(date))
-  res.status(200).send({message: "server api call test successfully"});
+  res.status(200).send({ message: "server api call test successfully" });
 });
-app.post("/",getMessages)
 app.use("/", router);
 app.use("/auth", googleRouter);
 
-
 // const localtunnel = require("localtunnel");
-
 httpServer.listen(process.env.SERVER_PORT, async () => {
   await mongoDbConnection();
   await socketConnection();

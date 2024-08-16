@@ -8,22 +8,28 @@ const initialState = {
     notification: null,
     friends: null,
     messages: null,
-    activeUserChat: null,    
-    loader:{
-        friendsLoader: false ,
+    activeUserChat: null,
+    loader: {
+        friendsLoader: false,
         chatLoader: false,
-        changeChatLoader:false,
+        changeChatLoader: false,
     },
     pendingViewIds: [],
     notificationSound: false,
     activeAside: "FRIENDS",
     notificationViewPending: false,
+    popup: {
+        title:null,
+        message:null,
+        button:null,
+        redirectUrl:null,
+    }
 }
 
 
 const chatReducer = createSlice({
     name: "chat",
-    initialState:initialState,
+    initialState: initialState,
     reducers: {
         setNotification: setNotificationFun,
         pushNotification: pushNotificationFun,
@@ -40,7 +46,8 @@ const chatReducer = createSlice({
         setChatLoader: setChatLoaderFun,
         changeAsideContent: changeAsideContentFun,
         setPendingNotificationView: setPendingNotificationViewFun,
-        changeChangeChatLoader:changeChangeChatLoaderFun
+        changeChangeChatLoader: changeChangeChatLoaderFun,
+        setPopup:setPopupFun
     }
 })
 function setNotificationFun(state, action) {
@@ -148,7 +155,12 @@ function setPendingNotificationViewFun(state, action) {
     state.notificationViewPending = action.payload;
 }
 function changeChangeChatLoaderFun(state, action) {
-    state.changeChatLoader= action.payload
+    state.changeChatLoader = action.payload
+}
+
+function setPopupFun(state, action) {
+    console.log('action', action)
+    state.popup = action.payload;
 }
 export const {
     setNotification,
@@ -166,6 +178,7 @@ export const {
     setChatLoader,
     changeAsideContent,
     setPendingNotificationView,
-    changeChangeChatLoader
+    changeChangeChatLoader,
+    setPopup
 } = chatReducer.actions;
 export default chatReducer.reducer;

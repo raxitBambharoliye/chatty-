@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { setUser, setUserToken } from '../reducers/userReducer';
 import Login from './Login';
 import { useNavigate } from 'react-router-dom';
+import { setPopup } from '../reducers/chatReducer';
 
 function LogOut() {
     const navigate = useNavigate();
@@ -13,7 +14,8 @@ function LogOut() {
         removeCookieData(COOKIE_KEY.TOKEN);
         removeCookieData(COOKIE_KEY.USER);
         dispatch(setUser({}));
-        dispatch(setUserToken(""));
+      dispatch(setUserToken(""));
+      dispatch(setPopup(null))
         navigate("/");
     });
   return (

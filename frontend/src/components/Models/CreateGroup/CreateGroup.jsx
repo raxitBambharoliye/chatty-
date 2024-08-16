@@ -83,4 +83,4 @@ function CreateGroup({ id, modalClass = '' }) {
     )
 }
 
-export default CreateGroup
+export default CreateGroup;

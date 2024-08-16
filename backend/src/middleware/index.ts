@@ -16,6 +16,6 @@ export const verifyToken = async (req: any, res: any, next: any) => {
   } catch (error) {
       logger.error(`CATCH ERROR :: IN :: verifyToken ::: ${error}`)
       console.log('error', error)
-      return res.status(401).json({message:"invalid token"});
+      return res.status(1000).json({message:"invalid token"});
   }
 };

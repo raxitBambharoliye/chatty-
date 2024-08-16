@@ -23,22 +23,25 @@
         background-color: #595959;
         position: relative;
     }
-    .asideHeader .userProfile i{
+
+    .asideHeader .userProfile i {
         transition: all .4s linear;
         position: absolute;
         top: 50%;
         left: 50%;
-        transform: translate(-50%,-50%);
+        transform: translate(-50%, -50%);
         z-index: 9;
         opacity: 0;
     }
+
     .asideHeader .userProfile img {
         width: inherit;
         height: inherit;
         border-radius: inherit;
         object-fit: cover;
     }
-    .asideHeader .userProfile::after{
+
+    .asideHeader .userProfile::after {
         content: '';
         transition: all .4s linear;
         position: absolute;
@@ -51,12 +54,15 @@
         background-color: #000000c0;
         cursor: pointer;
     }
-    .asideHeader .userProfile:hover i{
+
+    .asideHeader .userProfile:hover i {
         opacity: 1;
     }
-    .asideHeader .userProfile:hover:after{
+
+    .asideHeader .userProfile:hover:after {
         opacity: 1;
     }
+
     .toggleButton {
         display: inline-block;
         width: 35px;
@@ -76,13 +82,16 @@
         transition: all .4s linear;
         z-index: 999;
     }
-    .toggleButton:hover{
-    opacity: 1;
+
+    .toggleButton:hover {
+        opacity: 1;
     }
-    .toggleButton.show  i {
-    rotate: 180deg;
-    transition: all .4s linear;
+
+    .toggleButton.show i {
+        rotate: 180deg;
+        transition: all .4s linear;
     }
+
     /* aside contact details */
     .asideContacts {
         padding-top: 12px;
@@ -94,13 +103,16 @@
         transition: all .4s linear;
     }
 
-    .asideContacts .asideContactsItem:hover,.asideContacts .asideContactsItem.active {
+    .asideContacts .asideContactsItem:hover,
+    .asideContacts .asideContactsItem.active {
         background-color: var(--color-black);
         box-shadow: 0 0 10px 2px #57545478;
     }
+
     .asideContacts .asideContactsItem.active {
         box-shadow: none;
     }
+
     .asideContacts .asideContactsItem img {
         width: 40px;
         height: 40px;
@@ -128,28 +140,33 @@
         background: linear-gradient(261deg, rgba(239, 96, 136, 0.30015756302521013) 10%, rgba(118, 127, 240, 0.3) 79%);
 
     }
+
     .asideFooterMenu {
-        display: flex; 
+        display: flex;
         justify-content: space-around;
     }
-    .asideFooterMenu a{
-    background: transparent;
-    border: none;
-    color: white;
-    font-size: 22px;
-    border-radius: 50%;
-    text-decoration: none;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all .2s linear;
+
+    .asideFooterMenu a {
+        background: transparent;
+        border: none;
+        color: white;
+        font-size: 22px;
+        border-radius: 50%;
+        text-decoration: none;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all .2s linear;
     }
-    .asideFooterMenu a:hover,.asideFooterMenu a.active{
+
+    .asideFooterMenu a:hover,
+    .asideFooterMenu a.active {
         background: white;
         color: black;
     }
+
     /* Chat  */
     .chatInner {
         padding: 30px;
@@ -163,7 +180,8 @@
         color: black;
 
     }
-    .chatInput .input .inputBlack{
+
+    .chatInput .input .inputBlack {
         margin: 0 !important;
     }
 
@@ -177,14 +195,16 @@
         color: black;
     }
 
-    .chatInner input:focus{
+    .chatInner input:focus {
         color: white !important;
     }
 
-    .chatInner input:focus::placeholder{
+    .chatInner input:focus::placeholder {
         color: white;
     }
-    .sendButton button,.attachmentButton button {
+
+    .sendButton button,
+    .attachmentButton button {
         font-size: 20px;
         border: none;
         padding: 4px 12px;
@@ -192,41 +212,62 @@
         transition: all .4s linear;
 
     }
-    .sendButton button{
+
+    .sendButton button {
         background-color: white;
         color: black;
     }
-    .attachmentButton button:hover{
+
+    .attachmentButton button:hover {
         background-color: white;
         color: black;
     }
-    .sendButton button:hover{
-        background:  var(--color-primary);
+
+    .sendButton button:hover {
+        background: var(--color-primary);
         color: white;
     }
+
     .attachmentButton button {
         background-color: var(--color-black-light);
         color: var(--color-gray);
     }
+
     /* chart header */
-    .chatHeader .userProfile img{
+    .chatHeader {
+        padding: 12px;
+        border-radius: 12px;
+        transition: all .2s linear;
+        cursor: pointer;
+        margin-bottom: 12px;
+    }
+
+    .chatHeader:hover {
+        background-color: var(--color-black-second);
+
+    }
+
+    .chatHeader .userProfile img {
         width: 3.5rem;
         height: 3.5rem;
         /* background: red; */
         border-radius: 50%;
     }
-    .chatHeader .userProfile p { 
+
+    .chatHeader .userProfile p {
         color: var(--color-gray);
         text-transform: capitalize;
     }
-    .chatHeader .menuButton{
+
+    .chatHeader .menuButton {
         background-color: transparent;
         color: white;
         border: none;
         outline: none;
         font-size: 22px;
     }
-    .chatHeaderUserMenu ul{
+
+    .chatHeaderUserMenu ul {
         list-style: none;
         background: var(--color-black-light);
         border-radius: 8px;
@@ -244,79 +285,185 @@
         transform-origin: top right;
         z-index: 9999;
     }
-    .chatHeaderUserMenu ul.show{
-        scale:1;
+
+    .chatHeaderUserMenu ul.show {
+        scale: 1;
     }
-    .chatHeaderUserMenu li{
+
+    .chatHeaderUserMenu li {
         cursor: pointer;
         padding: 6px 12px;
         width: 100%;
     }
-    .chatHeaderUserMenu li:hover{
+
+    .chatHeaderUserMenu li:hover {
         background-color: var(--color-gray);
         color: black;
         transition: all .2s linear;
     }
-    .chatBox{
+
+    .chatBox {
         overflow: scroll;
-        overflow-x:hidden;
+        overflow-x: hidden;
+    }
+
+    .receiverMorInfo {
+        padding: 12px;
+        border-radius: 8px;
+        position: absolute;
+        top: 0;
+        background-color: #363636;
+        min-width: 450px;
+        z-index: 99;
+    }
+
+    .receiverMorInfo .actionButton button {
+        color: white;
+        background-color: var(--color-primary);
+        margin: 0 5px;
+        border-radius: 50%;
+        width: 45px;
+        height: 45px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all .4s linear;
+        font-size: 18px;
+    }
+
+    .receiverMorInfo .actionButton button.favorite {
+        background: rgba(244, 92, 135, 0.431);
+    }
+
+    .receiverMorInfo .actionButton button.favorite:hover {
+        background: rgb(244, 92, 135);
+    }
+
+    .receiverMorInfo .actionButton button.pin {
+        background: hsla(230, 88%, 56%, 0.431);
+    }
+
+    .receiverMorInfo .actionButton button.pin:hover {
+        background: #2b4cf2;
+    }
+
+    .receiverMorInfo .actionButton button.mute {
+        background: hsla(45, 98%, 48%, 0.431);
+    }
+
+    .receiverMorInfo .actionButton button.mute:hover {
+        background: hsl(45, 98%, 48%);
+    }
+
+    .receiverMorInfo .informButton {
+        color: red;
+        border: 1px solid red;
+        border-radius: 20px;
+        margin: 0 6px;
+        transition: all .4s linear;
+    }
+    .receiverMorInfo .informButton i{
+        margin-right: 6px;
+    }
+    .receiverMorInfo .informButton:hover {
+        background: red;
+        color: white;
+    }
+    .receiverMorInfo .profileImage{
+        margin: 8px 0;
+    }
+    .receiverMorInfo .groupMember{
+        max-height: 200px;
+        overflow: auto;
+    }
+    .receiverMorInfo .groupMember .groupMemberItem  h5{
+        color: var(--color-gray);
+    }
+    .receiverMorInfo  .groupMember .groupMemberItem .profileImage img{
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+        margin-right: 12px;
+    }   
+    .receiverMorInfo  .groupMember .groupMemberItem p{
+        color: white;
+    }
+    .receiverMorInfo  .groupMember .groupMemberItem .adminShow{
+        background-color: var(--color-success);
+        padding: 0 6px;
+        border-radius: 4px;
+        text-transform: capitalize;
+    }
+    .receiverMorInfo  .groupMember .groupMemberItem .followShow{
+        background-color: var(--color-primary);
+        padding: 0 6px;
+        border-radius: 4px;
+        text-transform: capitalize;
     }
     /* animation  */
 
-    .asideInner.hide{
+    .asideInner.hide {
         /* transform: translateX(-100%); */
         transform: scaleX(0);
         transform-origin: left;
         width: 0px;
         z-index: 9999;
     }
+
     /* message */
-    .message{
-    
-    }
-    .message p{
-        max-width: 100% ;
+    .message {}
+
+    .message p {
+        max-width: 100%;
         padding: 6px 12px;
         width: fit-content;
     }
+
     .message .profile {
         width: 28px;
-        height: 28px;  
+        height: 28px;
     }
-    .message .profile img{
+
+    .message .profile img {
         width: inherit;
         height: inherit;
         object-fit: cover;
         border-radius: 50%;
     }
-    .message.send p{
+
+    .message.send p {
         background: rgb(255, 255, 255);
         color: black;
         border-radius: 12px 12px 12px 0;
     }
-    .message.receive p{
-        background:var(--color-black-light);
+
+    .message.receive p {
+        background: var(--color-black-light);
         color: white;
-        border-radius: 12px 12px 0 12px ;
+        border-radius: 12px 12px 0 12px;
     }
-    .messageTime{
+
+    .messageTime {
         display: block;
         font-size: 12px;
         color: var(--color-gray);
     }
-    .messageText{
+
+    .messageText {
         width: fit-content;
     }
 
     /* date part  */
-    .datePart{
+    .datePart {
         color: var(--color-gray);
         margin: 12px 0;
     }
-    .datePart .part{
-    border: 1px solid var(--color-black-second);
-    height: 2px;
+
+    .datePart .part {
+        border: 1px solid var(--color-black-second);
+        height: 2px;
     }
+
     .datePart p {
         border: 1.5px solid var(--color-gray);
         padding: 4px 12px;
@@ -334,22 +481,25 @@
         /* text-align: center;
         line-height: 150px; */
     }
-    .editUserProfile .profile img{
+
+    .editUserProfile .profile img {
         width: 100%;
         height: 100%;
         object-fit: cover;
     }
-    .editUserProfile .profile i{
+
+    .editUserProfile .profile i {
         font-size: 26px;
         position: absolute;
         top: 50%;
         right: 50%;
-        transform: translate(50%,-50%);
+        transform: translate(50%, -50%);
         transition: all .4s linear;
         opacity: 0;
         z-index: 9;
     }
-    .editUserProfile .profile::after{
+
+    .editUserProfile .profile::after {
         content: "";
         position: absolute;
         top: 0;
@@ -358,28 +508,33 @@
         right: 0;
         background-color: rgba(0, 0, 0, 0.68);
         transition: all .4s linear;
-opacity: 0;
+        opacity: 0;
     }
-    .editUserProfile .profile:hover i,.editUserProfile .profile:hover::after{
+
+    .editUserProfile .profile:hover i,
+    .editUserProfile .profile:hover::after {
         opacity: 1;
     }
 
 
-/* notification */
-.notificationItem .userProfile img{
-    height: 2.5rem;
-    width: 2.5rem;
-    border-radius: 50%;
-}
-.notificationItem p {
-    font-size: 16px;
-    color: var(--color-gray);
-}
-.notificationItem{
-    margin: 8px 0;
-    padding: 8px;
-}
-.notificationItem:hover{
-    background-color: var(--color-black);
-    /* color: ; */
-}
+    /* notification */
+    .notificationItem .userProfile img {
+        height: 2.5rem;
+        width: 2.5rem;
+        border-radius: 50%;
+    }
+
+    .notificationItem p {
+        font-size: 16px;
+        color: var(--color-gray);
+    }
+
+    .notificationItem {
+        margin: 8px 0;
+        padding: 8px;
+    }
+
+    .notificationItem:hover {
+        background-color: var(--color-black);
+        /* color: ; */
+    }
