@@ -15,6 +15,7 @@ function Chat() {
     const activeUserChat = useSelector((state) => state.chat.activeUserChat);
     const changeChatLoader = useSelector((state) => state.chat.loader.changeChatLoader)
     const user = useSelector((state) => state.userData.user);
+
     const messages = useSelector((state) => state.chat.messages);
     const chatLoader = useSelector((state) => state.chat.loader.chatLoader);
     const { sendRequest } = useContext(SocketContext);
@@ -25,7 +26,7 @@ function Chat() {
     const { register, handleSubmit, setValue } = useForm();
     const sendMessage = (data) => {
         if (activeUserChat && activeUserChat._id && data && data.message.length >= 0) {
-            sendRequest({ eventName: EVENT_NAME.MESSAGE, data: { receiverId: activeUserChat._id, message: data.message, isGroup: (activeUserChat.type && activeUserChat.type == 'GROUP') ? true : false }});
+            sendRequest({ eventName: EVENT_NAME.MESSAGE, data: { receiverId: activeUserChat._id, message: data.message, isGroup: (activeUserChat.type && activeUserChat.type == 'GROUP') ? true : false } });
             setValue("message", "");
             bottomRef.current?.scrollIntoView({ behavior: "smooth" });
         }
@@ -52,7 +53,6 @@ function Chat() {
     useEffect(() => {
         setPage(2);
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-
     }, [activeUserChat]);
 
     useEffect(() => {
@@ -79,7 +79,7 @@ function Chat() {
             {(activeUserChat && !changeChatLoader) && (
                 <>
                     {/* chat header */}
-                    <ChatHeader/>
+                    <ChatHeader />
                     {messages && messages.length > 0 && (
                         <>
                             {chatLoader && (
@@ -111,20 +111,29 @@ function Chat() {
                     )}
                     {/* chat Input */}
                     <div className="chatInput">
-                        <form onSubmit={handleSubmit(sendMessage)}>
-                            <div className="d-flex align-items-center">
-                                <div className="input me-2 flex-grow-1">
-                                    <Input type="text" placeholder="Enter Your message..." inputClass="inputBlack" {...register("message")} />
+                        {!user.blockedUserId.includes(activeUserChat._id) &&
+                            <form onSubmit={handleSubmit(sendMessage)}>
+                                <div className="d-flex align-items-center">
+                                    <div className="input me-2 flex-grow-1">
+                                        <Input type="text" placeholder="Enter Your message..." inputClass="inputBlack" {...register("message")} />
+                                    </div>
+                                    <div className="attachmentButton me-2">
+                                        <button type="button"><i className="fa-solid fa-paperclip" /></button>
+                                    </div>
+                                    <div className="sendButton">
+                                        <button type="submit"><i className="fa-regular fa-paper-plane" /></button>
+                                    </div>
                                 </div>
-                                <div className="attachmentButton me-2">
-                                    <button type="button"><i className="fa-solid fa-paperclip" /></button>
-                                </div>
-                                <div className="sendButton">
-                                    <button type="submit"><i className="fa-regular fa-paper-plane" /></button>
-                                </div>
+                            </form>
+                        }
+
+                        {user.blockedUserId.includes(activeUserChat._id) &&
+                            <div className="blockedPopUp d-flex align-items-center justify-content-center">
+                                <p className='m-0'> you blocked this {activeUserChat.type == "GROUP" ? "Group" : "User"}</p>
                             </div>
-                        </form>
+                        }
                     </div>
+
                 </>
             )}
         </>

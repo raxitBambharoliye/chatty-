@@ -13,16 +13,17 @@ const initialState = {
         friendsLoader: false,
         chatLoader: false,
         changeChatLoader: false,
+        editGroupAdminLoader: false,
     },
     pendingViewIds: [],
     notificationSound: false,
     activeAside: "FRIENDS",
     notificationViewPending: false,
     popup: {
-        title:null,
-        message:null,
-        button:null,
-        redirectUrl:null,
+        title: null,
+        message: null,
+        button: null,
+        redirectUrl: null,
     }
 }
 
@@ -47,7 +48,10 @@ const chatReducer = createSlice({
         changeAsideContent: changeAsideContentFun,
         setPendingNotificationView: setPendingNotificationViewFun,
         changeChangeChatLoader: changeChangeChatLoaderFun,
-        setPopup:setPopupFun
+        setPopup: setPopupFun,
+        changeGroupAdminData: changeGroupAdminDataFun,
+        changeEditGroupAdminLoader: changeEditGroupAdminLoaderFun,
+        removeFriends: removeFriendsFun
     }
 })
 function setNotificationFun(state, action) {
@@ -159,9 +163,32 @@ function changeChangeChatLoaderFun(state, action) {
 }
 
 function setPopupFun(state, action) {
-    console.log('action', action)
     state.popup = action.payload;
 }
+function changeGroupAdminDataFun(state, action) {
+    const friends = JSON.parse(JSON.stringify(state.friends));
+    const index = friends.findIndex((element) => element._id == action.payload.groupId);
+    if (index >= 0) {
+        state.friends[index].admin = action.payload.newAdminList;
+        const activeChat = JSON.parse(JSON.stringify(state.activeUserChat));
+        if (activeChat._id == action.payload.groupId) {
+            state.activeUserChat.admin = action.payload.newAdminList;
+        }
+    }
+    state.loader.editGroupAdminLoader = false;
+}
+function changeEditGroupAdminLoaderFun(state, action) {
+    state.action = action.payload
+}
+function removeFriendsFun(state, action) {
+    console.log('action', action)
+    state.friends = state.friends.filter((element) => element._id != action.payload);
+    const activeChat = JSON.parse(JSON.stringify(state.activeUserChat));
+    if (activeChat._id == action.payload) {
+        state.activeUserChat = null;
+    }
+}
+
 export const {
     setNotification,
     pushNotification,
@@ -179,6 +206,9 @@ export const {
     changeAsideContent,
     setPendingNotificationView,
     changeChangeChatLoader,
-    setPopup
+    setPopup,
+    changeGroupAdminData,
+    changeEditGroupAdminLoader,
+    removeFriends
 } = chatReducer.actions;
 export default chatReducer.reducer;

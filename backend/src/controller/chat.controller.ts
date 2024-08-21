@@ -48,7 +48,9 @@ export const onlineUser = async (socket: any, data: any) => {
       eventName: EVENT_NAME.ONLINE_USER,
       data: {
         notifications,
-        friends:userGroup &&userGroup.length>0 ? [...userWithFriends[0].friends,...userGroup]:[...userWithFriends[0].friends],
+        friends: userGroup && userGroup.length > 0 ? [...userWithFriends[0].friends, ...userGroup] : [...userWithFriends[0].friends],
+        blockedByUsers: user.blockedByUsers,
+        blockedUserId: user.blockedUserId
       },
     };
 
@@ -388,5 +390,274 @@ export const joinGroupChatHandler = async (socket: any, data: any) => {
   } catch (error) {
     logger.error(`CATCH ERROR IN : joinGroupChatHandler ${error}`)
     console.log('error', error)
+  }
+}
+export const editAdminHandler = async (socket: any, data: any)=>{
+  try {
+    console.log("chcek admin data ::: ")
+    console.log(data);
+    let { editor, groupId, newAdminList } = data;
+    if (!editor|| !groupId|| !newAdminList) { 
+      return false
+    }
+    const groupData = await MQ.findById<GroupIN>(MODEL.GROUP_MODEL, groupId);
+    if(!groupData){
+      logger.error(`group data not found `);
+      return false;
+    }
+    if (!groupData.admin.includes(editor)) {
+      logger.error(`editor is not admin`)
+      return false;
+    }
+    newAdminList.forEach((element:any) => {
+      if (!groupData.groupMembers.includes(element)) {
+        logger.error(`user ${element} not found in group members`);
+        return false;
+      }
+    });
+    newAdminList = newAdminList.filter((value:string, index:number, array:string[]) => array.indexOf(value) === index);
+
+    const newGroupData = await MQ.findByIdAndUpdate<GroupIN>(MODEL.GROUP_MODEL, groupId, {admin: newAdminList} ,true);
+    console.log('newGroupData', newGroupData)
+    const requestData = {
+      eventName: EVENT_NAME.EDIT_GROUP_ADMIN,
+      data: {
+        groupId: newGroupData?.id,
+        newAdminList: newAdminList
+      }
+    }
+    sendToSocket(socket.id,requestData);
+  } catch (error) {
+    logger.error(`CATCH ERROR IN : editAdminHandler ${error}`)
+    console.log('error', error)
+  }
+}
+
+export const leaveGroupHandler = async (socket: any, data: any) => {
+  try {
+    console.log('data', data)
+    const { groupId, userId } = data;
+    if (!groupId || !userId) {
+      logger.error(`leaveGroupHandler ::: groupId or userId not found `);
+      return;
+    }
+    const userData = await MQ.findById<UserIN>(MODEL.USER_MODEL, userId);
+    console.log('userData', userData)
+    if (!userData) {
+      logger.error(`leaveGroupHandler ::: user data not found `);
+      return;
+    }
+    const groupData = await MQ.findById<GroupIN>(MODEL.GROUP_MODEL, groupId);
+    console.log('groupData', groupData)
+    if (!groupData) {
+      logger.error(`leaveGroupHandler ::: group data not found `);
+      return;
+    }
+    if (!groupData.groupMembers.includes(userData._id)) {
+      logger.error(`leaveGroupHandler :::user is not a group member`);
+      return;
+    }
+    const newGroupMember = groupData.groupMembers.filter((element:any) => element.toString() !== userData.id);
+    console.log('newGroupMember', newGroupMember)
+    let query:any = {
+      $set: {
+        groupMembers:newGroupMember
+      }
+    }
+    let newAdminList;
+    if (groupData.admin.includes(userData._id)) {
+      newAdminList = groupData.admin.filter((element: any) => element.toString() != userData.id);
+      console.log('newAdminList', newAdminList)
+      query.$set.admin = newAdminList;
+    }
+    console.log('query', query)
+    const updatedGroupData = await MQ.findByIdAndUpdate<GroupIN>(MODEL.GROUP_MODEL, groupData.id, query, true);
+    
+    if (!updatedGroupData) {
+      logger.error(`leaveGroupHandler ::: group data not found after update `);
+      return;
+    }
+    socket.leave(groupData._id);
+    const responseData = {
+      eventName: EVENT_NAME.LEAVE_GROUP,
+      data: {
+        leavedGroup:updatedGroupData._id
+      }
+    }
+    sendToSocket(socket.id, responseData);
+  } catch (error) {
+    logger.error(`CATCH ERROR IN : leaveGroupHandler ${error}`)
+    console.log('error', error)
+  }
+}
+
+export const blockUserHandler = async (socket: any, data: any) => { 
+  try {
+    const { userId, blockUserId ,isGroup} = data;
+    console.log('data', data)
+    if (!userId || !blockUserId) {
+      logger.error(`blockUserHandler ::: userId or blockUserId not found `);
+      return;
+    }
+    let userData = await MQ.findById<UserIN>(MODEL.USER_MODEL, userId);
+    console.log('userData', userData)
+    if (!userData) {
+      logger.error(`blockUserHandler ::: user data not found `);
+      return;
+    }
+    let blockedUserData:any;
+    if (isGroup) {
+      blockedUserData = await MQ.findById<GroupIN>(MODEL.GROUP_MODEL, blockUserId);
+      if (!blockedUserData) {
+        logger.error(`blockUserHandler ::: blocked group data not found `);
+        return;
+      }
+    } else {
+      blockedUserData = await MQ.findById<UserIN>(MODEL.USER_MODEL, blockUserId);
+      if (!blockedUserData) { 
+        logger.error(`blockUserHandler ::: blocked user data not found `);
+        return;
+      }
+    }
+    
+    console.log('blockedUserData', blockedUserData)
+    console.log('!userData.blockedUserId.includes(blockUserId)', !userData.blockedUserId.includes(blockedUserData.id))
+    if (!userData.blockedUserId.includes(blockedUserData.id)) { 
+      userData = await MQ.findByIdAndUpdate(MODEL.USER_MODEL, userData.id, { $push: { blockedUserId: blockedUserData.id } }, true)
+      if (!userData) {
+        logger.error(`blockUserHandler ::: user data not found after update `);
+        return;
+      }
+    }
+    
+    console.log('!isGroup && !blockedUserData.blockedByUsers.includes(userData.id)', !isGroup && !blockedUserData.blockedByUsers.includes(userData.id))
+    if (!isGroup && !blockedUserData.blockedByUsers.includes(userData.id)) {
+      blockedUserData= await MQ.findByIdAndUpdate(MODEL.USER_MODEL,blockedUserData.id,{ $push: { blockedByUsers: userData.id } })
+      if (!blockedUserData) {
+        logger.error(`blockUserHandler ::: blocked user data not found after update `);
+        return;
+      }
+    }
+    const responseData = {
+      eventName: EVENT_NAME.BLOCK_USER,
+      data: {
+        blockedUser: blockUserId
+      }
+    }
+    sendToSocket(socket.id, responseData);
+    if (!isGroup && blockedUserData.socketId) {
+      const responseData = {
+        eventName: EVENT_NAME.BLOCK_USER,
+        data: {
+          blockedByUser: userId
+        }
+      }
+      sendToSocket(socket.id, responseData);
+    }
+  } catch (error) {
+    logger.error(`CATCH ERROR IN : blockUserHandler ${error}`);
+    console.log('error', error)
+  }
+}
+export const unBlockUserHandler = async (socket: any, data: any) => { 
+  try {
+    const { userId, blockUserId ,isGroup} = data;
+    console.log('data', data)
+    if (!userId || !blockUserId) {
+      logger.error(`unBlockUserHandler ::: userId or blockUserId not found `);
+      return;
+    }
+    let userData = await MQ.findById<UserIN>(MODEL.USER_MODEL, userId);
+    console.log('userData', userData)
+    if (!userData) {
+      logger.error(`unBlockUserHandler ::: user data not found `);
+      return;
+    }
+    let blockedUserData:any;
+    if (isGroup) {
+      blockedUserData = await MQ.findById<GroupIN>(MODEL.GROUP_MODEL, blockUserId);
+      if (!blockedUserData) {
+        logger.error(`unBlockUserHandler ::: blocked group data not found `);
+        return;
+      }
+    } else {
+      blockedUserData = await MQ.findById<UserIN>(MODEL.USER_MODEL, blockUserId);
+      if (!blockedUserData) { 
+        logger.error(`unBlockUserHandler ::: blocked user data not found `);
+        return;
+      }
+    }
+    if (userData.blockedUserId.includes(blockedUserData.id)) { 
+      userData = await MQ.findByIdAndUpdate(MODEL.USER_MODEL, userData.id, { $pull: { blockedUserId: blockedUserData.id } }, true)
+      if (!userData) {
+        logger.error(`unBlockUserHandler ::: user data not found after update `);
+        return;
+      }
+    }
+    if (!isGroup && blockedUserData.blockedByUsers.includes(userData.id)) {
+      blockedUserData= await MQ.findByIdAndUpdate(MODEL.USER_MODEL,blockedUserData.id,{ $pull: { blockedByUsers: userData.id } })
+      if (!blockedUserData) {
+        logger.error(`unBlockUserHandler ::: blocked user data not found after update `);
+        return;
+      }
+    }
+    const responseData = {
+      eventName: EVENT_NAME.UNBLOCK_USER,
+      data: {
+        blockedUser: blockUserId
+      }
+    }
+    sendToSocket(socket.id, responseData);
+    if (!isGroup && blockedUserData.socketId) {
+      const responseData = {
+        eventName: EVENT_NAME.UNBLOCK_USER,
+        data: {
+          blockedByUser: userId
+        }
+      }
+      sendToSocket(socket.id, responseData);
+    }
+  } catch (error) {
+    logger.error(`CATCH ERROR IN : unBlockUserHandler ${error}`);
+    console.log('error', error)
+  }
+}
+
+export const muteUserHandler = async (socket: any, data: any)=>{
+  try {
+    const { userId, muteUserId } = data;
+    if (!userId || !muteUserId) {
+      logger.error(`muteUserHandler ::: userId or muteUserId not found `);
+      return;
+    }
+    let userData = await MQ.findById<UserIN>(MODEL.USER_MODEL, userId);
+    if (!userData) {
+      logger.error(`muteUserHandler ::: user data not found `);
+      return;
+    }
+    if (!userData.friends.includes(muteUserId)) {
+      logger.error(`muteUserHandler ::: user is not friend with mute user `);
+      return;
+    }
+    const muteUserData = await MQ.findById<UserIN>(MODEL.USER_MODEL, muteUserId);
+    if (!muteUserData) {
+      logger.error(`muteUserHandler ::: mute user data not found `);
+      return;
+    }
+    if (!userData.mutedUser.includes(muteUserData.id)) {
+      userData = await MQ.findByIdAndUpdate<UserIN>(MODEL.USER_MODEL, userData.id, { $push: { mutedUser: muteUserData.id } });
+    }
+    const responseData = {
+      eventName: EVENT_NAME.MUTE_USER,
+      data: {
+        mutedUser:muteUserData.id,
+      }
+    }
+    sendToSocket(socket.id, responseData);
+    return;
+  } catch (error) {
+    logger.error(`CATCH ERROR IN : unMuteUserHandler ${error}`)
+    console.log('error', error)
+    return;
   }
 }

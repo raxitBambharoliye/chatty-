@@ -5,7 +5,7 @@ import ReceiverMoreInfo from './ReceiverMoreInfo';
 function ChatHeader() {
     const activeUserChat = useSelector((state) => state.chat.activeUserChat);
     const [chatHeaderMenu, setChatHeaderMenu] = useState(false);
-
+    
     return (
         <>
             {/* chat header */}

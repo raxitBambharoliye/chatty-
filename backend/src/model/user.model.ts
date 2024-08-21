@@ -26,8 +26,10 @@ const userSchema = new Schema({
         required: true,
     },
     blockedUserId: {
-        type: Array,
+        type: [{type:mongoose.Schema.Types.ObjectId,ref:MODEL.USER_MODEL}],
+        ref:MODEL.USER_MODEL,
         default: [],
+        required: true,
     },
     password: {
         type: String,
@@ -66,6 +68,24 @@ const userSchema = new Schema({
     },
     groups: {
         type: [{type:mongoose.Schema.Types.ObjectId,ref:MODEL.GROUP_MODEL}],
+        ref:MODEL.USER_MODEL,
+        default: [],
+        required: true,
+    },
+    blockedByUsers: {
+        type: [{type:mongoose.Schema.Types.ObjectId,ref:MODEL.USER_MODEL}],
+        ref:MODEL.USER_MODEL,
+        default: [],
+        required: true,
+    },
+    pinedUsers: {
+        type: [{type:mongoose.Schema.Types.ObjectId,ref:MODEL.USER_MODEL}],
+        ref:MODEL.USER_MODEL,
+        default: [],
+        required: true,
+    },
+    mutedUser: {
+        type: [{type:mongoose.Schema.Types.ObjectId,ref:MODEL.USER_MODEL}],
         ref:MODEL.USER_MODEL,
         default: [],
         required: true,

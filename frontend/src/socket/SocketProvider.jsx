@@ -3,8 +3,8 @@ import { getSocket } from ".";
 import { APP_URL, COOKIE_KEY, EVENT_NAME } from '../constant/'
 import { useDispatch, useSelector } from "react-redux";
 import { clearAllCookiesData, removeCookieData, setDataInCookie } from "../common";
-import { setUser } from "../reducers/userReducer";
-import { changeChangeChatLoader, pushFriend, pushMessage, pushNotification, setFriend, setFriendLoader, setMessage, setNotification, setPopup } from "../reducers/chatReducer";
+import { addBlockUser, setBlockedByUsers, setBlockedUserId, setUser, unBlockUser } from "../reducers/userReducer";
+import { changeChangeChatLoader, changeGroupAdminData, pushFriend, pushMessage, pushNotification, removeFriends, setFriend, setFriendLoader, setMessage, setNotification, setPopup } from "../reducers/chatReducer";
 export const SocketContext = createContext();
 
 export const SocketProvider = ({ children }) => {
@@ -44,6 +44,8 @@ export const SocketProvider = ({ children }) => {
       dispatch(setFriend(data.friends))
       dispatch(setNotification(data.notifications))
       dispatch(setFriendLoader(false));
+      dispatch(setBlockedByUsers(data.blockedByUsers))
+      dispatch(setBlockedUserId(data.blockedUserId))
     })
 
     socket.on(EVENT_NAME.FOLLOW, (data) => {
@@ -67,6 +69,20 @@ export const SocketProvider = ({ children }) => {
     socket.on(EVENT_NAME.CHATS, (data) => {
       dispatch(setMessage(data.chats))
       dispatch(changeChangeChatLoader(false));
+    })
+    socket.on(EVENT_NAME.EDIT_GROUP_ADMIN, (data) => {
+      dispatch(changeGroupAdminData(data))
+    })
+    socket.on(EVENT_NAME.LEAVE_GROUP, (data) => {
+      dispatch(removeFriends(data.leavedGroup));
+    })
+
+    socket.on(EVENT_NAME.BLOCK_USER, (data) => {
+      dispatch(addBlockUser(data));
+    
+    })
+    socket.on(EVENT_NAME.UNBLOCK_USER, (data) => {
+      dispatch(unBlockUser(data));
     })
     socket.on('connect_error', (error) => {
       if (error.message == "Authentication error") {

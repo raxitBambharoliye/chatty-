@@ -2,11 +2,15 @@ import { io } from "..";
 import { EVENT_NAME } from "../common";
 import {
   acceptFollowRequest,
+  blockUserHandler,
   chatHandler,
+  editAdminHandler,
   followRequest,
   joinGroupChatHandler,
+  leaveGroupHandler,
   messageHandler,
   onlineUser,
+  unBlockUserHandler,
 } from "../controller/chat.controller";
 import logger from "../utility/logger";
 
@@ -34,6 +38,18 @@ export const eventHandler = (socket: any) => {
         break;
       case EVENT_NAME.JOIN_GROUP_CHAT:
         joinGroupChatHandler(socket, data);
+        break;
+      case EVENT_NAME.EDIT_GROUP_ADMIN:
+        editAdminHandler(socket, data);
+        break;
+      case EVENT_NAME.LEAVE_GROUP:
+        leaveGroupHandler(socket, data);
+        break;
+      case EVENT_NAME.BLOCK_USER:
+        blockUserHandler(socket, data);
+        break;
+      case EVENT_NAME.UNBLOCK_USER:
+        unBlockUserHandler(socket, data);
         break;
     }
   });

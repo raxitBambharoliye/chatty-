@@ -232,7 +232,15 @@
         background-color: var(--color-black-light);
         color: var(--color-gray);
     }
-
+    .blockedPopUp{
+        color: rgb(255, 255, 255);
+        background: #ffbf00a7;
+        padding: 6px 12px ;
+        border-radius: 8px;
+        border: 1px solid #312501;
+        text-transform: capitalize;
+        text-align: center;
+    }
     /* chart header */
     .chatHeader {
         padding: 12px;
@@ -355,17 +363,19 @@
         background: hsl(45, 98%, 48%);
     }
 
-    .receiverMorInfo .informButton {
+    .receiverMorInfo .informButton, .receiverMorInfo .informButton.fill:hover {
         color: red;
         border: 1px solid red;
         border-radius: 20px;
         margin: 0 6px;
         transition: all .4s linear;
+        background: transparent;
     }
+    
     .receiverMorInfo .informButton i{
         margin-right: 6px;
     }
-    .receiverMorInfo .informButton:hover {
+    .receiverMorInfo .informButton:hover,.receiverMorInfo .informButton.fill {
         background: red;
         color: white;
     }
@@ -375,6 +385,9 @@
     .receiverMorInfo .groupMember{
         max-height: 200px;
         overflow: auto;
+    }
+    .receiverMorInfo .makeAdmin{
+        padding: 10px;
     }
     .receiverMorInfo .groupMember .groupMemberItem  h5{
         color: var(--color-gray);

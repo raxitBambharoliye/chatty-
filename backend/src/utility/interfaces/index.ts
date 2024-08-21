@@ -11,6 +11,7 @@ export interface UserIN {
   profilePicture: string;
   isBlocked: Boolean;
   blockedUserId: string[];
+  blockedByUsers: string[];
   withEmail: Boolean;
   verifiedEmail: Boolean;
   password: string;
@@ -23,6 +24,8 @@ export interface UserIN {
   createdAt: Date;
   updatedAt: Date;
   groups: mongoose.Schema.Types.ObjectId[] | GroupIN[];
+  pinedUsers: string;
+  mutedUser: string;
 }
 
 export interface NotificationIN {
@@ -48,11 +51,11 @@ export interface MessageIN {
 export interface GroupIN {
   id: mongoose.Schema.Types.ObjectId | string;
   _id: mongoose.Schema.Types.ObjectId | string;
-  groupName:string;
-  tagLine:string;
-  groupMembers:string[]|UserIN[];
-  creator:string|UserIN;
-  admin:string[]|UserIN[];
-  groupProfile:string;
-  type:string;
+  groupName: string;
+  tagLine: string;
+  groupMembers: string[] | UserIN[];
+  creator: string | UserIN;
+  admin: string[] | UserIN[];
+  groupProfile: string;
+  type: string;
 }

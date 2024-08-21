@@ -94,3 +94,50 @@ border-radius: 50%;
 font-size: 18px;
 color: var(--color-gray);
 }
+
+
+/* editGroupAdmin  */
+.editGroupAdmin{
+    z-index: 99999;
+}
+.editGroupAdmin .adminItem .adminProfile img{
+    width: 4rem;
+    height: 4rem;
+    object-fit: cover;
+    border-radius: 50%;
+}
+.editGroupAdmin .adminItem .adminProfile .closeButton{
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: rgba(255, 0, 0, 0.733);
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.editGroupAdmin .adminItem .adminProfile .closeButton:hover{
+    background: red;
+}
+.editGroupAdmin .groupMemberItem{
+    padding: 6px 12px;
+    margin: 4px 0;
+}
+.editGroupAdmin .groupMemberItem img{
+   width: 2.6rem;
+   height: 2.6rem;
+   border-radius: 50%;
+   object-fit: cover;
+   margin-right: 12px;
+}
+.editGroupAdmin .groupMemberItem:hover,.editGroupAdmin .groupMemberItem.active{
+    background: var(--color-black-light);
+    cursor: pointer;    
+}
+.editGroupAdmin .loader {
+    background: #000000a1;
+    z-index: 999999;
+}
