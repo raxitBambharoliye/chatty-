@@ -15,6 +15,7 @@ function Chat() {
     const activeUserChat = useSelector((state) => state.chat.activeUserChat);
     const changeChatLoader = useSelector((state) => state.chat.loader.changeChatLoader)
     const user = useSelector((state) => state.userData.user);
+    console.log('user', user)
 
     const messages = useSelector((state) => state.chat.messages);
     const chatLoader = useSelector((state) => state.chat.loader.chatLoader);
@@ -111,7 +112,7 @@ function Chat() {
                     )}
                     {/* chat Input */}
                     <div className="chatInput">
-                        {!user.blockedUserId.includes(activeUserChat._id) &&
+                        {(!user.blockedUserId.includes(activeUserChat._id) && !user.blockedByUsers.includes(activeUserChat._id)) &&
                             <form onSubmit={handleSubmit(sendMessage)}>
                                 <div className="d-flex align-items-center">
                                     <div className="input me-2 flex-grow-1">
@@ -130,6 +131,11 @@ function Chat() {
                         {user.blockedUserId.includes(activeUserChat._id) &&
                             <div className="blockedPopUp d-flex align-items-center justify-content-center">
                                 <p className='m-0'> you blocked this {activeUserChat.type == "GROUP" ? "Group" : "User"}</p>
+                            </div>
+                        }
+                        {user.blockedByUsers.includes(activeUserChat._id) &&
+                            <div className="blockedPopUp d-flex align-items-center justify-content-center">
+                                <p className='m-0'> you blocked by {activeUserChat.userName}</p>
                             </div>
                         }
                     </div>

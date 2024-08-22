@@ -51,7 +51,8 @@ const chatReducer = createSlice({
         setPopup: setPopupFun,
         changeGroupAdminData: changeGroupAdminDataFun,
         changeEditGroupAdminLoader: changeEditGroupAdminLoaderFun,
-        removeFriends: removeFriendsFun
+        removeFriends: removeFriendsFun,
+        updateFriends:updateFriendsFun
     }
 })
 function setNotificationFun(state, action) {
@@ -188,7 +189,14 @@ function removeFriendsFun(state, action) {
         state.activeUserChat = null;
     }
 }
-
+function updateFriendsFun(state, action) {
+    console.log('action', action)
+    const index = state.friends.findIndex((element) => element._id == action.payload.id);
+    console.log('index', index)
+    if (index > -1) {
+        state.friends[index] = {...state.friends[index],...action.payload.updateData};
+    }
+}
 export const {
     setNotification,
     pushNotification,
@@ -209,6 +217,7 @@ export const {
     setPopup,
     changeGroupAdminData,
     changeEditGroupAdminLoader,
-    removeFriends
+    removeFriends,
+    updateFriends
 } = chatReducer.actions;
 export default chatReducer.reducer;

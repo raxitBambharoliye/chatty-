@@ -4,7 +4,7 @@ import { APP_URL, COOKIE_KEY, EVENT_NAME } from '../constant/'
 import { useDispatch, useSelector } from "react-redux";
 import { clearAllCookiesData, removeCookieData, setDataInCookie } from "../common";
 import { addBlockUser, setBlockedByUsers, setBlockedUserId, setMutedUser, setPinUser, setUser, unBlockUser, unMuteUser, unPinUser } from "../reducers/userReducer";
-import { changeChangeChatLoader, changeGroupAdminData, pushFriend, pushMessage, pushNotification, removeFriends, setFriend, setFriendLoader, setMessage, setNotification, setPopup } from "../reducers/chatReducer";
+import { changeChangeChatLoader, changeGroupAdminData, pushFriend, pushMessage, pushNotification, removeFriends, setFriend, setFriendLoader, setMessage, setNotification, setPopup, updateFriends } from "../reducers/chatReducer";
 export const SocketContext = createContext();
 
 export const SocketProvider = ({ children }) => {
@@ -94,11 +94,15 @@ export const SocketProvider = ({ children }) => {
       dispatch(unMuteUser(data.unMutedUser));
     })
     socket.on(EVENT_NAME.PIN_USER,(data)=>{
-      dispatch(setPinUser(data.mutedUser));
+      dispatch(setPinUser(data.pinedUserId));
     })
     socket.on(EVENT_NAME.UNPIN_USER,(data)=>{
       dispatch(unPinUser(data.unPinedUserId));
     })
+    socket.on(EVENT_NAME.UPDATE_GROUP_MEMBERS, (data) => {
+      dispatch(updateFriends(data));
+    })
+ 
     socket.on('connect_error', (error) => {
       if (error.message == "Authentication error") {
         clearAllCookiesData();

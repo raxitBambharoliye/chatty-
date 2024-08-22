@@ -2,6 +2,7 @@ import { io } from "..";
 import { EVENT_NAME } from "../common";
 import {
   acceptFollowRequest,
+  addUserInGroupHandler,
   blockUserHandler,
   chatHandler,
   editAdminHandler,
@@ -67,6 +68,10 @@ export const eventHandler = (socket: any) => {
       case EVENT_NAME.UNPIN_USER:
         unPinUserHandler(socket, data);
         break;
+      case EVENT_NAME.ADD_FRIENDS_IN_GROUP:
+        addUserInGroupHandler(socket, data);
+        break;
+
     }
   });
 };

@@ -33,15 +33,15 @@ export const onlineUser = async (socket: any, data: any) => {
       "userName profilePicture tagLine isOnLine "
     );
     const userGroup = await MQ.findWithPopulate<GroupIN[]>(MODEL.GROUP_MODEL, { groupMembers: user.id }, "groupMembers", "profilePicture tagLine userName");
-    console.log('userGroup', userGroup)
     if (!userWithFriends) {
       return;
     }
     // delete user.password;
-    console.log('userWithFriends', JSON.stringify(userWithFriends))
     if (userWithFriends[0].groups) {
       userWithFriends[0].groups.forEach((element:any) => {
-        socket.join(element.id.toString());
+        if (!user.blockedUserId.includes(element.id)){
+         socket.join(element._id.toString());
+        }
       });
     }
     const onLineUserEventData = {
@@ -551,10 +551,10 @@ export const blockUserHandler = async (socket: any, data: any) => {
       const responseData = {
         eventName: EVENT_NAME.BLOCK_USER,
         data: {
-          blockedByUser: userId
+          blockedByUsers: userId
         }
       }
-      sendToSocket(socket.id, responseData);
+      sendToSocket(blockedUserData.socketId, responseData);
     }
   } catch (error) {
     logger.error(`CATCH ERROR IN : blockUserHandler ${error}`);
@@ -614,10 +614,10 @@ export const unBlockUserHandler = async (socket: any, data: any) => {
       const responseData = {
         eventName: EVENT_NAME.UNBLOCK_USER,
         data: {
-          blockedByUser: userId
+          blockedByUsers: userId
         }
       }
-      sendToSocket(socket.id, responseData);
+      sendToSocket(blockedUserData.socketId, responseData);
     }
   } catch (error) {
     logger.error(`CATCH ERROR IN : unBlockUserHandler ${error}`);
@@ -745,7 +745,7 @@ export const pinUserHandler = async (socket: any, data: any)=>{
     }
     let pinUserData:any;
     if(isGroup){
-      pinUserData= await MQ.findById<GroupIN>(MODEL.GROUP_MODEL,pinUserData);
+      pinUserData= await MQ.findById<GroupIN>(MODEL.GROUP_MODEL,pinUserId);
     }else{
       pinUserData = await MQ.findById<UserIN>(MODEL.USER_MODEL, pinUserId);
     }
@@ -794,7 +794,7 @@ export const unPinUserHandler = async (socket: any, data: any)=>{
     }
     let pinUserData:any;
     if(isGroup){
-      pinUserData= await MQ.findById<GroupIN>(MODEL.GROUP_MODEL,pinUserData);
+      pinUserData= await MQ.findById<GroupIN>(MODEL.GROUP_MODEL,pinUserId);
     }else{
       pinUserData = await MQ.findById<UserIN>(MODEL.USER_MODEL, pinUserId);
     }
@@ -819,4 +819,75 @@ export const unPinUserHandler = async (socket: any, data: any)=>{
     console.log('error', error)
     return;
   }
+}
+
+
+export const addUserInGroupHandler = async (socket: any, data: any)=>{
+ try {
+   console.log(data);
+   /* 
+   {
+  editor: '66a66acc351b0bec2848d11f',
+  groupId: '66bc376fd25b5fa2b8ed03dd',
+  newFriendsList: [ '66a66b8d31b9fcf4e9c40d6f' ]
+}
+    */
+   const { editor, groupId, newFriendsList } = data;
+   if (!editor || !groupId || !newFriendsList || newFriendsList.length <= 0) {
+     logger.error(`addUserInGroupHandler ::: editor, groupId or newFriendsList not found or empty `);
+     return;
+   }
+   const editorData = await MQ.findById<UserIN>(MODEL.USER_MODEL, editor);
+   console.log('editorData', editorData)
+   if (!editorData) {
+     logger.error(`addUserInGroupHandler ::: editor data not found `);
+     return;
+   }
+   const groupData = await MQ.findById<GroupIN>(MODEL.GROUP_MODEL, groupId);
+   if (!groupData) { 
+     logger.error(`addUserInGroupHandler ::: group data not found `);
+     return;
+   }
+   if (!groupData.admin.includes(editorData._id)) {
+     logger.error(`addUserInGroupHandler :::editor is not an admin `);
+     return;
+   }
+   newFriendsList.forEach(async (friendId:any) => {
+     if (!editorData.friends.includes(friendId)) { 
+       logger.error(`addUserInGroupHandler ::: editor is not a friend with friendId ${friendId}`);
+       return;
+     }
+   })
+   const updatedGroupData = await MQ.findByIdAndUpdate<GroupIN>(MODEL.GROUP_MODEL, groupId, { $push: { groupMembers: { $each: newFriendsList } } });
+   console.log('updatedGroupData', updatedGroupData)
+   if (!updatedGroupData) {
+     logger.error(`addUserInGroupHandler ::: failed to add user to group `);
+     return;
+   }
+   //NOTE - update new friends data and join the room 
+   for (var i = 0; i < newFriendsList.length; i++){
+     let newFriendData = await MQ.findByIdAndUpdate<UserIN>(MODEL.USER_MODEL, newFriendsList[i], { $push: { groups: groupData.id } }, true);
+     if (newFriendData && newFriendData?.socketId) {
+      const sendEventData = {
+        eventName: EVENT_NAME.ACCEPT_FOLLOW_REQUEST,
+        data: {newFriend:groupData}
+        }
+        sendToSocket(newFriendData.socketId, sendEventData);
+      }
+   }
+   const updateGroupData = {
+     eventName: EVENT_NAME.UPDATE_GROUP_MEMBERS,
+     data: {
+       updateData: {
+         groupMembers: updatedGroupData.groupMembers,
+       },
+       id: updatedGroupData.id
+       
+     }
+   }
+   sendToRoom(groupData._id.toString(), updateGroupData);
+ } catch (error) {
+  logger.error(`CATCH ERROR IN : addUserInGroupHandler ${error}`)
+  console.log('error', error)
+ }
 }

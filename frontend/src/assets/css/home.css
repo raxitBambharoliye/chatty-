@@ -339,23 +339,23 @@
         font-size: 18px;
     }
 
-    .receiverMorInfo .actionButton button.favorite {
-        background: rgba(244, 92, 135, 0.431);
+    .receiverMorInfo .actionButton button.favorite{
+        background: rgba(244, 92, 135, 0.431) ;
     }
 
-    .receiverMorInfo .actionButton button.favorite:hover {
+    .receiverMorInfo .actionButton button.favorite:hover,.actionButton button.favorite.active {
         background: rgb(244, 92, 135);
     }
 
-    .receiverMorInfo .actionButton button.pin {
+    .receiverMorInfo .actionButton button.addFriends {
         background: hsla(230, 88%, 56%, 0.431);
     }
 
-    .receiverMorInfo .actionButton button.pin:hover {
+    .receiverMorInfo .actionButton button.addFriends:hover {
         background: #2b4cf2;
     }
 
-    .receiverMorInfo .actionButton button.mute,.receiverMorInfo .actionButton button.mute.active:hover {
+    .receiverMorInfo .actionButton button.mute {
         background: hsla(45, 98%, 48%, 0.431);
     }
 
@@ -406,12 +406,22 @@
         padding: 0 6px;
         border-radius: 4px;
         text-transform: capitalize;
+        transition:all .4s linear ;
+    }
+    .receiverMorInfo  .groupMember .groupMemberItem .followShow.Requested{
+        background: #2b4cf2ca;
     }
     .receiverMorInfo  .groupMember .groupMemberItem .followShow{
+        color: white;
         background-color: var(--color-primary);
         padding: 0 6px;
         border-radius: 4px;
         text-transform: capitalize;
+        border: 2px solid transparent;
+    }
+    .receiverMorInfo  .groupMember .groupMemberItem .followShow:hover{
+background: transparent;
+border-color: var(--color-primary);
     }
     /* animation  */
 
