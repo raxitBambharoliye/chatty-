@@ -12,4 +12,7 @@ export default Object.freeze({
     BLOCK_USER:"BLOCK_USER",
     UNBLOCK_USER: "UNBLOCK_USER",
     MUTE_USER: "MUTE_USER",
+    UNMUTE_USER:"UNMUTE_USER",
+    PIN_USER:"PIN_USER",
+    UNPIN_USER:"UNPIN_USER"
 })

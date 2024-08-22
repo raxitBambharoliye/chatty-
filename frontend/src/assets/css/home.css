@@ -355,11 +355,11 @@
         background: #2b4cf2;
     }
 
-    .receiverMorInfo .actionButton button.mute {
+    .receiverMorInfo .actionButton button.mute,.receiverMorInfo .actionButton button.mute.active:hover {
         background: hsla(45, 98%, 48%, 0.431);
     }
 
-    .receiverMorInfo .actionButton button.mute:hover {
+    .receiverMorInfo .actionButton button.mute:hover,.receiverMorInfo .actionButton button.mute.active {
         background: hsl(45, 98%, 48%);
     }
 

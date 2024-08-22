@@ -50,7 +50,9 @@ export const onlineUser = async (socket: any, data: any) => {
         notifications,
         friends: userGroup && userGroup.length > 0 ? [...userWithFriends[0].friends, ...userGroup] : [...userWithFriends[0].friends],
         blockedByUsers: user.blockedByUsers,
-        blockedUserId: user.blockedUserId
+        blockedUserId: user.blockedUserId,
+        mutedUser:user.mutedUser,
+        pinedUsers:user.pinedUsers
       },
     };
 
@@ -625,7 +627,7 @@ export const unBlockUserHandler = async (socket: any, data: any) => {
 
 export const muteUserHandler = async (socket: any, data: any)=>{
   try {
-    const { userId, muteUserId } = data;
+    const { userId, muteUserId ,isGroup} = data;
     if (!userId || !muteUserId) {
       logger.error(`muteUserHandler ::: userId or muteUserId not found `);
       return;
@@ -635,11 +637,21 @@ export const muteUserHandler = async (socket: any, data: any)=>{
       logger.error(`muteUserHandler ::: user data not found `);
       return;
     }
-    if (!userData.friends.includes(muteUserId)) {
+    if (!isGroup && !userData.friends.includes(muteUserId)) {
       logger.error(`muteUserHandler ::: user is not friend with mute user `);
       return;
     }
-    const muteUserData = await MQ.findById<UserIN>(MODEL.USER_MODEL, muteUserId);
+    if(isGroup && !userData.groups.includes(muteUserId)){
+      logger.error(`muteUserHandler ::: user is not member of mute group  `);
+      return;
+    }
+    let muteUserData:any;
+    if(isGroup){
+      muteUserData= await MQ.findById<GroupIN>(MODEL.GROUP_MODEL,muteUserId);
+    }else{
+      muteUserData = await MQ.findById<UserIN>(MODEL.USER_MODEL, muteUserId);
+    }
+    console.log('muteUserData', muteUserData)
     if (!muteUserData) {
       logger.error(`muteUserHandler ::: mute user data not found `);
       return;
@@ -656,7 +668,154 @@ export const muteUserHandler = async (socket: any, data: any)=>{
     sendToSocket(socket.id, responseData);
     return;
   } catch (error) {
+    logger.error(`CATCH ERROR IN : MuteUserHandler ${error}`)
+    console.log('error', error)
+    return;
+  }
+}
+
+export const unMuteUserHandler = async (socket: any, data: any)=>{
+  try {
+    const { userId, muteUserId ,isGroup} = data;
+    if (!userId || !muteUserId) {
+      logger.error(`unMuteUserHandler ::: userId or muteUserId not found `);
+      return;
+    }
+    let userData = await MQ.findById<UserIN>(MODEL.USER_MODEL, userId);
+    if (!userData) {
+      logger.error(`unMuteUserHandler ::: user data not found `);
+      return;
+    }
+    if (!isGroup && !userData.friends.includes(muteUserId)) {
+      logger.error(`unMuteUserHandler ::: user is not friend with mute user `);
+      return;
+    }
+    if(isGroup && !userData.groups.includes(muteUserId)){
+      logger.error(`unMuteUserHandler ::: user is not member of mute group  `);
+      return;
+    }
+    let muteUserData:any;
+    if(isGroup){
+      muteUserData= await MQ.findById<GroupIN>(MODEL.GROUP_MODEL,muteUserId);
+    }else{
+      muteUserData = await MQ.findById<UserIN>(MODEL.USER_MODEL, muteUserId);
+    }
+    console.log('muteUserData', muteUserData)
+    if (!muteUserData) {
+      logger.error(`unMuteUserHandler ::: mute user data not found `);
+      return;
+    }
+    if (userData.mutedUser.includes(muteUserData.id)) {
+      userData = await MQ.findByIdAndUpdate<UserIN>(MODEL.USER_MODEL, userData.id, { $pull: { mutedUser: muteUserData.id } });
+    }
+    const responseData = {
+      eventName: EVENT_NAME.UNMUTE_USER,
+      data: {
+        unMutedUser:muteUserData.id,
+      }
+    }
+    sendToSocket(socket.id, responseData);
+    return;
+  } catch (error) {
     logger.error(`CATCH ERROR IN : unMuteUserHandler ${error}`)
+    console.log('error', error)
+    return;
+  }
+}
+
+export const pinUserHandler = async (socket: any, data: any)=>{
+  try {
+    const { userId, pinUserId ,isGroup} = data;
+    if (!userId || !pinUserId) {
+      logger.error(`pinUserHandler ::: userId or pinUserId not found `);
+      return;
+    }
+    let userData = await MQ.findById<UserIN>(MODEL.USER_MODEL, userId);
+    if (!userData) {
+      logger.error(`pinUserHandler ::: user data not found `);
+      return;
+    }
+    if (!isGroup && !userData.friends.includes(pinUserId)) {
+      logger.error(`pinUserHandler ::: user is not friend with mute user `);
+      return;
+    }
+    if(isGroup && !userData.groups.includes(pinUserId)){
+      logger.error(`pinUserHandler ::: user is not member of mute group  `);
+      return;
+    }
+    let pinUserData:any;
+    if(isGroup){
+      pinUserData= await MQ.findById<GroupIN>(MODEL.GROUP_MODEL,pinUserData);
+    }else{
+      pinUserData = await MQ.findById<UserIN>(MODEL.USER_MODEL, pinUserId);
+    }
+    console.log('pinUserData', pinUserData)
+    if (!pinUserData) {
+      logger.error(`pinUserHandler ::: pin user data not found `);
+      return;
+    }
+    if (!userData.pinedUsers.includes(pinUserData.id)) {
+      userData = await MQ.findByIdAndUpdate<UserIN>(MODEL.USER_MODEL, userData.id, { $push: { pinedUsers: pinUserData.id } });
+    }
+    const responseData = {
+      eventName: EVENT_NAME.PIN_USER,
+      data: {
+        pinedUserId:pinUserData.id,
+      }
+    }
+    sendToSocket(socket.id, responseData);
+    return;
+  } catch (error) {
+    logger.error(`CATCH ERROR IN : pinUserHandler ${error}`)
+    console.log('error', error)
+    return;
+  }
+}
+
+export const unPinUserHandler = async (socket: any, data: any)=>{
+  try {
+    const { userId, pinUserId ,isGroup} = data;
+    if (!userId || !pinUserId) {
+      logger.error(`unPinUserHandler ::: userId or pinUserId not found `);
+      return;
+    }
+    let userData = await MQ.findById<UserIN>(MODEL.USER_MODEL, userId);
+    if (!userData) {
+      logger.error(`unPinUserHandler ::: user data not found `);
+      return;
+    }
+    if (!isGroup && !userData.friends.includes(pinUserId)) {
+      logger.error(`unPinUserHandler ::: user is not friend with mute user `);
+      return;
+    }
+    if(isGroup && !userData.groups.includes(pinUserId)){
+      logger.error(`unPinUserHandler ::: user is not member of mute group  `);
+      return;
+    }
+    let pinUserData:any;
+    if(isGroup){
+      pinUserData= await MQ.findById<GroupIN>(MODEL.GROUP_MODEL,pinUserData);
+    }else{
+      pinUserData = await MQ.findById<UserIN>(MODEL.USER_MODEL, pinUserId);
+    }
+    console.log('pinUserData', pinUserData)
+    if (!pinUserData) {
+      logger.error(`unPinUserHandler ::: pin user data not found `);
+      return;
+    }
+    if (userData.pinedUsers.includes(pinUserData.id)) {
+      userData = await MQ.findByIdAndUpdate<UserIN>(MODEL.USER_MODEL, userData.id, { $pull: { pinedUsers: pinUserData.id } });
+    }
+    const responseData = {
+      eventName: EVENT_NAME.UNPIN_USER,
+      data: {
+        unPinedUserId:pinUserData.id,
+      }
+    }
+    sendToSocket(socket.id, responseData);
+    return;
+  } catch (error) {
+    logger.error(`CATCH ERROR IN : unPinUserHandler ${error}`)
     console.log('error', error)
     return;
   }

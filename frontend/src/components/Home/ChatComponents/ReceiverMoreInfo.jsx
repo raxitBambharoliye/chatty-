@@ -42,6 +42,50 @@ function ReceiverMoreInfo() {
       }
     })
   }
+  const muteHandler= () =>{
+    sendRequest({
+      eventName:EVENT_NAME.MUTE_USER,
+      data:{
+        userId:userInfo._id,
+        muteUserId:activeChatInfo._id,
+        isGroup:(activeChatInfo.type === 'GROUP'),
+
+      }
+    })
+  }
+  const unMuteHandler= () =>{
+    sendRequest({
+      eventName:EVENT_NAME.UNMUTE_USER,
+      data:{
+        userId:userInfo._id,
+        muteUserId:activeChatInfo._id,
+        isGroup:(activeChatInfo.type === 'GROUP'),
+
+      }
+    })
+  }
+  const pinHandler= () =>{
+    sendRequest({
+      eventName:EVENT_NAME.PIN_USER,
+      data:{
+        userId:userInfo._id,
+        pinUserId:activeChatInfo._id,
+        isGroup:(activeChatInfo.type === 'GROUP'),
+
+      }
+    })
+  }
+  const unPinHandler= () =>{
+    sendRequest({
+      eventName:EVENT_NAME.UNPIN_USER,
+      data:{
+        userId:userInfo._id,
+        pinUserId:activeChatInfo._id,
+        isGroup:(activeChatInfo.type === 'GROUP'),
+
+      }
+    })
+  }
   return (
     <>
       <div className="receiverMorInfo">
@@ -55,9 +99,16 @@ function ReceiverMoreInfo() {
             <p className='m-0'>{activeChatInfo.tagLine ?? "---"}</p>
           </div>
           <div className="actionButton flex-grow-1 text-end d-flex justify-content-end">
-            <button className='btn favorite'><i className="fa-regular fa-star"></i></button>
+            {/* pin */}
+            {
+            console.log('userInfo.pinedUsers', userInfo.pinedUsers)
+            }
+            {userInfo.pinedUsers?.includes(activeChatInfo._id) &&<button className='btn favorite' onClick={unPinHandler}><i className="fa-solid fa-star"></i></button> }
+            {!userInfo.pinedUsers.includes(activeChatInfo._id) &&<button className='btn favorite' onClick={pinHandler}><i className="fa-regular fa-star"></i></button> }
             <button className='btn pin'><i className="fa-solid fa-thumbtack"></i></button>
-            <button className='btn mute '><i className="fa-regular fa-bell"></i></button>
+            {/* mute  */}
+            {userInfo.mutedUser.includes(activeChatInfo._id) && <button className='btn mute active' onClick={unMuteHandler}><i className="fa-regular fa-bell-slash"></i></button>}
+            {!userInfo.mutedUser.includes(activeChatInfo._id) && <button className='btn mute ' onClick={muteHandler}><i className="fa-regular fa-bell"></i></button>}
           </div>
         </div>
         <div className="infoBody">

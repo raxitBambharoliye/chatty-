@@ -9,8 +9,12 @@ import {
   joinGroupChatHandler,
   leaveGroupHandler,
   messageHandler,
+  muteUserHandler,
   onlineUser,
+  pinUserHandler,
   unBlockUserHandler,
+  unMuteUserHandler,
+  unPinUserHandler,
 } from "../controller/chat.controller";
 import logger from "../utility/logger";
 
@@ -51,6 +55,18 @@ export const eventHandler = (socket: any) => {
       case EVENT_NAME.UNBLOCK_USER:
         unBlockUserHandler(socket, data);
         break;
+      case EVENT_NAME.MUTE_USER:
+        muteUserHandler(socket, data);
+        break;
+      case EVENT_NAME.UNMUTE_USER:
+        unMuteUserHandler(socket, data);
+        break;
+      case EVENT_NAME.PIN_USER:
+        pinUserHandler(socket, data);
+        break;
+      case EVENT_NAME.UNPIN_USER:
+        unPinUserHandler(socket, data);
+        break;
     }
   });
 };
@@ -58,20 +74,20 @@ export const eventHandler = (socket: any) => {
 export const sendToSocket = async (socketId: any, data: any) => {
   try {
     console.log("socketId", socketId);
-    logger.info(`EVENT SENDING :: ${data.eventName} :: ${JSON.stringify(  data.data)} :::::::::::::: `);
+    logger.info(`EVENT SENDING :: ${data.eventName} :: ${JSON.stringify(data.data)} :::::::::::::: `);
     await io.to(socketId).emit(data.eventName, data.data);
   } catch (error) {
     logger.error(`SEND DATA ERROR IN sendRToSocket: ${error}`);
     console.log("error", error);
   }
 };
-export const sendToRoom = async (roomId: any, data: any)=>{
-    try {
-      logger.info(`EVENT SENDING :: ${data.eventName} :: ${JSON.stringify(data.data)} :::::::::::::: `);
-      await io.to(roomId).emit(data.eventName, data.data);
-    } catch (error) {
-      logger.error(`SEND DATA ERROR IN sendToRoom: ${error}`);
-      console.log("error", error);
-    }
-  
+export const sendToRoom = async (roomId: any, data: any) => {
+  try {
+    logger.info(`EVENT SENDING :: ${data.eventName} :: ${JSON.stringify(data.data)} :::::::::::::: `);
+    await io.to(roomId).emit(data.eventName, data.data);
+  } catch (error) {
+    logger.error(`SEND DATA ERROR IN sendToRoom: ${error}`);
+    console.log("error", error);
+  }
+
 }

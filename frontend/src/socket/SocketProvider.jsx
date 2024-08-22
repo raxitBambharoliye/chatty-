@@ -3,7 +3,7 @@ import { getSocket } from ".";
 import { APP_URL, COOKIE_KEY, EVENT_NAME } from '../constant/'
 import { useDispatch, useSelector } from "react-redux";
 import { clearAllCookiesData, removeCookieData, setDataInCookie } from "../common";
-import { addBlockUser, setBlockedByUsers, setBlockedUserId, setUser, unBlockUser } from "../reducers/userReducer";
+import { addBlockUser, setBlockedByUsers, setBlockedUserId, setMutedUser, setPinUser, setUser, unBlockUser, unMuteUser, unPinUser } from "../reducers/userReducer";
 import { changeChangeChatLoader, changeGroupAdminData, pushFriend, pushMessage, pushNotification, removeFriends, setFriend, setFriendLoader, setMessage, setNotification, setPopup } from "../reducers/chatReducer";
 export const SocketContext = createContext();
 
@@ -46,6 +46,8 @@ export const SocketProvider = ({ children }) => {
       dispatch(setFriendLoader(false));
       dispatch(setBlockedByUsers(data.blockedByUsers))
       dispatch(setBlockedUserId(data.blockedUserId))
+      dispatch(setMutedUser(data.mutedUser));
+      dispatch(setPinUser(data.pinedUsers));
     })
 
     socket.on(EVENT_NAME.FOLLOW, (data) => {
@@ -83,6 +85,19 @@ export const SocketProvider = ({ children }) => {
     })
     socket.on(EVENT_NAME.UNBLOCK_USER, (data) => {
       dispatch(unBlockUser(data));
+    })
+
+    socket.on(EVENT_NAME.MUTE_USER,(data)=>{
+      dispatch(setMutedUser(data.mutedUser));
+    })
+    socket.on(EVENT_NAME.UNMUTE_USER,(data)=>{
+      dispatch(unMuteUser(data.unMutedUser));
+    })
+    socket.on(EVENT_NAME.PIN_USER,(data)=>{
+      dispatch(setPinUser(data.mutedUser));
+    })
+    socket.on(EVENT_NAME.UNPIN_USER,(data)=>{
+      dispatch(unPinUser(data.unPinedUserId));
     })
     socket.on('connect_error', (error) => {
       if (error.message == "Authentication error") {
