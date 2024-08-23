@@ -1,6 +1,6 @@
 import { EVENT_NAME, MQ } from "../common";
 import { CONFIG, MODEL } from "../constant";
-import { sendToRoom, sendToSocket } from "../eventHandlers";
+import { eventHandler, sendToRoom, sendToSocket } from "../eventHandlers";
 import { GroupIN, MessageIN, NotificationIN, UserIN } from "../utility/interfaces";
 import logger from "../utility/logger";
 
@@ -274,12 +274,20 @@ export const messageHandler = async (socket: any, data: any) => {
         return false;
       }
   }
-
+  if(user.blockedUserId.includes(receiverId)){
+    logger.error(`messageHandler ::: sender was a blocked receiver
+      `);
+    return;
+  }
     let friend;
     if (!isGroup) {
         friend=await MQ.findById<UserIN>(MODEL.USER_MODEL,receiverId);
         if(!friend || !friend.friends.includes(user._id)){
           return false;
+        }
+        if(friend.blockedByUsers.includes(user.id)){
+          logger.error(`messageHandler ::: sender was a blocked `);
+          return;
         }
     }
    
@@ -444,13 +452,11 @@ export const leaveGroupHandler = async (socket: any, data: any) => {
       return;
     }
     const userData = await MQ.findById<UserIN>(MODEL.USER_MODEL, userId);
-    console.log('userData', userData)
     if (!userData) {
       logger.error(`leaveGroupHandler ::: user data not found `);
       return;
     }
     const groupData = await MQ.findById<GroupIN>(MODEL.GROUP_MODEL, groupId);
-    console.log('groupData', groupData)
     if (!groupData) {
       logger.error(`leaveGroupHandler ::: group data not found `);
       return;
@@ -460,7 +466,6 @@ export const leaveGroupHandler = async (socket: any, data: any) => {
       return;
     }
     const newGroupMember = groupData.groupMembers.filter((element:any) => element.toString() !== userData.id);
-    console.log('newGroupMember', newGroupMember)
     let query:any = {
       $set: {
         groupMembers:newGroupMember
@@ -472,7 +477,6 @@ export const leaveGroupHandler = async (socket: any, data: any) => {
       console.log('newAdminList', newAdminList)
       query.$set.admin = newAdminList;
     }
-    console.log('query', query)
     const updatedGroupData = await MQ.findByIdAndUpdate<GroupIN>(MODEL.GROUP_MODEL, groupData.id, query, true);
     
     if (!updatedGroupData) {
@@ -487,6 +491,22 @@ export const leaveGroupHandler = async (socket: any, data: any) => {
       }
     }
     sendToSocket(socket.id, responseData);
+    const newGroupData = await MQ.findWithPopulate<GroupIN[]>(MODEL.GROUP_MODEL, { _id: groupData.id }, "groupMembers", "profilePicture tagLine userName");
+    console.log('newGroupData', newGroupData)
+    if(!newGroupData){
+      logger.error(`leaveGroupHandler ::: newGroupData not found `);
+      return ;
+    }
+    const roomResponseData= {
+        eventName:EVENT_NAME.UPDATE_FRIEND,
+        data:{
+          id:newGroupData[0].id,
+          updateData:{
+            groupMembers:newGroupData[0].groupMembers
+          }
+        }
+    }
+    sendToRoom(groupData._id.toString(),roomResponseData);
   } catch (error) {
     logger.error(`CATCH ERROR IN : leaveGroupHandler ${error}`)
     console.log('error', error)
@@ -864,19 +884,24 @@ export const addUserInGroupHandler = async (socket: any, data: any)=>{
      logger.error(`addUserInGroupHandler ::: failed to add user to group `);
      return;
    }
+   const newGroupData = await MQ.findWithPopulate<GroupIN[]>(MODEL.GROUP_MODEL, { _id: groupData.id }, "groupMembers", "profilePicture tagLine userName");
+   if(!newGroupData){
+    logger.error(`addUserInGroupHandler:: newGroupData not found `);
+    return;
+   }
    //NOTE - update new friends data and join the room 
    for (var i = 0; i < newFriendsList.length; i++){
      let newFriendData = await MQ.findByIdAndUpdate<UserIN>(MODEL.USER_MODEL, newFriendsList[i], { $push: { groups: groupData.id } }, true);
      if (newFriendData && newFriendData?.socketId) {
       const sendEventData = {
         eventName: EVENT_NAME.ACCEPT_FOLLOW_REQUEST,
-        data: {newFriend:groupData}
+        data: {newFriend:newGroupData[0]}
         }
         sendToSocket(newFriendData.socketId, sendEventData);
       }
    }
    const updateGroupData = {
-     eventName: EVENT_NAME.UPDATE_GROUP_MEMBERS,
+     eventName: EVENT_NAME.UPDATE_FRIEND,
      data: {
        updateData: {
          groupMembers: updatedGroupData.groupMembers,

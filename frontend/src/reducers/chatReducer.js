@@ -182,7 +182,6 @@ function changeEditGroupAdminLoaderFun(state, action) {
     state.action = action.payload
 }
 function removeFriendsFun(state, action) {
-    console.log('action', action)
     state.friends = state.friends.filter((element) => element._id != action.payload);
     const activeChat = JSON.parse(JSON.stringify(state.activeUserChat));
     if (activeChat._id == action.payload) {
@@ -190,11 +189,14 @@ function removeFriendsFun(state, action) {
     }
 }
 function updateFriendsFun(state, action) {
-    console.log('action', action)
     const index = state.friends.findIndex((element) => element._id == action.payload.id);
     console.log('index', index)
     if (index > -1) {
         state.friends[index] = {...state.friends[index],...action.payload.updateData};
+        const activeUserChat= JSON.parse(JSON.stringify(state.activeUserChat));
+        if(activeUserChat && activeUserChat._id == action.payload.id){
+            state.activeUserChat={...state.activeUserChat,...action.payload.updateData}
+        }
     }
 }
 export const {

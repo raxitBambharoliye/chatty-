@@ -99,7 +99,7 @@ export const SocketProvider = ({ children }) => {
     socket.on(EVENT_NAME.UNPIN_USER,(data)=>{
       dispatch(unPinUser(data.unPinedUserId));
     })
-    socket.on(EVENT_NAME.UPDATE_GROUP_MEMBERS, (data) => {
+    socket.on(EVENT_NAME.UPDATE_FRIEND, (data) => {
       dispatch(updateFriends(data));
     })
  
