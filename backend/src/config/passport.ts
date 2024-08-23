@@ -6,8 +6,8 @@ import passport from "passport";
 import { Profile, VerifyCallback } from "passport-google-oauth20";
 
 
-const clientSecret = process.env.CLIENT_SECRET || "";
-const clientID = process.env.CLIENT_ID || "";
+const clientSecret = process.env.CLIENT_SECRET || "testCheck";
+const clientID = process.env.CLIENT_ID || "testCheck";
 passport.use(
   new GoogleStrategy(
     {
