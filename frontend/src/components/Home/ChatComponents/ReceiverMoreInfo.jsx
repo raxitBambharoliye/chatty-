@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux';
 import { AddFriendsInGroup, EditAdmin } from '../../Models';
 import { SocketContext } from '../../../socket/SocketProvider';
-import eventName from '../../../constant/eventName';
 import { EVENT_NAME } from '../../../constant';
 
 function ReceiverMoreInfo() {
@@ -118,9 +117,6 @@ function ReceiverMoreInfo() {
           </div>
           <div className="actionButton flex-grow-1 text-end d-flex justify-content-end">
             {/* pin */}
-            {
-              console.log('userInfo.pinedUsers', userInfo.pinedUsers)
-            }
             {userInfo.pinedUsers?.includes(activeChatInfo._id) && <button className='btn favorite active' onClick={unPinHandler}><i className="fa-solid fa-star"></i></button>}
             {!userInfo.pinedUsers.includes(activeChatInfo._id) && <button className='btn favorite' onClick={pinHandler}><i className="fa-regular fa-star"></i></button>}
             {/* mute  */}

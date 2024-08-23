@@ -285,16 +285,6 @@ export const createGroup = async (req: any, res: any) => {
   try {
     console.log(req.body);
     console.log(typeof req.body.groupMember)
-
-    /* 
-    {
-  groupName: 'cholate ',
-  groupMember: '66a66acc351b0bec2848d11f,66a66b8d31b9fcf4e9c40d6f,66a66b8e31b9fcf4e9c40d77',
-  tagLine: 'testDelete',
-  creator: '669de4006bda9f696cc6aae7'
-}
-
-     */
     const user = await MQ.findById<UserIN>(MODEL.USER_MODEL, req.body.creator);
     if (!user) {
       return res.status(400).json({ message: "user not found" });

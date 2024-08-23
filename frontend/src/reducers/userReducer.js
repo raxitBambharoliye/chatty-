@@ -61,6 +61,7 @@ function setBlockedUserIdFunction(state, action) {
     state.user.blockedUserId = action.payload;
 }
 function setMutedUserFunction(state, action) {
+    console.log('action setMutedUserFunction', action)
     if (state.user.mutedUser && state.user.mutedUser.length > 0) {
         state.user.mutedUser.push(action.payload)
     } else {

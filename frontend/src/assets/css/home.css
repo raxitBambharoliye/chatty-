@@ -434,7 +434,7 @@ border-color: var(--color-primary);
     }
 
     /* message */
-    .message {}
+    /* .message {} */
 
     .message p {
         max-width: 100%;
@@ -560,4 +560,15 @@ border-color: var(--color-primary);
     .notificationItem:hover {
         background-color: var(--color-black);
         /* color: ; */
+    }
+
+/* new chat button */
+    .newCat{
+        cursor: pointer;
+        position: absolute;
+        bottom: 7%;
+        right: 8%;
+        font-size: 40px;        
+        transform: rotateY(180deg);
+        color: var(--color-yellow);
     }

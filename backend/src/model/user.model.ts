@@ -90,6 +90,12 @@ const userSchema = new Schema({
         default: [],
         required: true,
     },
+    messageOrder: {
+        type: [{type:mongoose.Schema.Types.ObjectId,ref:MODEL.USER_MODEL}],
+        ref:MODEL.USER_MODEL,
+        default: [],
+        required: true,
+    },
     verifiedEmail: { type: Boolean, default: false },
     profilePictureId: { type: String, }
 }, { timestamps: true })

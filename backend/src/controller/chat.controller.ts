@@ -52,7 +52,8 @@ export const onlineUser = async (socket: any, data: any) => {
         blockedByUsers: user.blockedByUsers,
         blockedUserId: user.blockedUserId,
         mutedUser:user.mutedUser,
-        pinedUsers:user.pinedUsers
+        pinedUsers: user.pinedUsers,
+        messageOrder:user.messageOrder
       },
     };
 
@@ -264,7 +265,6 @@ export const messageHandler = async (socket: any, data: any) => {
 
 
     const user=await MQ.findById<UserIN>(MODEL.USER_MODEL,socket.userId);
-    console.log('user', user)
     if (isGroup) {
       if(!user || !user.groups.includes(receiverId)){
         return false;
@@ -307,8 +307,35 @@ export const messageHandler = async (socket: any, data: any) => {
       receiverId:isGroup?groupData?.id:receiverId,
       message:message
     }
-    let messageData= await MQ.insertOne<MessageIN>(MODEL.MESSAGE_MODEL,insertMessageData);
-    console.log('messageData', messageData)
+    let messageData = await MQ.insertOne<MessageIN>(MODEL.MESSAGE_MODEL, insertMessageData);
+    //NOTE - update order of message in sender and receiver both
+    console.log('!isGroup&&friend', !isGroup&&friend)
+    if (!isGroup && friend) { 
+      let query:any = {
+        $push:{messageOrder:friend.id}
+      }
+      let query2:any = {
+        $push:{messageOrder:groupData?.id}
+      }
+      if (user.messageOrder.includes(friend._id)) {
+        query.$pull={messageOrder:friend.id}
+      }
+      if (friend.messageOrder.includes(user._id)) {
+        query2.$pull={messageOrder:user.id}
+      }
+      await MQ.findByIdAndUpdate(MODEL.USER_MODEL,user.id,query)
+      await MQ.findByIdAndUpdate(MODEL.USER_MODEL, friend.id, query2)
+      logger.info(`op`)
+    } else if(groupData) {
+      let query:any = {
+        $push:{messageOrder:groupData?.id}
+      }
+
+      if (user.messageOrder.includes(groupData.id)) {
+        query.$pull={messageOrder:groupData?.id}
+      }
+      await MQ.findByIdAndUpdate(MODEL.USER_MODEL,user.id,{$pull:{messageOrder:groupData?.id},})      
+    }
     if(!messageData){
       return false;
     }
@@ -845,13 +872,6 @@ export const unPinUserHandler = async (socket: any, data: any)=>{
 export const addUserInGroupHandler = async (socket: any, data: any)=>{
  try {
    console.log(data);
-   /* 
-   {
-  editor: '66a66acc351b0bec2848d11f',
-  groupId: '66bc376fd25b5fa2b8ed03dd',
-  newFriendsList: [ '66a66b8d31b9fcf4e9c40d6f' ]
-}
-    */
    const { editor, groupId, newFriendsList } = data;
    if (!editor || !groupId || !newFriendsList || newFriendsList.length <= 0) {
      logger.error(`addUserInGroupHandler ::: editor, groupId or newFriendsList not found or empty `);
@@ -904,7 +924,7 @@ export const addUserInGroupHandler = async (socket: any, data: any)=>{
      eventName: EVENT_NAME.UPDATE_FRIEND,
      data: {
        updateData: {
-         groupMembers: updatedGroupData.groupMembers,
+         groupMembers: newGroupData[0].groupMembers,
        },
        id: updatedGroupData.id
        

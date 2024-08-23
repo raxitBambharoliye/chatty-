@@ -40,13 +40,14 @@ export const SocketProvider = ({ children }) => {
     socket.emit(EVENT_NAME.ONLINE_USER, { userId: user._id });
 
     socket.on(EVENT_NAME.ONLINE_USER, (data) => {
+      removeCookieData(COOKIE_KEY.USER);
       removeCookieData(COOKIE_KEY.ACTIVE_USER_CHAT)
       dispatch(setFriend(data.friends))
       dispatch(setNotification(data.notifications))
       dispatch(setFriendLoader(false));
       dispatch(setBlockedByUsers(data.blockedByUsers))
       dispatch(setBlockedUserId(data.blockedUserId))
-      dispatch(setMutedUser(data.mutedUser));
+      // dispatch(setMutedUser(data.mutedUser));
       dispatch(setPinUser(data.pinedUsers));
     })
 
@@ -137,6 +138,9 @@ export const SocketProvider = ({ children }) => {
     console.log('friends', friends)
     setDataInCookie(COOKIE_KEY.FRIENDS, friends);
   }, [friends])
+  useEffect(() => {
+    setDataInCookie(COOKIE_KEY.USER, user);
+  }, [user])
   return (
     <SocketContext.Provider value={{ socket, sendRequest, connectSocket }}>
 

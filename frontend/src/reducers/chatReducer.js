@@ -52,7 +52,7 @@ const chatReducer = createSlice({
         changeGroupAdminData: changeGroupAdminDataFun,
         changeEditGroupAdminLoader: changeEditGroupAdminLoaderFun,
         removeFriends: removeFriendsFun,
-        updateFriends:updateFriendsFun
+        updateFriends: updateFriendsFun
     }
 })
 function setNotificationFun(state, action) {
@@ -99,19 +99,21 @@ function setMessageFun(state, action) {
 function pushMessageFun(state, action) {
     const activeUserChat = getCookieData(COOKIE_KEY.ACTIVE_USER_CHAT);
     const userData = getCookieData(COOKIE_KEY.USER)
-
-    if (userData._id !== action.payload.senderId) {
-        const notificationSound = new Audio('./sound/messageNotification.wav')
-        notificationSound.play().catch(error => {
-            addNotification({
-                title: 'Message Received',
-                subtitle: `${action.payload.senderName}`,
-                message: `form: ${action.payload.senderName} \n ${action.payload.message}`,
-                theme: 'darkblue',
-                native: true,
-                duration: 4000
+    if (userData._id !== action.payload.senderId && !userData.mutedUser.includes(action.payload.senderId)) {
+        if (action.payload.isGroup && !userData.mutedUser.includes(action.payload.receiverId)) {
+            const notificationSound = new Audio('./sound/messageNotification.wav')
+            notificationSound.play().catch(error => {
+                addNotification({
+                    title: 'Message Received',
+                    subtitle: `${action.payload.senderName}`,
+                    message: `form: ${action.payload.senderName} \n ${action.payload.message}`,
+                    theme: 'darkblue',
+                    native: true,
+                    duration: 4000
+                });
             });
-        });;
+        }
+
     }
 
     if (!activeUserChat || (activeUserChat && action.payload.senderId != activeUserChat._id && action.payload.senderId != userData._id)) {
@@ -192,10 +194,10 @@ function updateFriendsFun(state, action) {
     const index = state.friends.findIndex((element) => element._id == action.payload.id);
     console.log('index', index)
     if (index > -1) {
-        state.friends[index] = {...state.friends[index],...action.payload.updateData};
-        const activeUserChat= JSON.parse(JSON.stringify(state.activeUserChat));
-        if(activeUserChat && activeUserChat._id == action.payload.id){
-            state.activeUserChat={...state.activeUserChat,...action.payload.updateData}
+        state.friends[index] = { ...state.friends[index], ...action.payload.updateData };
+        const activeUserChat = JSON.parse(JSON.stringify(state.activeUserChat));
+        if (activeUserChat && activeUserChat._id == action.payload.id) {
+            state.activeUserChat = { ...state.activeUserChat, ...action.payload.updateData }
         }
     }
 }

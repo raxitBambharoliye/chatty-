@@ -26,6 +26,7 @@ export interface UserIN {
   groups: mongoose.Schema.Types.ObjectId[] | GroupIN[];
   pinedUsers: string;
   mutedUser: string;
+  messageOrder: mongoose.Schema.Types.ObjectId[] | string[];
 }
 
 export interface NotificationIN {
@@ -49,7 +50,7 @@ export interface MessageIN {
 }
 
 export interface GroupIN {
-  id: mongoose.Schema.Types.ObjectId | string;
+  id: mongoose.Schema.Types.ObjectId | string | any;
   _id: mongoose.Schema.Types.ObjectId | string;
   groupName: string;
   tagLine: string;

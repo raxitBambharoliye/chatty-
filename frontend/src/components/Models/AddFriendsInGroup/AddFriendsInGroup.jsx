@@ -14,13 +14,16 @@ export default function AddFriendsInGroup({ id, modalClass = '' }) {
     const { sendRequest } = useContext(SocketContext);
     const dispatch = useDispatch();
     const editGroupAdminLoader = useSelector((state) => state.chat.loader.editGroupAdminLoader);
-
     if (!(activeChatInfo.type && activeChatInfo.type == 'GROUP')) {
         return <></>
     }
-
     const [friendsList, setFriendsList] = useState(activeChatInfo.groupMembers);
     const [activeSubmitButton, setActiveSubmitButton] = useState(true);
+    useEffect(() => {
+        setFriendsList(activeChatInfo.groupMembers);
+        console.log('activeChatInfo.groupMembers:::::::: ', activeChatInfo)
+        console.log('activeChatInfo.groupMembers:::::::: Change ed ', activeChatInfo.groupMembers)
+    }, [activeChatInfo])
     useEffect(() => {
         if (friendsList.join("-") != activeChatInfo.groupMembers.join("-")) {
             setActiveSubmitButton(false);

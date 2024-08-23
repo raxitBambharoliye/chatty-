@@ -51,10 +51,13 @@ function Aside({ asideShow }) {
                         <div className="menuItem"><Link className="menuItem" title='logout' to={APP_URL.FE_LOGOUT}><i className="fa-solid fa-right-from-bracket"></i></Link></div>
                     </div>
                 </div>
+                <div className="newCat">
+                    <i className="fa-solid fa-comment-medical"></i>
+                </div>
             </div>
             <EditProfile id={'editUserProfile'} modalClass='secondBlackModal editUserProfile'></EditProfile>
             <AddFriends id={"addFriendsModel"} modalClass='blackModal addFriendsModal '></AddFriends>
-            <CreateGroup id={"createGroupModal" } modalClass='secondBlackModal editUserProfile'/>
+            <CreateGroup id={"createGroupModal"} modalClass='secondBlackModal editUserProfile' />
         </>
     )
 }

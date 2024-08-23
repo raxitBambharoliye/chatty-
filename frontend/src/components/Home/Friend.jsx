@@ -74,6 +74,7 @@ function Friend() {
                         <AsideContactsItem  userName={contact.type&& contact.type=="GROUP"?contact.groupName:contact.userName} profile={contact.type&& contact.type=="GROUP"?contact.groupProfile??"./image/dummyGroupProfile.png":contact.profilePicture ?? "./image/dummyProfile.png"} itemClass={pendingViewsId.includes(contact._id) ? "pendingBall" : ""} tagLine={contact.tagLine ?? "-"} index={index} activeChat={activeChat} key={`${index}FriendsItems`} onClick={(e) => { setActiveChat(index) }} />
                     ))}
                 </>)}
+                
         </>
     )
 }
