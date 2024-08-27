@@ -129,7 +129,9 @@
         color: var(--color-gray);
         text-transform: capitalize;
     }
-
+    .asideContactsItem .pinIcon{
+        color: var(--color-gray);
+    }
     /* aside footer  */
 
     .asideFooter {
@@ -571,4 +573,7 @@ border-color: var(--color-primary);
         font-size: 40px;        
         transform: rotateY(180deg);
         color: var(--color-yellow);
+    }
+    .newCat.active{
+        color: white;
     }

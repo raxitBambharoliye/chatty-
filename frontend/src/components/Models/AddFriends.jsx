@@ -14,37 +14,37 @@ function AddFriends({ id, modalClass = '' }) {
     const [searchResult, setSearchResult] = useState([]);
     const [search, setSearch] = useState("");
     const [searchCache, setSearchCache] = useState({});
-    const user= useSelector((state)=>state.userData.user)
+    const user = useSelector((state) => state.userData.user)
 
     const debouncedSearch = useCallback(
         _.debounce((searchQuery) => {
             if (searchQuery === '') {
                 setSearchResult([]);
-          return;
-        }
-        setLoader(true);
-        if (searchCache[searchQuery]) {
-          setSearchResult(searchCache[searchQuery]);
-          setLoader(false);
-        } else {
-          AxiosCLI.get(`${APP_URL.SEARCH_USER}/${searchQuery}`)
-            .then((response) => {
-              if (response.status === 200 && response.data.searchResult) {
-                setSearchCache({ ...searchCache, [searchQuery]: response.data.searchResult });
-                setSearchResult(response.data.searchResult);
+                return;
+            }
+            setLoader(true);
+            if (searchCache[searchQuery]) {
+                setSearchResult(searchCache[searchQuery]);
                 setLoader(false);
-              }
-            })
-            .catch((error) => {
-              console.error('Error:', error);
-              setLoader(false);
-            });
-        }
-      }, 500), []);
-    
-      useEffect(() => {
+            } else {
+                AxiosCLI.get(`${APP_URL.SEARCH_USER}/${searchQuery}`)
+                    .then((response) => {
+                        if (response.status === 200 && response.data.searchResult) {
+                            setSearchCache({ ...searchCache, [searchQuery]: response.data.searchResult });
+                            setSearchResult(response.data.searchResult);
+                            setLoader(false);
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                        setLoader(false);
+                    });
+            }
+        }, 500), []);
+
+    useEffect(() => {
         debouncedSearch(search);
-      }, [search, debouncedSearch]);
+    }, [search, debouncedSearch]);
     const SendFollowRequest = (id) => {
         let sendData = {
             eventName: EVENT_NAME.FOLLOW,
@@ -53,7 +53,7 @@ function AddFriends({ id, modalClass = '' }) {
                 senderId: user._id
             }
         }
-        sendRequest(sendData );
+        sendRequest(sendData);
         console.log("send request ", id)
     }
 
@@ -79,12 +79,12 @@ function AddFriends({ id, modalClass = '' }) {
                                             <h2 className='mt-4'>SearchIng...</h2>
                                         </>}
                                     {(!isLoading && searchResult.length == 0) && (<>
-                                    <h1>No data found</h1></>)}
-                                    {!isLoading && searchResult.map((element,index) => (
+                                        <h1>No data found</h1></>)}
+                                    {!isLoading && searchResult.map((element, index) => (
                                         <div className="searchResultItem w-100" key={`${index}AddFriendITem`}>
                                             <div className="d-flex align-items-center">
                                                 <div className="userProfile me-4">
-                                                    <img src={element.profilePicture??"./image/dummyProfile.png"} alt="" />
+                                                    <img src={element.profilePicture ?? "./image/dummyProfile.png"} alt="" />
                                                 </div>
                                                 <div className="userData flex-grow-1 ">
                                                     <div className="d-flex justify-content-between align-items-center">
@@ -92,7 +92,7 @@ function AddFriends({ id, modalClass = '' }) {
                                                             <h3 className='m-0'>{element.userName}</h3>
                                                             <p className='m-0'>{element.tagLine ? element.tagLine : "---"}</p>
                                                         </div>
-                                                        <Button type="button" value={user.sendedRequest.includes(element._id)?"requested":user.friendRequest.includes(element._id)?"follow back":"follow"} buttonClass="btn-outline-primary hover" disabled={user.sendedRequest.includes(element._id)?true:false} onClick={(e)=>{SendFollowRequest(element._id)}} />
+                                                        <Button type="button" value={user.sendedRequest.includes(element._id) ? "requested" : user.friendRequest.includes(element._id) ? "follow back" : "follow"} buttonClass="btn-outline-primary hover" disabled={user.sendedRequest.includes(element._id) ? true : false} onClick={(e) => { SendFollowRequest(element._id) }} />
                                                     </div>
                                                 </div>
                                             </div>

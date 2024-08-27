@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 // user interface
 export interface UserIN {
   _id: any;
-  id: string;
+  id: any;
   userName: string;
   DOB: string;
   email: string;
@@ -24,9 +24,11 @@ export interface UserIN {
   createdAt: Date;
   updatedAt: Date;
   groups: mongoose.Schema.Types.ObjectId[] | GroupIN[];
-  pinedUsers: string;
-  mutedUser: string;
+  pinedUsers:  mongoose.Schema.Types.ObjectId[] | string[];
+  mutedUser:  mongoose.Schema.Types.ObjectId[] | string[];
   messageOrder: mongoose.Schema.Types.ObjectId[] | string[];
+  unFollowedUser: mongoose.Schema.Types.ObjectId[] | string[];
+  unFollowedByUsers: mongoose.Schema.Types.ObjectId[] | string[];
 }
 
 export interface NotificationIN {

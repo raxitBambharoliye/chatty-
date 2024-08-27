@@ -7,16 +7,12 @@ import { EVENT_NAME } from '../../../constant';
 function ReceiverMoreInfo() {
   const activeChatInfo = useSelector((state) => state.chat.activeUserChat);
   const userInfo = useSelector((state) => state.userData.user);
+  const {blockedUserId,mutedUser,pinedUsers} = useSelector((state) => state.chat.userFriendsData);
   const { sendRequest } = useContext(SocketContext);
   const [isGroup, setIsGroup] = useState(false);
   useEffect(() => {
     setIsGroup((activeChatInfo.type === 'GROUP'));
   }, [activeChatInfo])
-
-  useEffect(() => {
-    console.log("user.pinedUsers", userInfo.pinedUsers)
-  }, [userInfo])
-
 
   const leaveGroupHandler = () => {
     sendRequest({
@@ -102,7 +98,15 @@ function ReceiverMoreInfo() {
     sendRequest(sendData);
     console.log("send request ", id)
   }
-
+  const unFollowHandler = () => {
+    sendRequest({
+      eventName: EVENT_NAME.UN_FOLLOW,
+      data: {
+        userId: userInfo._id,
+        friendId:activeChatInfo._id
+      }
+    })
+  }
   return (
     <>
       <div className="receiverMorInfo">
@@ -117,11 +121,11 @@ function ReceiverMoreInfo() {
           </div>
           <div className="actionButton flex-grow-1 text-end d-flex justify-content-end">
             {/* pin */}
-            {userInfo.pinedUsers?.includes(activeChatInfo._id) && <button className='btn favorite active' onClick={unPinHandler}><i className="fa-solid fa-star"></i></button>}
-            {!userInfo.pinedUsers.includes(activeChatInfo._id) && <button className='btn favorite' onClick={pinHandler}><i className="fa-regular fa-star"></i></button>}
+            {pinedUsers?.includes(activeChatInfo._id) && <button className='btn favorite active' onClick={unPinHandler}><i className="fa-solid fa-star"></i></button>}
+            {!pinedUsers.includes(activeChatInfo._id) && <button className='btn favorite' onClick={pinHandler}><i className="fa-regular fa-star"></i></button>}
             {/* mute  */}
-            {userInfo.mutedUser.includes(activeChatInfo._id) && <button className='btn mute active' onClick={unMuteHandler}><i className="fa-regular fa-bell-slash"></i></button>}
-            {!userInfo.mutedUser.includes(activeChatInfo._id) && <button className='btn mute ' onClick={muteHandler}><i className="fa-regular fa-bell"></i></button>}
+            {mutedUser.includes(activeChatInfo._id) && <button className='btn mute active' onClick={unMuteHandler}><i className="fa-regular fa-bell-slash"></i></button>}
+            {!mutedUser.includes(activeChatInfo._id) && <button className='btn mute ' onClick={muteHandler}><i className="fa-regular fa-bell"></i></button>}
             {/* add friends in group */}
             {(activeChatInfo.type === 'GROUP' && activeChatInfo.admin.includes(userInfo._id)) && <button className='btn addFriends' data-bs-toggle="modal" data-bs-target="#addFriendsInGroup"><i className="fa-solid fa-user-plus"></i></button>}
           </div>
@@ -150,11 +154,14 @@ function ReceiverMoreInfo() {
             {activeChatInfo.admin.includes(userInfo._id) && <div className="makeAdmin" data-bs-toggle="modal" data-bs-target="#editGroupAdmin">Edit group admins</div>}
           </>}
           <div className="buttons">
-            {(activeChatInfo.type == 'GROUP') ? <button className='btn informButton' onClick={leaveGroupHandler}><i className="fa-solid fa-right-from-bracket"></i> Leave Group & delate Group</button> : <button className='btn informButton'><i className="fa-solid fa-user-minus"></i> un Follow </button>}
+            {(activeChatInfo.type == 'GROUP') ?
+              <button className='btn informButton' onClick={leaveGroupHandler}><i className="fa-solid fa-right-from-bracket"></i> Leave Group & delate Group</button> :
+              <button button className='btn informButton' onClick={unFollowHandler}><i className="fa-solid fa-user-minus"></i> un Follow & delate Chat  </button> 
+            }
 
             {(activeChatInfo.type != 'GROUP') &&
               <>
-                {userInfo.blockedUserId.includes(activeChatInfo._id) ?
+                {blockedUserId.includes(activeChatInfo._id) ?
                   <button className='btn informButton fill' onClick={unBlockUser}><i className="fa-solid fa-ban"></i>Un Block</button> :
                   <button className='btn informButton' onClick={blockUser}><i className="fa-solid fa-ban"></i>Block</button>
                 }
@@ -162,8 +169,9 @@ function ReceiverMoreInfo() {
             <button className='btn informButton' disabled><i className="fa-solid fa-thumbs-down"></i>Report</button>
           </div>
         </div>
-      </div>
-      {(activeChatInfo.type === "GROUP") && <EditAdmin id={"editGroupAdmin"} modalClass='blackModal editGroupAdmin ' />}
+      </div >
+      {(activeChatInfo.type === "GROUP") && <EditAdmin id={"editGroupAdmin"} modalClass='blackModal editGroupAdmin ' />
+      }
       {(activeChatInfo.type === "GROUP") && <AddFriendsInGroup id={"addFriendsInGroup"} modalClass='blackModal editGroupAdmin ' />}
     </>
   )

@@ -7,25 +7,22 @@ import { EVENT_NAME } from '../../../constant';
 import { changeEditGroupAdminLoader, removeFriends } from '../../../reducers/chatReducer';
 
 export default function AddFriendsInGroup({ id, modalClass = '' }) {
-    const activeChatInfo = useSelector((state) => state.chat.activeUserChat);
-    const friends = useSelector((state) => state.chat.friends);
+    const {activeUserChat,friends} = useSelector((state) => state.chat);
+    const editGroupAdminLoader = useSelector((state) => state.chat.loader.editGroupAdminLoader);
     const [newFriends, setNewFriends] = useState([]);
     const userData = useSelector((state) => state.userData.user);
     const { sendRequest } = useContext(SocketContext);
     const dispatch = useDispatch();
-    const editGroupAdminLoader = useSelector((state) => state.chat.loader.editGroupAdminLoader);
-    if (!(activeChatInfo.type && activeChatInfo.type == 'GROUP')) {
+    if (!(activeUserChat.type && activeUserChat.type == 'GROUP')) {
         return <></>
     }
-    const [friendsList, setFriendsList] = useState(activeChatInfo.groupMembers);
+    const [friendsList, setFriendsList] = useState(activeUserChat.groupMembers);
     const [activeSubmitButton, setActiveSubmitButton] = useState(true);
     useEffect(() => {
-        setFriendsList(activeChatInfo.groupMembers);
-        console.log('activeChatInfo.groupMembers:::::::: ', activeChatInfo)
-        console.log('activeChatInfo.groupMembers:::::::: Change ed ', activeChatInfo.groupMembers)
-    }, [activeChatInfo])
+        setFriendsList(activeUserChat.groupMembers);
+    }, [activeUserChat])
     useEffect(() => {
-        if (friendsList.join("-") != activeChatInfo.groupMembers.join("-")) {
+        if (friendsList.join("-") != activeUserChat.groupMembers.join("-")) {
             setActiveSubmitButton(false);
         }
     }, [friendsList, setFriendsList])
@@ -37,7 +34,7 @@ export default function AddFriendsInGroup({ id, modalClass = '' }) {
     }
     const updateFriends = async () => {
         dispatch(changeEditGroupAdminLoader(true))
-        sendRequest({ eventName: EVENT_NAME.ADD_FRIENDS_IN_GROUP, data: { editor: userData._id, groupId: activeChatInfo._id, newFriendsList: newFriends } });
+        sendRequest({ eventName: EVENT_NAME.ADD_FRIENDS_IN_GROUP, data: { editor: userData._id, groupId: activeUserChat._id, newFriendsList: newFriends } });
     }
     return (
         <div className={`modal fade  ${modalClass}`} id={id} tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -54,7 +51,7 @@ export default function AddFriendsInGroup({ id, modalClass = '' }) {
                     <div className="modal-body d-flex flex-column flex-grow-1">
                         <div className="adminList">
                             <div className="row justify-content-center">
-                                {[...friends, ...activeChatInfo.groupMembers].map((element, index) => {
+                                {[...friends, ...activeUserChat.groupMembers].map((element, index) => {
                                     if (friendsList.includes(element)) {
                                         return (
                                             <div className='col-2' key={`groupAdmins-${index}`}>
@@ -75,7 +72,7 @@ export default function AddFriendsInGroup({ id, modalClass = '' }) {
                         <div className="otherGroupMembers">
                             <div className="groupMember">
                                 {friends.map((element, index) => {
-                                    if (activeChatInfo.groupMembers.findIndex((val) => val._id == element._id) < 0 && element.type !== "GROUP" && friendsList.findIndex((val) => val._id == element._id) < 0) {
+                                    if (activeUserChat.groupMembers.findIndex((val) => val._id == element._id) < 0 && element.type !== "GROUP" && friendsList.findIndex((val) => val._id == element._id) < 0) {
                                         return (
                                             <div className="groupMemberItem d-flex align-items-center justify-content-between" key={`addFriendsInGroup-${index}`} onClick={(e) => { setFriendsList((value) => [...value, element]); setNewFriends((value) => [...value, element._id]) }}>
                                                 <div className="userInfo d-flex align-items-center">

@@ -10,7 +10,7 @@ import { setPopup } from '../reducers/chatReducer';
 function LogOut() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    useEffect(() => {
+  useEffect(() => {
         removeCookieData(COOKIE_KEY.TOKEN);
         removeCookieData(COOKIE_KEY.USER);
         dispatch(setUser({}));

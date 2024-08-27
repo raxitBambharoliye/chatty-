@@ -10,6 +10,7 @@ import { setNotification } from '../reducers/chatReducer';
 function Private() {
   const token = getCookieData(COOKIE_KEY.TOKEN, true);
   const userData = getCookieData(COOKIE_KEY.USER);
+  console.log('userData From Cookies ', userData)
   const notifications = getCookieData(COOKIE_KEY.NOTIFICATIONS);
   const dispatch = useDispatch();
   console.log("private running:::::")

@@ -9,6 +9,14 @@ const initialState = {
     friends: null,
     messages: null,
     activeUserChat: null,
+    userFriendsData: {
+        sendedRequest: [],
+        blockedByUsers: [],
+        blockedUserId: [],
+        mutedUser: [],
+        pinedUsers: [],
+        messageOrder: [],
+    },
     loader: {
         friendsLoader: false,
         chatLoader: false,
@@ -18,6 +26,7 @@ const initialState = {
     pendingViewIds: [],
     notificationSound: false,
     activeAside: "FRIENDS",
+    activeNewChat: false,
     notificationViewPending: false,
     popup: {
         title: null,
@@ -32,6 +41,7 @@ const chatReducer = createSlice({
     name: "chat",
     initialState: initialState,
     reducers: {
+        setOnlineUser: setOnlineUserFun,
         setNotification: setNotificationFun,
         pushNotification: pushNotificationFun,
         setFriend: setFriendFun,
@@ -52,9 +62,31 @@ const chatReducer = createSlice({
         changeGroupAdminData: changeGroupAdminDataFun,
         changeEditGroupAdminLoader: changeEditGroupAdminLoaderFun,
         removeFriends: removeFriendsFun,
-        updateFriends: updateFriendsFun
+        updateFriends: updateFriendsFun,
+        changeActiveNewChat: changeActiveNewChatFunction,
+        setMessageOrder: setMessageOrderFunction,
+        setPinUser: setPinUserFun,
+        unPinUser: unPinUserFun,
+        addBlockUser: addBlockUserFun,
+        unBlockUser: unBlockUserFun,
+        setMutedUser: setMutedUserFun,
+        unMuteUser: unMuteUserFun,
+        addUnFollowedUser: addUnFollowedUserFun,
+        setSendedRequest: setSendedRequestFun
     }
 })
+
+
+function setOnlineUserFun(state, action) {
+    console.log('action.payload.user', action.payload.user)
+    state.userFriendsData.sendedRequest = action.payload.user.sendedRequest;
+    state.userFriendsData.blockedByUsers = action.payload.user.blockedByUsers;
+    state.userFriendsData.blockedUserId = action.payload.user.blockedUserId;
+    state.userFriendsData.mutedUser = action.payload.user.mutedUser;
+    state.userFriendsData.pinedUsers = action.payload.user.pinedUsers;
+    state.userFriendsData.messageOrder = action.payload.user.messageOrder;
+}
+
 function setNotificationFun(state, action) {
     state.notification = action.payload;
 }
@@ -74,11 +106,14 @@ function setFriendFun(state, action) {
     state.friends = action.payload;
 }
 function pushFriendFun(state, action) {
+    let friends = JSON.parse(JSON.stringify(state.friends));
     if (state.friends && state.friends.length > 0) {
         state.friends.push(action.payload);
+        friends.push(action.payload);
     }
     else {
         state.friends = [action.payload];
+        friends = [action.payload];
     }
 }
 function changeNotificationStatusFun(state, action) {
@@ -115,6 +150,23 @@ function pushMessageFun(state, action) {
         }
 
     }
+    //NOTE -  change message order 
+    let messageOrderId = action.payload.receiverId;
+    if (action.payload.receiverId === userData._id) {
+        messageOrderId = action.payload.senderId
+    }
+    if (state.userFriendsData.pinedUsers.includes(messageOrderId)) {
+        state.userFriendsData.pinedUsers.splice(state.userFriendsData.pinedUsers.indexOf(messageOrderId), 1);
+        state.userFriendsData.pinedUsers.unshift(messageOrderId);
+    } else {
+        if (state.userFriendsData.messageOrder.includes(messageOrderId)) {
+            state.userFriendsData.messageOrder.splice(state.userFriendsData.messageOrder.indexOf(messageOrderId), 1);
+            state.userFriendsData.messageOrder = [messageOrderId, ...state.userFriendsData.messageOrder];
+        } else {
+            state.userFriendsData.messageOrder = [messageOrderId, ...state.userFriendsData.messageOrder];
+        }
+    }
+    state.activeNewChat = false
 
     if (!activeUserChat || (activeUserChat && action.payload.senderId != activeUserChat._id && action.payload.senderId != userData._id)) {
         if (action.payload.isGroup) {
@@ -201,6 +253,84 @@ function updateFriendsFun(state, action) {
         }
     }
 }
+function changeActiveNewChatFunction(state, action) {
+    state.activeNewChat = action.payload
+}
+function setMessageOrderFunction(state, action) {
+    console.log('action :::: set message order set check ', action)
+    state.userFriendsData.messageOrder = action.payload
+}
+function setPinUserFun(state, action) {
+    if (state.userFriendsData.pinedUsers && state.userFriendsData.pinedUsers.length > 0) {
+        state.userFriendsData.pinedUsers.push(action.payload)
+    } else {
+        if (typeof action.payload === 'string') {
+
+            state.userFriendsData.pinedUsers = [action.payload];
+        } else {
+            state.userFriendsData.pinedUsers = action.payload
+        }
+    }
+}
+function unPinUserFun(state, action) {
+    state.userFriendsData.pinedUsers = state.userFriendsData.pinedUsers.filter((element) => element != action.payload);
+    if (state.userFriendsData.messageOrder.includes(action.payload)) {
+        state.userFriendsData.messageOrder.splice(state.userFriendsData.messageOrder.indexOf(action.payload), 1);
+    }
+    state.userFriendsData.messageOrder.unshift(action.payload);
+}
+function addBlockUserFun(state, action) {
+    if (action.payload.blockedByUsers) {
+        state.userFriendsData.blockedByUsers.push(action.payload.blockedByUsers)
+    }
+    if (action.payload.blockedUser) {
+        state.userFriendsData.blockedUserId.push(action.payload.blockedUser)
+    }
+}
+
+function unBlockUserFun(state, action) {
+    if (action.payload.blockedByUsers) {
+        state.userFriendsData.blockedByUsers = state.userFriendsData.blockedByUsers.filter((element) => element != action.payload.blockedByUsers);
+    }
+    if (action.payload.blockedUser) {
+        state.userFriendsData.blockedUserId = state.userFriendsData.blockedUserId.filter((element) => element != action.payload.blockedUser);
+    }
+}
+function setMutedUserFun(state, action) {
+    if (state.userFriendsData.mutedUser && state.userFriendsData.mutedUser.length > 0) {
+        state.userFriendsData.mutedUser.push(action.payload)
+    } else {
+        if (typeof action.payload === 'string') {
+            state.userFriendsData.mutedUser = [action.payload];
+        } else {
+            state.userFriendsData.mutedUser = action.payload;
+        }
+    }
+}
+function unMuteUserFun(state, action) {
+    state.userFriendsData.mutedUser = state.userFriendsData.mutedUser.filter((element) => element != action.payload);
+}
+function addUnFollowedUserFun(state, action) {
+    state.friends = state.friends.filter((element) => element._id != action.payload.unFollowedUser)
+    state.userFriendsData.messageOrder = state.userFriendsData.messageOrder.filter((element) => element._id != action.payload.unFollowedUser)
+    state.userFriendsData.blockedUserId = state.userFriendsData.blockedUserId.filter((element) => element._id != action.payload.unFollowedUser)
+    state.userFriendsData.mutedUser = state.userFriendsData.mutedUser.filter((element) => element._id != action.payload.unFollowedUser)
+    state.userFriendsData.pinedUsers = state.userFriendsData.pinedUsers.filter((element) => element._id != action.payload.unFollowedUser)
+    if (state.activeUserChat && state.activeUserChat._id == action.payload.unFollowedUser) {
+        state.activeUserChat = null;
+    }
+}
+function setSendedRequestFun(state, action) {
+    if (state.userFriendsData.sendedRequest && state.userFriendsData.sendedRequest.length > 0) {
+        state.userFriendsData.sendedRequest.push(action.payload)
+    } else {
+        if (typeof action.payload === 'string') {
+            state.userFriendsData.sendedRequest = [action.payload];
+        } else {
+            state.userFriendsData.sendedRequest = action.payload;
+        }
+    }
+}
 export const {
     setNotification,
     pushNotification,
@@ -222,6 +352,17 @@ export const {
     changeGroupAdminData,
     changeEditGroupAdminLoader,
     removeFriends,
-    updateFriends
+    updateFriends,
+    changeActiveNewChat,
+    setMessageOrder,
+    setPinUser,
+    unPinUser,
+    addBlockUser,
+    unBlockUser,
+    setMutedUser,
+    unMuteUser,
+    addUnFollowedUser,
+    setSendedRequest,
+    setOnlineUser
 } = chatReducer.actions;
 export default chatReducer.reducer;

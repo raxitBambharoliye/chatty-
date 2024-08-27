@@ -8,10 +8,10 @@ import { changeEditGroupAdminLoader } from '../../../reducers/chatReducer';
 
 export default function EditAdmin({ id, modalClass = '' }) {
     const activeChatInfo = useSelector((state) => state.chat.activeUserChat);
+    const editGroupAdminLoader = useSelector((state) => state.chat.loader.editGroupAdminLoader);
     const userData = useSelector((state) => state.userData.user);
     const { sendRequest } = useContext(SocketContext);
     const dispatch = useDispatch();
-    const editGroupAdminLoader = useSelector((state) => state.chat.loader.editGroupAdminLoader);
 
     if (!(activeChatInfo.type && activeChatInfo.type == 'GROUP')) {
         return <></>

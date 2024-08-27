@@ -96,6 +96,18 @@ const userSchema = new Schema({
         default: [],
         required: true,
     },
+    unFollowedUser: {
+        type: [{type:mongoose.Schema.Types.ObjectId,ref:MODEL.USER_MODEL}],
+        ref:MODEL.USER_MODEL,
+        default: [],
+        required: true,
+    },
+    unFollowedByUsers: {
+        type: [{type:mongoose.Schema.Types.ObjectId,ref:MODEL.USER_MODEL}],
+        ref:MODEL.USER_MODEL,
+        default: [],
+        required: true,
+    },
     verifiedEmail: { type: Boolean, default: false },
     profilePictureId: { type: String, }
 }, { timestamps: true })

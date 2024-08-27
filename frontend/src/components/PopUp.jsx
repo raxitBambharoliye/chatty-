@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 
 function PopUp() {
   const popupData = useSelector((state) => state.chat.popup);
-  console.log('popupData', popupData)
 
   if (popupData && popupData.message) {
     return (

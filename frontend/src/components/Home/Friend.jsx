@@ -7,55 +7,61 @@ import { SocketContext } from '../../socket/SocketProvider';
 import { EVENT_NAME } from '../../constant';
 
 function Friend() {
-
-    const friendsState = useSelector((state) => state.chat.friends);
+    const { activeNewChat, friends } = useSelector((state) => state.chat);
+    const { messageOrder, pinedUsers } = useSelector((state) => state.chat.userFriendsData);
     const { sendRequest } = useContext(SocketContext);
     const user = useSelector((state) => state.userData.user);
     const dispatch = useDispatch();
     const [activeChat, setActiveChat] = useState(-1)
     const friendLoader = useSelector((state) => state.chat.loader.friendsLoader)
     const pendingViewsId = useSelector((state) => state.chat.pendingViewIds)
-    const [friends, setFriends] = useState(friendsState);
+    const [friendsState, setFriends] = useState(friends);
     const [friendSearch, setFriendsSearch] = useState("");
+    const [messageOrderState, setMessageOrder] = useState(messageOrder);
+
     useEffect(() => {
-        setFriends(friendsState);
-    }, [friendsState])
+        setFriends(friends);
+    }, [friends])
 
     useEffect(() => {
         if (activeChat < 0) {
             return;
         }
-        dispatch(changeActiveUserChat(friends[activeChat]));
+        dispatch(changeActiveUserChat(friendsState[activeChat]));
         //NOTE - find chat of that user 
         const sendData = {
             eventName: EVENT_NAME.CHATS,
             data: {
                 senderId: user._id,
-                receiverId: friends[activeChat]._id,
-                isGroup:(friends[activeChat].type && friends[activeChat].type==="GROUP")?true:false,
+                receiverId: friendsState[activeChat]._id,
+                isGroup: (friendsState[activeChat].type && friendsState[activeChat].type === "GROUP") ? true : false,
             }
         }
-        dispatch(removeIdFromPendingViews(friends[activeChat]._id));
+        dispatch(removeIdFromPendingViews(friendsState[activeChat]._id));
         dispatch(changeChangeChatLoader(true))
         sendRequest(sendData);
     }, [activeChat])
-
+    useEffect(() => {
+        setMessageOrder(messageOrder);
+    }, [messageOrder])
     useEffect(() => {
         if (friendSearch) {
-            console.log("friendSearch", friendSearch)
-            let newFriends = friends.filter(user => user.userName.toLowerCase().includes(friendSearch.toLowerCase()));
+            let newFriends = friendsState.filter((element) => {
+                if (element.type === 'GROUP') {
+                    return element.groupName.toLowerCase().includes(friendSearch.toLowerCase())
+                }
+                return element.userName.toLowerCase().includes(friendSearch.toLowerCase())
+            });
             setFriends(newFriends);
         } else {
-            setFriends(friendsState);
+            setFriends(friends);
             setFriendsSearch("");
         }
     }, [friendSearch])
 
     if (friendLoader) {
-
         return (
             <div className="w-100 bg-dark h-100 d-flex align-items-center justify-content-center">
-
                 <div className="asideLoader"></div>
             </div>
         )
@@ -63,18 +69,54 @@ function Friend() {
     return (
         <>
             <Input inputClass='inputBlack mx-2' placeholder="Search User Name ... " onChange={(e) => { setFriendsSearch(e.target.value) }}></Input>
-            {(!friends || friends.length === 0) &&
+            {(!friendsState || friendsState.length === 0) &&
                 <div className='h-100 d-flex flex-column justify-content-center align-items-center '>
-                    <h4 className='emptyMessage'>Friends not found</h4>
+                    <h4 className='emptyMessage'>friendsState not found</h4>
                 </div>
             }
-            {(friends && friends.length >= 0) && (
+            {(!activeNewChat && (friendsState && friendsState.length >= 0)) &&
                 <>
-                    {friends.map((contact, index) => (
-                        <AsideContactsItem  userName={contact.type&& contact.type=="GROUP"?contact.groupName:contact.userName} profile={contact.type&& contact.type=="GROUP"?contact.groupProfile??"./image/dummyGroupProfile.png":contact.profilePicture ?? "./image/dummyProfile.png"} itemClass={pendingViewsId.includes(contact._id) ? "pendingBall" : ""} tagLine={contact.tagLine ?? "-"} index={index} activeChat={activeChat} key={`${index}FriendsItems`} onClick={(e) => { setActiveChat(index) }} />
-                    ))}
-                </>)}
-                
+                    {
+                        pinedUsers.map((element) => {
+                            const contact = friendsState.find((val) => val._id === element);
+                            const index = friendsState.findIndex((val) => val._id == element);
+                            if (contact) {
+                                return (
+                                    <AsideContactsItem userName={contact.type && contact.type == "GROUP" ? contact.groupName : contact.userName} profile={contact.type && contact.type == "GROUP" ? contact.groupProfile ?? "./image/dummyGroupProfile.png" : contact.profilePicture ?? "./image/dummyProfile.png"} itemClass={pendingViewsId.includes(contact._id) ? "pendingBall" : ""} tagLine={contact.tagLine ?? "-"} index={index} activeChat={activeChat} key={`${index}FriendsItems`} onClick={(e) => { setActiveChat(index) }} isPined={true} />
+                                )
+                            }
+                            return;
+                        })
+                    }
+                    {
+                        messageOrderState.map((element) => {
+                            const contact = friendsState.find((val) => val._id == element);
+                            const index = friendsState.findIndex((val) => val._id == element)
+                            if (contact && !pinedUsers.includes(contact._id)) {
+                                return (
+                                    <AsideContactsItem userName={contact.type && contact.type == "GROUP" ? contact.groupName : contact.userName} profile={contact.type && contact.type == "GROUP" ? contact.groupProfile ?? "./image/dummyGroupProfile.png" : contact.profilePicture ?? "./image/dummyProfile.png"} itemClass={pendingViewsId.includes(contact._id) ? "pendingBall" : ""} tagLine={contact.tagLine ?? "-"} index={index} activeChat={activeChat} key={`${index}FriendsItems`} onClick={(e) => { setActiveChat(index) }} />
+                                )
+                            }
+                            return;
+                        })
+                    }
+                </>
+            }
+
+            {(activeNewChat && (friendsState && friendsState.length >= 0)) && (
+                <>
+                    {friendsState.map((contact, index) => {
+                        console.log('friendsState', friendsState)
+                        if (1 || !messageOrderState.includes(contact?._id) && !pinedUsers.includes(contact?._id)) {
+                            return (
+                                <AsideContactsItem userName={contact.type && contact.type == "GROUP" ? contact.groupName : contact.userName} profile={contact.type && contact.type == "GROUP" ? contact.groupProfile ?? "./image/dummyGroupProfile.png" : contact.profilePicture ?? "./image/dummyProfile.png"} itemClass={pendingViewsId.includes(contact._id) ? "pendingBall" : ""} tagLine={contact.tagLine ?? "-"} index={index} activeChat={activeChat} key={`${index}FriendsItems`} onClick={(e) => { setActiveChat(index) }} />
+                            )
+                        }
+                        return;
+                    })}
+                </>
+            )}
+
         </>
     )
 }

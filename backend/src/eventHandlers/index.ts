@@ -14,6 +14,7 @@ import {
   onlineUser,
   pinUserHandler,
   unBlockUserHandler,
+  unFollowUserHandler,
   unMuteUserHandler,
   unPinUserHandler,
 } from "../controller/chat.controller";
@@ -71,7 +72,9 @@ export const eventHandler = (socket: any) => {
       case EVENT_NAME.ADD_FRIENDS_IN_GROUP:
         addUserInGroupHandler(socket, data);
         break;
-
+      case EVENT_NAME.UN_FOLLOW:
+        unFollowUserHandler(socket, data);
+        break;
     }
   });
 };

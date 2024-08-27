@@ -28,7 +28,6 @@ function Notifications() {
         </div>}
       {(notification && notification.length > 0) && notification.map((element, index) => (
         <div className="notificationItem d-flex align-items-center justify-content-around" key={`${index}NotificationItem`}>
-          {console.log(notification)}
           <div className="userProfile">
             {/* <img src={element.senderId.profilePicture?element.senderId.profilePicture:"./image/dummyProfile.png"} alt="" /> */}
             <img src={element.profilePicture??"./image/dummyProfile.png"} alt="" />
