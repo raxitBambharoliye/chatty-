@@ -4,7 +4,7 @@ import {SocketContext} from '../../socket/SocketProvider'
 import { EVENT_NAME } from '../../constant';
 import { changeNotificationStatus } from '../../reducers/chatReducer';
 function Notifications() {
-  const notification = useSelector((state) => state.chat.notification);
+  const {notification,friends} = useSelector((state) => state.chat);
   const [userNotifications, setUserNotifications] = useState(null)
   const { sendRequest } = useContext(SocketContext)
   const dispatch = useDispatch();
@@ -12,7 +12,6 @@ function Notifications() {
 
   useEffect(() => {
     if (notification && notification.length > 0) {
-      console.log('notification', notification)
       setUserNotifications(notification)
     }
   }, [notification]);
@@ -29,14 +28,14 @@ function Notifications() {
       {(notification && notification.length > 0) && notification.map((element, index) => (
         <div className="notificationItem d-flex align-items-center justify-content-around" key={`${index}NotificationItem`}>
           <div className="userProfile">
-            {/* <img src={element.senderId.profilePicture?element.senderId.profilePicture:"./image/dummyProfile.png"} alt="" /> */}
             <img src={element.profilePicture??"./image/dummyProfile.png"} alt="" />
             </div>
             <div className="text">
             <h5>{element.senderId.userName ?? "--"}</h5>
             <p className='mb-0'>{element.type=="FOLLOW_REQUEST" ?`sent you a friend request.` :element.type=="FOLLOW_ACCEPTED"?`accepted your follow request`:''}</p>
           </div>
-          {element.type=="FOLLOW_REQUEST"&&<div className="acceptButton">
+          {(element.type == "FOLLOW_REQUEST"&& friends.findIndex((val)=>val._id == element.senderId._id)==-1 )&&
+            <div className="acceptButton">
             <button className='btn btn-primary btn-sm' onClick={(e)=>{acceptFriendRequest(element.senderId._id,element._id)}} type='button'> Accept</button>
           </div>
           }

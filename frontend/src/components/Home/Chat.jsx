@@ -12,7 +12,7 @@ import { ChatHeader } from './ChatComponents';
 /* with of full picture 767 */
 function Chat() {
     const bottomRef = useRef();
-    const {activeUserChat,messages} = useSelector((state) => state.chat);
+    const {activeUserChat,messages,friends} = useSelector((state) => state.chat);
     const {changeChatLoader,chatLoader} = useSelector((state) => state.chat.loader)
     const {blockedByUsers,blockedUserId}= useSelector((state)=>state.chat.userFriendsData)
     const user = useSelector((state) => state.userData.user);
@@ -91,13 +91,18 @@ function Chat() {
                                     let previousIndex = index - 1 > 0 ? index - 1 : 0;
                                     const previousDate = messages[previousIndex].createdAt;
                                     const datePrint = checkDatePrint(element.createdAt, previousDate, index === 0);
+                                    let profile = friends.findIndex((val) => val._id == element.senderId);
+                                    if (profile >=0) {
+                                        profile = friends[profile].profilePicture;
+                                    }
+                                    let userProfile = user.profilePicture;
                                     return (
                                         <React.Fragment key={element._id}>
                                             {datePrint && <DatePart text={datePrint} />}
                                             {!element.type && (
                                                 <>
-                                                    {element.senderId === user._id && <SendMessage message={element.message} time={getChatTime(element.createdAt)} />}
-                                                    {element.senderId !== user._id && <ReceiveMessage message={element.message} time={getChatTime(element.createdAt)} />}
+                                                    {element.senderId === user._id && <SendMessage message={element.message} profile={userProfile}  time={getChatTime(element.createdAt)} />}
+                                                    {element.senderId !== user._id && <ReceiveMessage message={element.message} profile={profile??"./image/dummyProfile.png"} time={getChatTime(element.createdAt)} />}
                                                 </>
                                             )}
                                         </React.Fragment>

@@ -245,7 +245,6 @@
     }
     /* chart header */
     .chatHeader {
-        padding: 12px;
         border-radius: 12px;
         transition: all .2s linear;
         cursor: pointer;
@@ -256,7 +255,9 @@
         background-color: var(--color-black-second);
 
     }
-
+    .chatHeader .userProfile{
+        padding: 12px;
+    }
     .chatHeader .userProfile img {
         width: 3.5rem;
         height: 3.5rem;
@@ -368,6 +369,13 @@
         background: #2b4cf2;
     }
 
+    .receiverMorInfo .actionButton button.editGroup {
+        background: hsla(153, 89%, 79%, 0.431);
+    }
+
+    .receiverMorInfo .actionButton button.editGroup:hover {
+        background: hsl(153, 48%, 57%);
+    }
     .receiverMorInfo .actionButton button.mute {
         background: hsla(45, 98%, 48%, 0.431);
     }

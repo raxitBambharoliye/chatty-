@@ -27,6 +27,7 @@ function Friend() {
         if (activeChat < 0) {
             return;
         }
+        console.log('activeChat :::: index ', activeChat)
         dispatch(changeActiveUserChat(friendsState[activeChat]));
         //NOTE - find chat of that user 
         const sendData = {
@@ -107,7 +108,7 @@ function Friend() {
                 <>
                     {friendsState.map((contact, index) => {
                         console.log('friendsState', friendsState)
-                        if (1 || !messageOrderState.includes(contact?._id) && !pinedUsers.includes(contact?._id)) {
+                        if ( !messageOrderState.includes(contact?._id) && !pinedUsers.includes(contact?._id)) {
                             return (
                                 <AsideContactsItem userName={contact.type && contact.type == "GROUP" ? contact.groupName : contact.userName} profile={contact.type && contact.type == "GROUP" ? contact.groupProfile ?? "./image/dummyGroupProfile.png" : contact.profilePicture ?? "./image/dummyProfile.png"} itemClass={pendingViewsId.includes(contact._id) ? "pendingBall" : ""} tagLine={contact.tagLine ?? "-"} index={index} activeChat={activeChat} key={`${index}FriendsItems`} onClick={(e) => { setActiveChat(index) }} />
                             )

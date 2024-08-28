@@ -15,7 +15,8 @@ function AddFriends({ id, modalClass = '' }) {
     const [search, setSearch] = useState("");
     const [searchCache, setSearchCache] = useState({});
     const user = useSelector((state) => state.userData.user)
-
+    const { sendedRequest, friendRequest } = useSelector((state) => state.chat.userFriendsData);
+    const friends = useSelector((state) => state.chat.friends);
     const debouncedSearch = useCallback(
         _.debounce((searchQuery) => {
             if (searchQuery === '') {
@@ -92,7 +93,9 @@ function AddFriends({ id, modalClass = '' }) {
                                                             <h3 className='m-0'>{element.userName}</h3>
                                                             <p className='m-0'>{element.tagLine ? element.tagLine : "---"}</p>
                                                         </div>
-                                                        <Button type="button" value={user.sendedRequest.includes(element._id) ? "requested" : user.friendRequest.includes(element._id) ? "follow back" : "follow"} buttonClass="btn-outline-primary hover" disabled={user.sendedRequest.includes(element._id) ? true : false} onClick={(e) => { SendFollowRequest(element._id) }} />
+                                                        {friends.findIndex((val) => val._id == element._id) == -1 &&
+                                                            <Button type="button" value={sendedRequest.includes(element._id) ? "requested" : friendRequest.includes(element._id) ? "follow back" : "follow"} buttonClass="btn-outline-primary hover" disabled={sendedRequest.includes(element._id) ? true : false} onClick={(e) => { SendFollowRequest(element._id) }} />
+                                                        }
                                                     </div>
                                                 </div>
                                             </div>

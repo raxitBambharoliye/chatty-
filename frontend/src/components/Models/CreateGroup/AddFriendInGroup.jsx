@@ -61,9 +61,9 @@ function AddFriendInGroup({ selectedFriendsIds, setSelectedFriendsIds }) {
                     {(!selectedFriends || selectedFriends.length <= 0) && (<h2 className='text-center second-heading'>NO FRIENDS SELECTED</h2>)}
                 </div>
             </div>
-            <div className="friends mt-2">
+            <div className="friends mt-2 ">
                 {friends && friends.map((element, index) => {
-
+                    if (element.type !== 'GROUP') {
                     return (
 
                             <div className={`friendsItem ${(selectedFriendsIds.length > 0 && selectedFriendsIds.includes(element._id)) ? "selected" : ''}`} key={`groupFiendSelection${index}`} onClick={(e) => { handleSelectFriend(element) }}>
@@ -78,7 +78,9 @@ function AddFriendInGroup({ selectedFriendsIds, setSelectedFriendsIds }) {
                                     </div>
                                 </div>
                             </div>
-                    )
+                    )                        
+                    }
+
                 })}
             </div>
         </div>

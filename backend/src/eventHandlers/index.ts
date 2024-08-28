@@ -21,7 +21,7 @@ import {
 import logger from "../utility/logger";
 
 export const eventHandler = (socket: any) => {
-  socket.onAny((eventName: String, data: any) => {
+  socket.onAny((eventName: String, data: any,callback?:any) => {
     logger.info(`EVENT RECEIVED :: ${eventName} :: ${JSON.stringify(data)} :::::::::::::: `);
     switch (eventName) {
       case "test":
@@ -46,7 +46,7 @@ export const eventHandler = (socket: any) => {
         joinGroupChatHandler(socket, data);
         break;
       case EVENT_NAME.EDIT_GROUP_ADMIN:
-        editAdminHandler(socket, data);
+        editAdminHandler(socket, data,callback);
         break;
       case EVENT_NAME.LEAVE_GROUP:
         leaveGroupHandler(socket, data);
@@ -70,7 +70,7 @@ export const eventHandler = (socket: any) => {
         unPinUserHandler(socket, data);
         break;
       case EVENT_NAME.ADD_FRIENDS_IN_GROUP:
-        addUserInGroupHandler(socket, data);
+        addUserInGroupHandler(socket, data,callback);
         break;
       case EVENT_NAME.UN_FOLLOW:
         unFollowUserHandler(socket, data);

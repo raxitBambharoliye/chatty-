@@ -35,7 +35,6 @@ export const SocketProvider = ({ children }) => {
     dispatch(setFriendLoader(true));
     socket.emit(EVENT_NAME.ONLINE_USER, { userId: user._id });
     socket.on(EVENT_NAME.ONLINE_USER, (data) => {
-      console.log('data', data)
       removeCookieData(COOKIE_KEY.ACTIVE_USER_CHAT)
       dispatch(setFriend(data.friends));
       dispatch(setNotification(data.notifications));
@@ -43,10 +42,7 @@ export const SocketProvider = ({ children }) => {
       dispatch(setFriendLoader(false));
     })
     socket.on(EVENT_NAME.FOLLOW, (data) => {
-      if (data.user) {
-        setDataInCookie(data.use);
-        dispatch(setUser(data.user));
-      }
+        dispatch(setSendedRequest(data.sendedRequest));
     })
     socket.on(EVENT_NAME.NOTIFICATION, (data) => {
       dispatch(pushNotification(data.notification))
@@ -111,11 +107,15 @@ export const SocketProvider = ({ children }) => {
     }
   }, [socket])
   //NOTE - send request function 
-  const sendRequest = useCallback((data) => {
+  const sendRequest = useCallback((data,callback) => {
     if (!socket) {
       return;
     }
-    socket.emit(data.eventName, data.data)
+    if (callback) {
+      socket.emit(data.eventName, data.data,callback)
+    } else {
+      socket.emit(data.eventName, data.data)
+    }
     console.log(`SENDING EVENT ::: ${data.eventName} ::: DATA ::: ${JSON.stringify(data.data)}`)
   }, [socket])
 

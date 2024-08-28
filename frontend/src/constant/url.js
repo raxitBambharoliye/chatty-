@@ -6,6 +6,7 @@ export default Object.freeze({
     SEARCH_USER: '/user/searchUser',
     GET_MESSAGE: '/user/getMessage',
     CREATE_GROUP: '/user/createGroup',
+    UPDATE_GROUP:'/user/updateGroup',
     // SEND_VERIFICATION_MAIL:'/user/'
 
     FE_LOGIN: '/login',

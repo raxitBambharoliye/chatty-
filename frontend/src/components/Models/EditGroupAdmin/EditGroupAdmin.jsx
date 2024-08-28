@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import '../../../assets/css/modal.css'
 import { Button } from '../../Form';
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,7 +12,7 @@ export default function EditAdmin({ id, modalClass = '' }) {
     const userData = useSelector((state) => state.userData.user);
     const { sendRequest } = useContext(SocketContext);
     const dispatch = useDispatch();
-
+    const closeButtonRef = useRef();
     if (!(activeChatInfo.type && activeChatInfo.type == 'GROUP')) {
         return <></>
     }
@@ -30,7 +30,11 @@ export default function EditAdmin({ id, modalClass = '' }) {
     }
     const updateAdmin = async () => {
         dispatch(changeEditGroupAdminLoader(true))
-        sendRequest({ eventName: EVENT_NAME.EDIT_GROUP_ADMIN, data: { editor: userData._id, groupId: activeChatInfo._id, newAdminList: adminList } });
+        sendRequest({ eventName: EVENT_NAME.EDIT_GROUP_ADMIN, data: { editor: userData._id, groupId: activeChatInfo._id, newAdminList: adminList } }, (ackData) => {
+            if (ackData.closeModal) {
+                closeButtonRef.current.click();
+            }
+        });
     }
     return (
             <div className={`modal fade  ${modalClass}`} id={id} tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -87,7 +91,7 @@ export default function EditAdmin({ id, modalClass = '' }) {
                             </div>
                         </div>
                         <div className="modal-footer">
-                            <Button buttonClass='buttonBlack hover btnRounded me-2' type='button' value='Close' data-bs-dismiss="modal" />
+                            <Button buttonClass='buttonBlack hover btnRounded me-2' type='button' value='Close' data-bs-dismiss="modal" ref={closeButtonRef} />
                             <Button buttonClass='themBlueBordered btnRounded' type='button' value='Save' disabled={activeSubmitButton} onClick={updateAdmin} />
                         </div>
                     </div>

@@ -13,6 +13,7 @@ function EditProfile({id,modalClass = ''
 }) {
     const ref = useRef()
     const user = useSelector((state) => state.userData.user)
+    console.log('user', user)
     const [submitButton, setSubmitButton] = useState(true);
     const [defaultValues, setDefaultValues] = useState(user)
     const dispatch = useDispatch();
@@ -88,7 +89,7 @@ function EditProfile({id,modalClass = ''
                             <div className="row">
                                 {errors.root && <p className='alert rootErrorValidation text-center' role="alert">{errors.root.message }</p>}
                                 <div className="col-12 col-lg-3 col-xl-2">
-                                    <ImagePreview {...register("profileImage",)} src={user.profilePicture ?? "./image/dummyProfile.png"} SubmitButtonStatus={activeSave} />
+                                    <ImagePreview {...register("profileImage",)} src={defaultValues.profilePicture ?? "./image/dummyProfile.png"} SubmitButtonStatus={activeSave} />
                                 </div>
                                 <div className="col-12 col-lg-9 col-xl-10 flex-grow-1">
                                     <Input inputClass='inputBlack' type='text' placeholder='Enter your User name ... ' label='User Name' ref={ref}  {...register("userName", {

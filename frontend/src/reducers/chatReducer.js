@@ -16,6 +16,7 @@ const initialState = {
         mutedUser: [],
         pinedUsers: [],
         messageOrder: [],
+        friendRequest: [],
     },
     loader: {
         friendsLoader: false,
@@ -80,6 +81,7 @@ const chatReducer = createSlice({
 function setOnlineUserFun(state, action) {
     console.log('action.payload.user', action.payload.user)
     state.userFriendsData.sendedRequest = action.payload.user.sendedRequest;
+    state.userFriendsData.friendRequest = action.payload.user.friendRequest;
     state.userFriendsData.blockedByUsers = action.payload.user.blockedByUsers;
     state.userFriendsData.blockedUserId = action.payload.user.blockedUserId;
     state.userFriendsData.mutedUser = action.payload.user.mutedUser;
@@ -106,14 +108,17 @@ function setFriendFun(state, action) {
     state.friends = action.payload;
 }
 function pushFriendFun(state, action) {
-    let friends = JSON.parse(JSON.stringify(state.friends));
     if (state.friends && state.friends.length > 0) {
-        state.friends.push(action.payload);
-        friends.push(action.payload);
+        state.friends.push(action.payload);        
+        if (state.userFriendsData.friendRequest.includes(action.payload._id)) {
+            state.userFriendsData.friendRequest.splice(state.userFriendsData.friendRequest.indexOf(action.payload._id), 1);
+        }
+        if (state.userFriendsData.sendedRequest.includes(action.payload._id)) {
+            state.userFriendsData.sendedRequest.splice(state.userFriendsData.sendedRequest.indexOf(action.payload._id), 1);
+        }
     }
     else {
         state.friends = [action.payload];
-        friends = [action.payload];
     }
 }
 function changeNotificationStatusFun(state, action) {
@@ -226,7 +231,7 @@ function changeGroupAdminDataFun(state, action) {
     if (index >= 0) {
         state.friends[index].admin = action.payload.newAdminList;
         const activeChat = JSON.parse(JSON.stringify(state.activeUserChat));
-        if (activeChat._id == action.payload.groupId) {
+        if ( activeChat &&activeChat._id == action.payload.groupId) {
             state.activeUserChat.admin = action.payload.newAdminList;
         }
     }

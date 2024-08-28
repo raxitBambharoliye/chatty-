@@ -83,15 +83,13 @@ export const followRequest = async (socket: any, data: any) => {
     let sendData: any = {
       eventName: EVENT_NAME.FOLLOW,
       data: {
-        user: updateSender,
+        sendedRequest: updateSender.sendedRequest,
       },
     };
 
-    console.log("sendData", sendData);
     await sendToSocket(socket.id, sendData);
 
     if (updateReceiver.socketId) {
-      console.log("updateReceiver.socketId", updateReceiver.socketId);
       const notificationEventData = {
         eventName: EVENT_NAME.NOTIFICATION,
         data: {
@@ -117,9 +115,7 @@ export const followRequest = async (socket: any, data: any) => {
 export const acceptFollowRequest = async (socket: any, data: any) => {
   try {
     const { friendId, notificationId } = data;
-    console.log("friendId", friendId);
     const userId = socket.userId;
-    console.log("userId", userId);
     if (!friendId || !userId) {
       logger.error(`friendId or userId not found :::: `);
       return false;
@@ -135,6 +131,9 @@ export const acceptFollowRequest = async (socket: any, data: any) => {
     const checkFriend = user.friendRequest.findIndex((element: any) => element._id == friendId);
     if (checkFriend < 0) {
       return false;
+    }
+    if (user.friends.includes(friendId)) {
+      return;
     }
     const updatedUser = await MQ.findByIdAndUpdate<UserIN>(
       MODEL.USER_MODEL,
@@ -171,7 +170,6 @@ export const acceptFollowRequest = async (socket: any, data: any) => {
     }
 
     // add notification
-    console.log('updateFriend.socketId', updateFriend?.socketId)
     if (updateFriend && updateFriend.socketId) {
       const sendNotificationData = {
         eventName: EVENT_NAME.NOTIFICATION,
@@ -179,7 +177,9 @@ export const acceptFollowRequest = async (socket: any, data: any) => {
           notification: {
             type: notification?.type,
             view: notification?.view,
-            userId: {
+            userId:updateFriend._id,
+            senderId: {
+              _id:user.id,
               profilePicture: user.profilePicture || null,
               userName: user.userName,
             },
@@ -191,7 +191,7 @@ export const acceptFollowRequest = async (socket: any, data: any) => {
         eventName: EVENT_NAME.ACCEPT_FOLLOW_REQUEST,
         data: {
           newFriend: {
-            _id: friendId,
+            _id: userId,
             userName: user.userName,
             profilePicture: user.profilePicture,
             tagLine: user.tagLine,
@@ -400,7 +400,7 @@ export const joinGroupChatHandler = async (socket: any, data: any) => {
     console.log("error", error);
   }
 };
-export const editAdminHandler = async (socket: any, data: any) => {
+export const editAdminHandler = async (socket: any, data: any,cb:any) => {
   try {
     console.log("chcek admin data ::: ");
     console.log(data);
@@ -434,7 +434,8 @@ export const editAdminHandler = async (socket: any, data: any) => {
         newAdminList: newAdminList,
       },
     };
-    sendToSocket(socket.id, requestData);
+    sendToRoom(groupData._id.toString(), requestData);
+    cb({ closeModal: true });
   } catch (error) {
     logger.error(`CATCH ERROR IN : editAdminHandler ${error}`);
     console.log("error", error);
@@ -838,7 +839,7 @@ export const unPinUserHandler = async (socket: any, data: any) => {
   }
 };
 
-export const addUserInGroupHandler = async (socket: any, data: any) => {
+export const addUserInGroupHandler = async (socket: any, data: any,cb:any) => {
   try {
     console.log(data);
     const { editor, groupId, newFriendsList } = data;
@@ -899,6 +900,7 @@ export const addUserInGroupHandler = async (socket: any, data: any) => {
       },
     };
     sendToRoom(groupData._id.toString(), updateGroupData);
+    cb({ closeModal:true });
   } catch (error) {
     logger.error(`CATCH ERROR IN : addUserInGroupHandler ${error}`);
     console.log("error", error);
@@ -926,9 +928,6 @@ export const unFollowUserHandler = async (socket: any, data: any) => {
       logger.error(`unFollowUserHandler ::: friend data not found `);
       return;
     }
-    // await MQ.findByIdAndUpdate(MODEL.USER_MODEL, userId, { $push: { unFollowedUser: friendData.id } });
-    // await MQ.findByIdAndUpdate(MODEL.USER_MODEL, friendData.id, { $push: { unFollowedByUsers: userData.id } });
-
 
     await MQ.findByIdAndUpdate(MODEL.USER_MODEL, userId, { $pull: { friends: friendData.id, messageOrder: friendData.id, pinedUsers: friendData.id ,blockedByUsers:friendData.id,blockedUserId:friendData.id} });
     await MQ.findByIdAndUpdate(MODEL.USER_MODEL, friendData.id, { $pull: { friends: userData.id, messageOrder: userData.id, pinedUsers: userData.id,blockedByUsers:userData.id,blockedUserId:userData.id} });

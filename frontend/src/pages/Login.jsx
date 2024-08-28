@@ -28,7 +28,7 @@ function Login() {
     const dispatch = useDispatch();
     const user = useSelector((state) => state.userData);
     const ref = useRef();
-    const { register, formState: { errors }, handleSubmit } = useForm({
+    const { register, formState: { errors }, handleSubmit ,setError } = useForm({
         defaultValues: {
             email: 'raxitdev55@gmail.com',
             password: 'ra@Patel.08',
@@ -44,8 +44,10 @@ function Login() {
                     setDataInCookie(COOKIE_KEY.TOKEN, response.data.token);
                 }
                 if (response.data.userData) {
+                    console.log('response.data.userData', response.data.userData)
                     setDataInCookie(COOKIE_KEY.USER, response.data.userData);
                     dispatch(setUser(response.data.userData));
+                    console.log('response.data.userData', response.data.userData)
                     setDataInCookie(COOKIE_KEY.NOTIFICATIONS, response.data.notifications)
                     dispatch(setNotification(response.data.notifications))
                 }
@@ -53,6 +55,12 @@ function Login() {
             }
         } catch (error) {
             console.log('CATCH ERROR IN : logInHandler', error);
+            if (error.response.status == 400 && error.response.data.message) {
+                setError("root", {
+                    message: error.response.data.message
+                })
+            }
+   
         }
     }
     //NOTE - login with google 
@@ -66,6 +74,8 @@ function Login() {
         <div className='w-100  vh-100  d-flex flex-column align-items-center justify-content-center background'>
             <div className="loginInner">
                 <h1 className='text-center mb-4'>Chatty π</h1>
+                {errors.root && <p className='alert rootErrorValidation text-center' role="alert">{errors.root.message}</p>}
+
                 <form action="" onSubmit={handleSubmit(logInHandler)}>
                     <Input inputClass='inputBlack' type='email' placeholder='Enter your email address ... ' label='Email Address' ref={ref} {...register("email", {
                         required: "Please enter your email address",

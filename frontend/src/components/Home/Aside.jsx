@@ -23,8 +23,6 @@ function Aside({ asideShow }) {
 
             {/* aside start  */}
             <div className={`asideInner  d-flex flex-column vh-100 position-relative ${asideShow ? 'show' : 'hide'} `}>
-                {/* <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Launch demo modal</button> */}
-
                 <div className="asideHeader d-flex align-items-center justify-content-between position-sticky top-0">
                     <h1 className='m-0'>Chatty 𝝅</h1>
                     <div className="userProfile" data-bs-toggle="modal" data-bs-target="#editUserProfile">

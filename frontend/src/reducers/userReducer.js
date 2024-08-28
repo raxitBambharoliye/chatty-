@@ -11,6 +11,7 @@ const userReducer = createSlice({
 
 
 function setUserFunction(state, action) {
+    console.log('action.payload', action.payload)
     state.user = action.payload;
 }
 function setUserTokenFunction(state, action) {
