@@ -325,8 +325,19 @@
         background-color: #363636;
         min-width: 450px;
         z-index: 99;
+        transition: all .4s ease-in-out;
     }
-
+    .receiverMorInfo.hide{
+        transform: translateY(-150%);
+    }
+    .receiverMorInfo.show{
+        transform: translateY(0%);
+    }
+    .receiverMorInfo .closeButton button{
+        font-size: 18px;
+        color: white;
+        text-align: end;
+    }
     .receiverMorInfo .actionButton button {
         color: white;
         background-color: var(--color-primary);

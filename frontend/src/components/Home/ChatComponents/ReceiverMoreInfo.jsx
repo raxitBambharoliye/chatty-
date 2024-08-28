@@ -4,7 +4,7 @@ import { AddFriendsInGroup, EditAdmin } from '../../Models';
 import { SocketContext } from '../../../socket/SocketProvider';
 import { EVENT_NAME } from '../../../constant';
 
-function ReceiverMoreInfo() {
+function ReceiverMoreInfo({infoClassName=''}) {
   const activeChatInfo = useSelector((state) => state.chat.activeUserChat);
   const userInfo = useSelector((state) => state.userData.user);
   const {blockedUserId,mutedUser,pinedUsers} = useSelector((state) => state.chat.userFriendsData);
@@ -13,6 +13,9 @@ function ReceiverMoreInfo() {
   useEffect(() => {
     setIsGroup((activeChatInfo.type === 'GROUP'));
   }, [activeChatInfo])
+
+  
+
 
   const leaveGroupHandler = () => {
     sendRequest({
@@ -109,8 +112,11 @@ function ReceiverMoreInfo() {
   }
   return (
     <>
-      <div className="receiverMorInfo">
+      <div className={`receiverMorInfo ${infoClassName} mt-4`} >
         {/* info Header  */}
+        <div className="closeButton text-end ">
+          <button className='btn'><i className="fa-solid fa-xmark"></i></button>
+        </div>
         <div className="infoHeader d-flex align-items-center w-100">
           <div className="userProfile me-2">
             <img src={isGroup ? activeChatInfo.groupProfile ?? "" : activeChatInfo.profilePicture ?? ""} alt="" />
@@ -133,8 +139,8 @@ function ReceiverMoreInfo() {
         <div className="infoBody">
 
           {(activeChatInfo.type == 'GROUP') && <>
-            <h5>Group Members ({activeChatInfo.groupMembers.length})</h5>
-            <div className="groupMember">
+            <h5 className='mt-3'>Group Members ({activeChatInfo.groupMembers.length})</h5>
+            <div className="groupMember mb-2">
               {activeChatInfo.groupMembers.map((element, index) => (
                 <div className="groupMemberItem d-flex align-items-center justify-content-between" key={`GroupMember-${index}`}>
                   <div className="userInfo d-flex align-items-center">
@@ -153,7 +159,7 @@ function ReceiverMoreInfo() {
             </div>
             {activeChatInfo.admin.includes(userInfo._id) && <div className="makeAdmin" data-bs-toggle="modal" data-bs-target="#editGroupAdmin">Edit group admins</div>}
           </>}
-          <div className="buttons">
+          <div className="buttons mt-3">
             {(activeChatInfo.type == 'GROUP') ?
               <button className='btn informButton' onClick={leaveGroupHandler}><i className="fa-solid fa-right-from-bracket"></i> Leave Group & delate Group</button> :
               <button button className='btn informButton' onClick={unFollowHandler}><i className="fa-solid fa-user-minus"></i> un Follow & delate Chat  </button> 
