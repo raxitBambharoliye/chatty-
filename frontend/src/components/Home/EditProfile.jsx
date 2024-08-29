@@ -16,6 +16,8 @@ function EditProfile({id,modalClass = ''
     console.log('user', user)
     const [submitButton, setSubmitButton] = useState(true);
     const [defaultValues, setDefaultValues] = useState(user)
+    const friendLoader = useSelector((state) => state.chat.loader.friendsLoader)
+
     const dispatch = useDispatch();
     const { register, getValues, formState: { errors }, setError,handleSubmit, setValue } = useForm({
         defaultValues: {
@@ -75,7 +77,9 @@ function EditProfile({id,modalClass = ''
             setSubmitButton(true)
         }
     }
-
+    if(friendLoader){
+        return <></>
+    }
     return (
         <div>
             <div className={`modal fade  ${modalClass}`} id={id} tabIndex={-1} aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -89,7 +93,7 @@ function EditProfile({id,modalClass = ''
                             <div className="row">
                                 {errors.root && <p className='alert rootErrorValidation text-center' role="alert">{errors.root.message }</p>}
                                 <div className="col-12 col-lg-3 col-xl-2">
-                                    <ImagePreview {...register("profileImage",)} src={defaultValues.profilePicture ?? "./image/dummyProfile.png"} SubmitButtonStatus={activeSave} />
+                                    <ImagePreview {...register("profileImage",)} src={defaultValues.profilePicture} SubmitButtonStatus={activeSave} />
                                 </div>
                                 <div className="col-12 col-lg-9 col-xl-10 flex-grow-1">
                                     <Input inputClass='inputBlack' type='text' placeholder='Enter your User name ... ' label='User Name' ref={ref}  {...register("userName", {

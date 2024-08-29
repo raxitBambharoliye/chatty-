@@ -24,7 +24,10 @@ function Aside({ asideShow }) {
             {/* aside start  */}
             <div className={`asideInner  d-flex flex-column vh-100 position-relative ${asideShow ? 'show' : 'hide'} `}>
                 <div className="asideHeader d-flex align-items-center justify-content-between position-sticky top-0">
-                    <h1 className='m-0'>Chatty 𝝅</h1>
+                    <div className="img logo">
+                        <img src="./image/logo.png" alt="" />
+                    </div>
+                    {/* <h1 className='m-0'>Chatty 𝝅</h1> */}
                     <div className="userProfile" data-bs-toggle="modal" data-bs-target="#editUserProfile">
                         <i className="fa-solid fa-pen pen"></i>
                         <img src={(user && user.profilePicture) ? user.profilePicture : "./image/dummyProfile.png"} alt="" />

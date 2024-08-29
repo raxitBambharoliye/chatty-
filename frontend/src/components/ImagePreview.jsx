@@ -15,7 +15,8 @@ function ImagePreview({
     }
     useEffect(() => {
         
-    },[])
+        console.log('image', image)
+    },[image])
     return (
         <>
             <label className="profile " htmlFor={id}>
