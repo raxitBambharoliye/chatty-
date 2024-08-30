@@ -12,9 +12,9 @@ import { ChatHeader } from './ChatComponents';
 /* with of full picture 767 */
 function Chat() {
     const bottomRef = useRef();
-    const {activeUserChat,messages,friends} = useSelector((state) => state.chat);
-    const {changeChatLoader,chatLoader} = useSelector((state) => state.chat.loader)
-    const {blockedByUsers,blockedUserId}= useSelector((state)=>state.chat.userFriendsData)
+    const { activeUserChat, messages, friends, maxPageOfChat } = useSelector((state) => state.chat);
+    const { changeChatLoader, chatLoader } = useSelector((state) => state.chat.loader)
+    const { blockedByUsers, blockedUserId } = useSelector((state) => state.chat.userFriendsData)
     const user = useSelector((state) => state.userData.user);
     const { sendRequest } = useContext(SocketContext);
     const [page, setPage] = useState(2);
@@ -22,6 +22,7 @@ function Chat() {
     const dispatch = useDispatch();
     const scrollREF = useRef();
     const { register, handleSubmit, setValue } = useForm();
+
     const sendMessage = (data) => {
         if (activeUserChat && activeUserChat._id && data && data.message.length >= 0) {
             sendRequest({ eventName: EVENT_NAME.MESSAGE, data: { receiverId: activeUserChat._id, message: data.message, isGroup: (activeUserChat.type && activeUserChat.type == 'GROUP') ? true : false } });
@@ -38,7 +39,7 @@ function Chat() {
     };
 
     async function scrollHandler() {
-        if (scrollREF.current.scrollTop === 0 && user._id && activeUserChat._id) {
+        if (scrollREF.current.scrollTop === 0 && user._id && activeUserChat._id && page+1 < maxPageOfChat) {
             setPrevScrollHeight(scrollREF.current.scrollHeight);
             setPage((prevPage) => prevPage + 1);
             dispatch(setChatLoader(true));
@@ -61,8 +62,12 @@ function Chat() {
 
     if (!activeUserChat) {
         return (
-            <div className="h-100 d-flex justify-content-center align-items-center">
-                <h1>Chatty 𝝅</h1>
+            <div className="h-100 d-flex flex-column justify-content-center align-items-center homeChat">
+                <div className="logo">
+                    <img src="./image/logo.png" alt="" />
+                </div>
+                <h1>Chatty π</h1>
+                <p>No boundaries, just free-flowing chat.</p>
             </div>
         );
     }
@@ -87,12 +92,18 @@ function Chat() {
                             )}
                             {/* chat show */}
                             <div className="chatBox flex-grow-1 justify-content-end" ref={scrollREF} onScroll={scrollHandler}>
+                                {/* {(page > maxPageOfChat) &&
+                                    <div className='end'>
+                                        <div className="logo">
+                                        <img src="./image/logo.png" alt="" />
+                                        </div>   
+                                </div>} */}
                                 {messages.map((element, index) => {
                                     let previousIndex = index - 1 > 0 ? index - 1 : 0;
                                     const previousDate = messages[previousIndex].createdAt;
                                     const datePrint = checkDatePrint(element.createdAt, previousDate, index === 0);
                                     let profile = friends.findIndex((val) => val._id == element.senderId);
-                                    if (profile >=0) {
+                                    if (profile >= 0) {
                                         profile = friends[profile].profilePicture;
                                     }
                                     let userProfile = user.profilePicture;
@@ -101,8 +112,8 @@ function Chat() {
                                             {datePrint && <DatePart text={datePrint} />}
                                             {!element.type && (
                                                 <>
-                                                    {element.senderId === user._id && <SendMessage message={element.message} profile={userProfile}  time={getChatTime(element.createdAt)} />}
-                                                    {element.senderId !== user._id && <ReceiveMessage message={element.message} profile={profile??"./image/dummyProfile.png"} time={getChatTime(element.createdAt)} />}
+                                                    {element.senderId === user._id && <SendMessage message={element.message} profile={userProfile} time={getChatTime(element.createdAt)} />}
+                                                    {element.senderId !== user._id && <ReceiveMessage message={element.message} profile={profile ?? "./image/dummyProfile.png"} time={getChatTime(element.createdAt)} />}
                                                 </>
                                             )}
                                         </React.Fragment>
@@ -114,7 +125,7 @@ function Chat() {
                     )}
                     {/* chat Input */}
                     <div className="chatInput">
-                        {(!blockedUserId.includes(activeUserChat._id) && !blockedByUsers.includes(activeUserChat._id) /* */ ) &&
+                        {(!blockedUserId.includes(activeUserChat._id) && !blockedByUsers.includes(activeUserChat._id) /* */) &&
                             <form onSubmit={handleSubmit(sendMessage)}>
                                 <div className="d-flex align-items-center">
                                     <div className="input me-2 flex-grow-1">

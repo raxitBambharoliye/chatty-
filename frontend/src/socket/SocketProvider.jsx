@@ -4,7 +4,7 @@ import { APP_URL, COOKIE_KEY, EVENT_NAME } from '../constant/'
 import { useDispatch, useSelector } from "react-redux";
 import { clearAllCookiesData, removeCookieData, setDataInCookie } from "../common";
 import { setUser } from "../reducers/userReducer";
-import { setMutedUser, unMuteUser, addBlockUser, changeChangeChatLoader, changeGroupAdminData, pushFriend, pushMessage, pushNotification, removeFriends, setFriend, setFriendLoader, setMessage, setMessageOrder, setNotification, setPinUser, setPopup, unBlockUser, unPinUser, updateFriends, addUnFollowedUser, setSendedRequest, setOnlineUser } from "../reducers/chatReducer";
+import { setMutedUser, unMuteUser, addBlockUser, changeChangeChatLoader, changeGroupAdminData, pushFriend, pushMessage, pushNotification, removeFriends, setFriend, setFriendLoader, setMessage, setMessageOrder, setNotification, setPinUser, setPopup, unBlockUser, unPinUser, updateFriends, addUnFollowedUser, setSendedRequest, setOnlineUser, setMaxNumberOfChatPages } from "../reducers/chatReducer";
 export const SocketContext = createContext();
 
 export const SocketProvider = ({ children }) => {
@@ -58,6 +58,7 @@ export const SocketProvider = ({ children }) => {
     socket.on(EVENT_NAME.CHATS, (data) => {
       dispatch(setMessage(data.chats))
       dispatch(changeChangeChatLoader(false));
+      dispatch(setMaxNumberOfChatPages(data.maxNumberOfPage))
     })
     socket.on(EVENT_NAME.EDIT_GROUP_ADMIN, (data) => {
       dispatch(changeGroupAdminData(data))

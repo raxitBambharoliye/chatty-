@@ -367,7 +367,13 @@ export const chatHandler = async (socket: any, data: any) => {
       query = { receiverId };
     }
     let chat = await MQ.findWithPagination<MessageIN[]>(MODEL.MESSAGE_MODEL, query, CONFIG.MESSAGE_LOAD_LIMIT, 1, { createdAt: -1 });
-    console.log("chat", chat);
+    let numberOfPages = await MQ.countDocuments(MODEL.MESSAGE_MODEL, query);
+    if (numberOfPages > 0) {
+      numberOfPages= Math.ceil(numberOfPages/CONFIG.MESSAGE_LOAD_LIMIT)
+    } else {
+      numberOfPages = 0;
+    }
+
     if (!chat) {
       chat = [];
     }
@@ -375,6 +381,7 @@ export const chatHandler = async (socket: any, data: any) => {
       eventName: EVENT_NAME.CHATS,
       data: {
         chats: chat ? chat.reverse() : [],
+        maxNumberOfPage: numberOfPages
       },
     };
     console.log("chatSendData", JSON.stringify(chatSendData));

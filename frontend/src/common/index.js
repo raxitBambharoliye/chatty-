@@ -35,4 +35,11 @@ const clearAllCookiesData = () => {
         cookies.removeItem(cookieName);
     });
 }
+
+export const cutString = (str, limit)=>{
+    if (str.length > limit) {
+        return str.substring(0, limit) + '...';
+    }
+    return str;
+}
 export { setDataInCookie, getCookieData, removeCookieData, clearAllCookiesData }

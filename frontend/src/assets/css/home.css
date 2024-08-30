@@ -1,7 +1,17 @@
     .homeBackground {
         background-color: var(--color-black);
     }
-
+    .logo img{
+        width: 250px; 
+    }
+    h1{
+        font-family: "Rosario", sans-serif !important;
+        font-size: 45px;
+        font-weight: 900;
+    }
+    .homeChat p{
+        color: var(--color-gray);
+    }
     .asideInner {
         background-color: var(--color-black-second);
         box-shadow: 9px 1px 27px 4px black;

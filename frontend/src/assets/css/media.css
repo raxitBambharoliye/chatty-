@@ -2,11 +2,19 @@
     .asideInner{
         width: 100%;
     }
-    .chatInner .toggleButton{
-        display: none;
-    }
     .chatInner{
-        display: none !important;
+        /* display: none !important; */
+        transform: scale(0);
+        width: 0;
+        padding: 0 !important;
+    }
+    .chatInner.show{
+        transform: scale(1);
+        width: 100%;
+        padding: 30px !important;
+    }
+    .chatInner .toggleButton{
+        display: block !important;
     }
     .message p{
         max-width: 100%;
@@ -19,11 +27,17 @@
         width: 100%;
     }
     .chatInner{
-        display: none !important;
+        /* display: none !important; */
+        transform: scale(0);
+        width: 0;
+        padding: 0 !important;
     }
-    .chatInner .toggleButton{
-        display: block !important;
+    .chatInner.show{
+        transform: scale(1);
+        width: 100%;
+        padding: 30px !important;
     }
+
     .message p{
         max-width: 100%;
     }
@@ -31,6 +45,9 @@
 @media (min-width:768px) {
     .chatInner{
         display: flex !important;
+        transform: scale(1);
+        width: 100%;
+        padding: 30px !important;
     }
     .asideInner{
         width: 40%;
@@ -49,12 +66,14 @@
 }
 @media (min-width:1200px) {
     .asideInner{
-        width: 18%;
+        width: 25%;
     }
     .chatInner .toggleButton{
         display: none !important;
     }
 }
 @media (min-width:1400px) {
-    
+    .asideInner{
+        width: 20%;
+    }
 }

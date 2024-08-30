@@ -106,6 +106,16 @@ class MQ {
       return null;
     }
   }
+  async countDocuments(collection: string, query: any) {
+    try {
+      this.setCollection(collection);
+      return await this.collection.countDocuments(query);
+    } catch (error) {
+      logger.error(`🤦‍♂️🤦‍♂️🤦‍♂️🤦‍♂️ CATCH ERROR IN countDocuments: 🤦‍♂️🤦‍♂️🤦‍♂️🤦‍♂️ ::: ${error}`);
+      console.log('error', error)
+      return 0;
+    }
+  }
 
 }
 

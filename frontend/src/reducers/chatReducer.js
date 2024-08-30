@@ -8,6 +8,7 @@ const initialState = {
     notification: null,
     friends: null,
     messages: null,
+    maxPageOfChat:null,
     activeUserChat: null,
     userFriendsData: {
         sendedRequest: [],
@@ -73,7 +74,8 @@ const chatReducer = createSlice({
         setMutedUser: setMutedUserFun,
         unMuteUser: unMuteUserFun,
         addUnFollowedUser: addUnFollowedUserFun,
-        setSendedRequest: setSendedRequestFun
+        setSendedRequest: setSendedRequestFun,
+        setMaxNumberOfChatPages:setMaxNumberOfChatPagesFun
     }
 })
 
@@ -336,6 +338,10 @@ function setSendedRequestFun(state, action) {
         }
     }
 }
+function setMaxNumberOfChatPagesFun(state, action) {
+    console.log('action.payload :::: setMaxNumberOfChatPagesFun', action.payload)
+    state.maxPageOfChat = action.payload
+}
 export const {
     setNotification,
     pushNotification,
@@ -368,6 +374,7 @@ export const {
     unMuteUser,
     addUnFollowedUser,
     setSendedRequest,
-    setOnlineUser
+    setOnlineUser,
+    setMaxNumberOfChatPages
 } = chatReducer.actions;
 export default chatReducer.reducer;

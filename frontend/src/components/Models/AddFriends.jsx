@@ -55,7 +55,6 @@ function AddFriends({ id, modalClass = '' }) {
             }
         }
         sendRequest(sendData);
-        console.log("send request ", id)
     }
 
     return (

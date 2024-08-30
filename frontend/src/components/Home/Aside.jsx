@@ -24,9 +24,7 @@ function Aside({ asideShow }) {
             {/* aside start  */}
             <div className={`asideInner  d-flex flex-column vh-100 position-relative ${asideShow ? 'show' : 'hide'} `}>
                 <div className="asideHeader d-flex align-items-center justify-content-between position-sticky top-0">
-                    <div className="img logo">
-                        <img src="./image/logo.png" alt="" />
-                    </div>
+                    <h2 className='m-0'>{ activeAside=="NOTIFICATION"?"Notification":"Chats"}</h2>
                     {/* <h1 className='m-0'>Chatty 𝝅</h1> */}
                     <div className="userProfile" data-bs-toggle="modal" data-bs-target="#editUserProfile">
                         <i className="fa-solid fa-pen pen"></i>
@@ -40,7 +38,8 @@ function Aside({ asideShow }) {
                 <div className="asideFooter">
                     <div className="asideFooterMenu">
                         {/* friends */}
-                        <div className="menuItem" onClick={(e) => { dispatch(changeAsideContent("FRIENDS")) }}><Link className={` ${activeAside == "FRIENDS" ? "active" : ''}`}><i className={`fa-regular fa-address-book`}></i></Link></div>
+                        <div className="
+                        +" onClick={(e) => { dispatch(changeAsideContent("FRIENDS")) }}><Link className={` ${activeAside == "FRIENDS" ? "active" : ''}`}><i className={`fa-regular fa-address-book`}></i></Link></div>
                         {/* add friends */}
                         <div className="menuItem"><Link data-bs-toggle="modal" data-bs-target="#addFriendsModel"><i className="fa-solid fa-user-plus"></i></Link></div>
                         {/* notification  */}
@@ -52,9 +51,11 @@ function Aside({ asideShow }) {
                     </div>
                 </div>
                 {/* new Chat start button */}
+                {activeAside=="FRIENDS" && 
                 <div className={`newCat ${activeNewChat? "active":""}`} onClick={(e)=>{dispatch(changeActiveNewChat(!activeNewChat))}}>
                     <i className="fa-solid fa-comment-medical"></i>
-                </div>
+                    </div>
+                }
             </div>
             <EditProfile id={'editUserProfile'} modalClass='secondBlackModal editUserProfile'></EditProfile>
             <AddFriends id={"addFriendsModel"} modalClass='blackModal addFriendsModal '></AddFriends>
